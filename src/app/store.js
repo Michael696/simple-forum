@@ -1,11 +1,11 @@
 import {configureStore} from '@reduxjs/toolkit';
-// import counterReducer from '../features/counter/counterSlice';
 
 import forumListReducer from '../features/forumList/forumListSlice';
+import languageSelectorReducer from '../features/languageSelector/languageSelectorSlice';
 
 export default configureStore({
     reducer: {
-        // counter: counterReducer,
         forumList: forumListReducer,
+        language: languageSelectorReducer
     },
 });
