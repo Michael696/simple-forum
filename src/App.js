@@ -4,7 +4,7 @@ import './styles/App.sass';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Navigation from './components/Navigation';
-import ForumList from './components/ForumList';
+import ForumList from './features/forumList/ForumList';
 import Faq from './components/Faq';
 import Register from './components/Register';
 import SignIn from './components/SignIn';
