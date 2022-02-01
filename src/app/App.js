@@ -8,7 +8,7 @@ import Navigation from '../components/Navigation';
 import Forums from '../features/forums/Forums';
 import Faq from '../components/Faq';
 import Register from '../components/Register';
-import SignIn from '../components/SignIn';
+import Auth from '../features/currentUser/Auth';
 
 function App() {
     return (
@@ -18,7 +18,7 @@ function App() {
             <Routes>
                 <Route path='/faq' element={<Faq/>}/>
                 <Route path='/register' element={<Register/>}/>
-                <Route path='/signin' element={<SignIn/>}/>
+                <Route path='/signin' element={<Auth/>}/>
                 <Route path='/*' element={<Forums/>}/>
             </Routes>
             <Footer/>

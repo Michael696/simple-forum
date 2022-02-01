@@ -12,14 +12,13 @@ import CurrentUser from '../features/currentUser/CurrentUser';
 
 export default function Header() {
     const user = useSelector(currentUser);
-    console.log('current user:', user);
 
     return (<div className='main-header'>
         <Logo/>
         <div>Header</div>
         <LanguageSelector/>
         <OnlineUsers/>
-        {user.name && <><CurrentUser name={user.name}/> <DeAuth/> </>}
+        {user.name.length ? <><CurrentUser name={user.name}/> <DeAuth/> </> : ''}
 
     </div>);
 }

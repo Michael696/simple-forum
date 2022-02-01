@@ -1,5 +1,46 @@
 import React from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/cjs/Button';
+import {currentUser} from './currentUserSlice';
+import {useSelector, useDispatch} from 'react-redux';
+import {auth} from './currentUserSlice';
 
 export default function Auth() {
-    return (<div className='sign-in'>Sign in</div>);
+    const user = useSelector(currentUser);
+    const dispatch = useDispatch();
+    const submitAuth = () => {
+        dispatch(auth({name: 'test1', id: '123'}));
+    };
+
+    return !user.name &&
+        (
+            <div className='sign-in'>
+                <Form>
+                    <Form.Group className="mb-3" controlId="formUserName">
+                        <Form.Label>Username</Form.Label>
+                        <Form.Control type="text" placeholder="Enter username"/>
+                        <Form.Text className="text-muted">
+                            only characters and numbers
+                        </Form.Text>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formUserPassword">
+                        <Form.Label htmlFor="inputPassword5">Password</Form.Label>
+                        <Form.Control
+                            type="password"
+                            id="inputPassword5"
+                            placeholder="Password"
+                            aria-describedby="passwordHelpBlock"
+                        />
+                        <Form.Text id="passwordHelpBlock" muted>
+                            Your password must be 8-20 characters long, contain letters and numbers, and
+                            must not contain spaces, special characters, or emoji.
+                        </Form.Text>
+                    </Form.Group>
+                    <Button variant="primary" onClick={submitAuth}>
+                        Submit
+                    </Button>
+                </Form>
+            </div>
+        );
 }

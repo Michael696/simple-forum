@@ -18,7 +18,7 @@ export const currentUserSlice = createSlice({
     },
 });
 
-export const {set} = currentUserSlice.actions;
+export const {auth, deAuth} = currentUserSlice.actions;
 
 export const currentUser = state => state.currentUser;
 
