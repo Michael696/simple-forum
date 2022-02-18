@@ -13,19 +13,16 @@ export default function LanguageSelector() {
     const available = useSelector(availableLanguages);
     const current = useSelector(currentLanguage);
     const dispatch = useDispatch();
-    const options = available.map(lang => {
-        return current === lang.id ?
-            (<option id={lang.id} selected>{lang.label}</option>)
-            :
-            (<option id={lang.id}>{lang.label}</option>)
-    });
+    const options = available.map(lang => <option key={lang.id} value={lang.id}>{lang.label}</option>);
     return (
         <Form className='main-lang-selector'>
             <fieldset>
                 <Form.Select
                     id='languageSelect'
+                    value={current}
                     onChange={e => {
-                        dispatch(setCurrent(available[e.target.selectedIndex].id))
+                        console.log('target',e.target);
+                        dispatch(setCurrent(e.target.value)); //available[e.target.selectedIndex].id
                     }}
                 >
                     {options}
