@@ -7,9 +7,9 @@ export const currentUserSlice = createSlice({
         id: '',
     },
     reducers: {
-        auth: (state, action) => {
-            state.name = action.payload.name;
-            state.id = action.payload.id;
+        auth: (state, {payload: {name, id}}) => {
+            state.name = name;
+            state.id = id;
         },
         deAuth: (state) => {
             state.name = '';
