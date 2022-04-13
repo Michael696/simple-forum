@@ -2,7 +2,8 @@ import {createSlice} from '@reduxjs/toolkit';
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {CaseReducer} from "@reduxjs/toolkit/dist/createReducer";
 import {userApi} from "../../app/userApi";
-import {AppDispatch, RootState} from "../../app/store";
+import {AppDispatch} from "../../app/store";
+import {useSelector} from "react-redux";
 
 interface OnlineUsersList {
     loading: 'idle' | 'pending' | 'error',
@@ -39,16 +40,17 @@ export const onlineUsersSlice = createSlice({
     },
 });
 
-// export const {set} = onlineUsersSlice.actions;
-// export const onlineUsers = state => state.onlineUsers.list;
-
 export const onlineUsersLoading = state => state.onlineUsers.loading;
+export const onlineUsers = state => state.onlineUsers.users;
+
 const {usersLoading, usersDone} = onlineUsersSlice.actions;
 
-export const fetchUsers = () => async (dispatch) => {
+export const fetchUsers = () => async (dispatch: AppDispatch) => {
     dispatch(usersLoading());
     const users = await userApi.fetchOnline();
     dispatch(usersDone(users))
 };
+
+// export const useFetchUsers = () => [fetchUsers, {online: useSelector(onlineUsers), isLoading: useSelector(onlineUsersLoading)}];
 
 export default onlineUsersSlice.reducer;

@@ -1,13 +1,13 @@
 import React from 'react';
 import {Routes, Route} from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import '../styles/App.sass';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Navigation from '../components/Navigation';
 import Forums from '../features/forums/Forums';
 import Faq from '../components/Faq';
-import Register from '../components/Register';
+import Register from '../features/registerUser/Register';
 import Auth from '../features/currentUser/Auth';
 
 function App() {

@@ -1,32 +1,25 @@
 import React, {useEffect} from 'react';
-// import {useSelector} from 'react-redux';
-// import {onlineUsersApi} from '../../app/onlineUsersApi';
-import {fetchUsers, onlineUsersLoading} from './onlineUsersSlice';
 import {useDispatch, useSelector} from 'react-redux';
-
-// import {
-//     onlineUsers,
-// } from './onlineUsersSlice';
+import {fetchUsers, onlineUsers, onlineUsersLoading} from './onlineUsersSlice';
 
 export default function OnlineUsers() {
+    // const isLoading = useSelector(onlineUsersLoading);
     // const users = useSelector(onlineUsers);
-    // const {data, isLoading} = onlineUsersApi.useOnlineUsersQuery();
-    const users=[],data=[];
-    const isLoading=useSelector(onlineUsersLoading);
-    // const isLoading = useSelector
+    const users = {
+        online: useSelector(onlineUsers),
+        state: useSelector(onlineUsersLoading)
+    };
     const fetch = fetchUsers();
+    // const [fetch, users] = useFetchUsers();
     const dispatch = useDispatch();
 
-    useEffect(()=>{
-        const fetchAsync = async () => await fetch(dispatch);
-        const u = fetchAsync();
-        console.log(u);
-
-    },[]);
+    useEffect(() => {
+        dispatch(fetch);
+    }, []);
 
     return (<div className='online-users'>
-        Users online: {users.length} (who?)
+        Users online: {users.online.length} ({JSON.stringify(users)})
         <br/>
-        data:{data} isLoading:{isLoading}
+        isLoading:{users.state}
     </div>);
 }

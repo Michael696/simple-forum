@@ -1,5 +1,5 @@
 import {configureStore} from '@reduxjs/toolkit';
-// import {exampleMiddleware} from './middleware';
+import {exampleMiddleware} from './middleware';
 import forumsReducer from '../features/forums/forumsSlice';
 import languageReducer from '../features/languageSelector/languageSelectorSlice';
 import onlineUsersReducer from '../features/onlineUsers/onlineUsersSlice';
@@ -28,7 +28,7 @@ export const store = configureStore({
         onlineUsers: onlineUsersReducer,
         currentUser: currentUserReducer,
     },
-    // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([exampleMiddleware,onlineUsersApi.middleware]),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([exampleMiddleware]),
 });
 
 // @ts-ignore

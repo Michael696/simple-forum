@@ -1,5 +1,5 @@
 import React from 'react';
-import {Nav, Navbar, NavItem, NavDropdown, Breadcrumb} from 'react-bootstrap';
+import {Nav, Navbar, NavItem, Container, NavDropdown, Breadcrumb} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {useSelector} from 'react-redux';
 
@@ -12,36 +12,44 @@ export default function Navigation() {
 
     return (
         <Navbar className="navbar navbar-fixed-top">
+            <Container>
+                <Nav className='me-auto'>
+                    <Nav.Link>
+                        <span>
+                            <LinkContainer to='/faq'>
+                                <span>FAQ</span>
+                            </LinkContainer>
+                        </span>
+                    </Nav.Link>
 
-            <Nav>
-                <LinkContainer to='/faq'>
-                    <NavItem>
-                        FAQ
-                    </NavItem>
-                </LinkContainer>
+                    <Nav.Link>
+                        <span>
+                            <LinkContainer to='/register'>
+                                <span>Register</span>
+                            </LinkContainer>
+                        </span>
+                    </Nav.Link>
 
-                <LinkContainer to='/register'>
-                    <NavItem>
-                        Register
-                    </NavItem>
-                </LinkContainer>
+                    <Nav.Link>
+                        <span>
+                            <LinkContainer to='/forums'>
+                                <span>Forums</span>
+                            </LinkContainer>
+                        </span>
+                    </Nav.Link>
 
+                    {!user.name && (
+                        <Nav.Link>
+                        <span>
+                            <LinkContainer to='/signin'>
+                                <span>Sign-in</span>
+                            </LinkContainer>
+                        </span>
+                        </Nav.Link>
 
-                <LinkContainer to='/forums'>
-                    <NavItem>
-                        Forums
-                    </NavItem>
-                </LinkContainer>
-
-                {!user.name && (
-                    <LinkContainer to='/signin'>
-                        <NavItem>
-                            Sign-in
-                        </NavItem>
-                    </LinkContainer>
-                )}
-
-            </Nav>
+                    )}
+                </Nav>
+            </Container>
         </Navbar>
     );
 }
