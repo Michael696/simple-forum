@@ -12,44 +12,39 @@ export default function Navigation() {
 
     return (
         <Navbar className="navbar navbar-fixed-top">
-            <Container>
-                <Nav className='me-auto'>
-                    <Nav.Link>
-                        <span>
-                            <LinkContainer to='/faq'>
-                                <span>FAQ</span>
-                            </LinkContainer>
-                        </span>
-                    </Nav.Link>
+            <Nav.Link>
+                <span>
+                    <LinkContainer to='/faq'>
+                        <span>FAQ</span>
+                    </LinkContainer>
+                </span>
+            </Nav.Link>
 
-                    <Nav.Link>
-                        <span>
-                            <LinkContainer to='/register'>
-                                <span>Register</span>
-                            </LinkContainer>
-                        </span>
-                    </Nav.Link>
+            <Nav.Link>
+                <span>
+                    <LinkContainer to='/register'>
+                        <span>Register</span>
+                    </LinkContainer>
+                </span>
+            </Nav.Link>
 
-                    <Nav.Link>
-                        <span>
-                            <LinkContainer to='/forums'>
-                                <span>Forums</span>
-                            </LinkContainer>
-                        </span>
-                    </Nav.Link>
+            <Nav.Link>
+                <span>
+                    <LinkContainer to='/forums'>
+                        <span>Forums</span>
+                    </LinkContainer>
+                </span>
+            </Nav.Link>
 
-                    {!user.name && (
-                        <Nav.Link>
-                        <span>
-                            <LinkContainer to='/signin'>
-                                <span>Sign-in</span>
-                            </LinkContainer>
-                        </span>
-                        </Nav.Link>
-
-                    )}
-                </Nav>
-            </Container>
+            {!user.name && (
+                <Nav.Link>
+                    <span>
+                        <LinkContainer to='/signin'>
+                            <span>Sign-in</span>
+                        </LinkContainer>
+                    </span>
+                </Nav.Link>
+            )}
         </Navbar>
     );
 }

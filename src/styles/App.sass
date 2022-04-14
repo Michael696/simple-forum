@@ -30,11 +30,6 @@
   100%
     transform: translateY(0px)
 
-
-.nav-link
-  .active
-    font-weight: bold
-
 .sign-in
   max-width: 50%
   margin-left: auto
@@ -43,6 +38,14 @@
   border-radius: 0.5em
   padding: 1em
 
+.navbar
+  display: flex
+  justify-content: center
+  column-gap: 5em
+
+.nav-link
+  .active
+    font-weight: bold
 
 .register__error
   background-color: #ffa1ab
@@ -50,3 +53,16 @@
   color: black
   margin: 1em
   border-radius: 0.25em
+
+.main-header
+  position: sticky
+  border: 1px solid gray
+  width: 100%
+  top: 0
+
+
+.main-footer
+  border: 1px solid gray
+  position: fixed
+  width: 100%
+  bottom: 0

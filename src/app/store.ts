@@ -4,6 +4,7 @@ import forumsReducer from '../features/forums/forumsSlice';
 import languageReducer from '../features/languageSelector/languageSelectorSlice';
 import onlineUsersReducer from '../features/onlineUsers/onlineUsersSlice';
 import currentUserReducer from '../features/currentUser/currentUserSlice';
+import registerReducer from "../features/registerUser/registerSlice";
 // import  { authApi }  from './services/auth'
 
 // import {onlineUsersApi} from './onlineUsersApi';
@@ -27,6 +28,7 @@ export const store = configureStore({
         language: languageReducer,
         onlineUsers: onlineUsersReducer,
         currentUser: currentUserReducer,
+        register: registerReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([exampleMiddleware]),
 });
