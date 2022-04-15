@@ -21,11 +21,10 @@ export const userApi = {
         }
     },
     register: async (params: RegisterParams) => {
-        try {
-            return await httpApi.post('/register', params);
-        } catch (e) {
-            console.error(e);
-            return false;
+        const response = await httpApi.post('/register', params);
+        if (response && response.data && response.data.error) {
+            throw response.data.error;
         }
+        return response.data;
     }
 };

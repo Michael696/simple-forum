@@ -7,24 +7,38 @@ import {userApi} from "../../app/userApi";
 // type ReducerWithoutAction = CaseReducer<OnlineUsersList>;
 // type ReducerWithAction = CaseReducer<OnlineUsersList, PayloadAction<object[]>>;
 
-type RegisterState = { state: 'idle' | 'pending' | 'done' | 'error' };
-// type RegisterReducer = CaseReducer<RegisterState, PayloadAction>;
-
-const initialState: RegisterState = {state: 'idle'};
-
 export type RegisterParams = {
     name: string,
     eMail: string,
     password: string
 };
 
+export type RegisterState = {
+    state: 'idle' | 'pending' | 'done' | 'error',
+    error?: string
+};
+
+export type RegisterRequest = RegisterParams & RegisterState;
+
+const initialState: RegisterRequest = {
+    state: 'idle',
+    error: '',
+    name: '',
+    eMail: '',
+    password: ''
+};
+
 export const registerSlice = createSlice({
     name: 'register',
     initialState,
     reducers: {
-        registerStart: (register, action) => {
+        registerStart: (register, action: PayloadAction<RegisterParams>) => {
+            console.log('registerStart action', action);
             if (register.state === 'idle') {
                 register.state = 'pending';
+                register.name = action.payload.name;
+                register.eMail = action.payload.eMail;
+                register.password = action.payload.password;
             }
         },
         registerDone: (register, action) => {
@@ -33,8 +47,10 @@ export const registerSlice = createSlice({
             }
         },
         registerError: (register, action) => {
+            console.log('registerError action', action);
             if (register.state === 'pending') {
                 register.state = 'error';
+                register.error = action.payload;
             }
         },
         registerClear: (register, action) => {
@@ -45,7 +61,8 @@ export const registerSlice = createSlice({
 
 export const {registerStart, registerDone, registerError, registerClear} = registerSlice.actions;
 
-export const registerState = state => state.register.state;
+export const registerState = (state: RootState) => state.register.state;
+export const registerErrorMessage = (state: RootState) => state.register.error;
 
 export const register = (params: RegisterParams) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const register = getState().register;

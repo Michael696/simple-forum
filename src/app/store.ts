@@ -1,4 +1,5 @@
 import {configureStore} from '@reduxjs/toolkit';
+import createSagaMiddleware from 'redux-saga';
 import {exampleMiddleware} from './middleware';
 import forumsReducer from '../features/forums/forumsSlice';
 import languageReducer from '../features/languageSelector/languageSelectorSlice';
@@ -6,6 +7,7 @@ import onlineUsersReducer from '../features/onlineUsers/onlineUsersSlice';
 import currentUserReducer from '../features/currentUser/currentUserSlice';
 import registerReducer from "../features/registerUser/registerSlice";
 // import  { authApi }  from './services/auth'
+import rootSaga from "./sagas";
 
 // import {onlineUsersApi} from './onlineUsersApi';
 // import {authUserApi} from './authUserApi';
@@ -18,6 +20,7 @@ import registerReducer from "../features/registerUser/registerSlice";
 // console.log('authUserApi.reducerPath:', authUserApi.reducerPath);
 // console.log('useExampleQuery:', useExampleQuery);
 
+const sagaMiddleware = createSagaMiddleware();
 
 export const store = configureStore({
     reducer: {
@@ -30,8 +33,10 @@ export const store = configureStore({
         currentUser: currentUserReducer,
         register: registerReducer
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([exampleMiddleware]),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([sagaMiddleware]),
 });
+
+sagaMiddleware.run(rootSaga);
 
 // @ts-ignore
 export type RootState = ReturnType<typeof store.getState>

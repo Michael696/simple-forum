@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 import Navigation from '../components/Navigation';
 import Forums from '../features/forums/Forums';
 import Faq from '../components/Faq';
-import Register from '../features/registerUser/Register';
+import Register from '../features/registerUser/Register.tsx';
 import Auth from '../features/currentUser/Auth';
 
 function App() {

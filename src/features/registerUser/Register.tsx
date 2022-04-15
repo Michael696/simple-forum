@@ -1,34 +1,45 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/cjs/Button';
-import {useSelector, useDispatch} from 'react-redux';
-import {register, registerState, registerClear} from '../registerUser/registerSlice';
+import {useDispatch} from 'react-redux';
+import {registerState, registerClear, registerStart, registerErrorMessage} from './registerSlice';
+import {useAppSelector} from "../../app/hooks";
+import {AppDispatch} from "../../app/store";
 
 
 export default function Register() {
-    const nameRef = useRef();
-    const [name, setName] = useState('');
-    const [eMail, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [password2, setPassword2] = useState('');
+    const nameRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
+    const [name, setName] = useState('b');
+    const [eMail, setEmail] = useState('a');
+    const [password, setPassword] = useState('a');
+    const [password2, setPassword2] = useState('a');
     const [error, setError] = useState('');
-    const registering = useSelector(registerState);
 
-    const dispatch = useDispatch();
-    console.log('registering', registering);
+    const registering = useAppSelector(registerState);
+    const errorMessage = useAppSelector(registerErrorMessage);
+    const dispatch: AppDispatch = useDispatch();
+
+    // console.log('registering', registering);
+
+    const regClear = () => {
+        if (registering !== 'idle') {
+            dispatch(registerClear({}));
+        }
+    };
 
     useEffect(() => {
         nameRef.current.focus();
         return () => {
-            dispatch(registerClear());
+            dispatch(registerClear({}));
         }
     }, []);
 
     useEffect(() => {
         if (registering === 'error') {
-            setError('register error');
+            // @ts-ignore
+            setError(errorMessage);
         }
-    }, [registering]);
+    }, [registering, error]);
 
     const handleSubmit = event => {
         if (name === '') {
@@ -40,16 +51,18 @@ export default function Register() {
         } else if (password === '') {
             setError('password is empty');
         } else { // all OK
-            dispatch(register({name, eMail, password}));
+            dispatch(registerStart({name, eMail, password}))
         }
     };
 
     const formDone = (
         <div>
-            Congratulations ! You've been successfully registered!
+            Congratulations ! You've been successfully registered!<br/>
+            Now you can sign-in.
         </div>
     );
 
+    // TODO refactor onChange handlers
     const formRegister = (
         <div className='sign-in'>
             <Form.Group className="mb-3" controlId="formUserName">
@@ -60,9 +73,9 @@ export default function Register() {
                     ref={nameRef}
                     value={name}
                     onChange={(e) => {
-                        setName(e.target.value)
+                        setName(e.target.value);
                         setError('');
-                        dispatch(registerClear());
+                        regClear();
                     }}
                 />
                 <Form.Text className="text-muted">
@@ -77,9 +90,9 @@ export default function Register() {
                     placeholder="Enter your e-mail"
                     value={eMail}
                     onChange={(e) => {
-                        setEmail(e.target.value)
+                        setEmail(e.target.value);
                         setError('');
-                        dispatch(registerClear());
+                        regClear();
                     }}
                 />
             </Form.Group>
@@ -92,9 +105,9 @@ export default function Register() {
                     aria-describedby="passwordHelpBlock"
                     value={password}
                     onChange={(e) => {
-                        setPassword(e.target.value)
+                        setPassword(e.target.value);
                         setError('');
-                        dispatch(registerClear());
+                        regClear();
                     }}
                 />
                 <Form.Text id="passwordHelpBlock" muted>
@@ -111,9 +124,9 @@ export default function Register() {
                     aria-describedby="passwordHelpBlock"
                     value={password2}
                     onChange={(e) => {
-                        setPassword2(e.target.value)
+                        setPassword2(e.target.value);
                         setError('');
-                        dispatch(registerClear());
+                        regClear();
                     }}
                 />
             </Form.Group>
