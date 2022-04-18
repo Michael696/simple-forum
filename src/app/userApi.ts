@@ -26,5 +26,14 @@ export const userApi = {
             throw response.data.error;
         }
         return response.data;
+    },
+    fetchForums: async () => {
+        try {
+            const response = await httpApi.post('/forum-list');
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
     }
 };

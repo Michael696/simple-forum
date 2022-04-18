@@ -3,10 +3,10 @@ import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {CaseReducer} from "@reduxjs/toolkit/dist/createReducer";
 import {userApi} from "../../app/userApi";
 import {AppDispatch} from "../../app/store";
-import {useSelector} from "react-redux";
+import {LoadingType} from '../../app/types';
 
 interface OnlineUsersList {
-    loading: 'idle' | 'pending' | 'error',
+    loading: LoadingType
     users: Array<object | string>
 }
 
@@ -18,13 +18,13 @@ const initialState: OnlineUsersList = {
 type ReducerWithoutAction = CaseReducer<OnlineUsersList>;
 type ReducerWithAction = CaseReducer<OnlineUsersList, PayloadAction<object[]>>;
 
-const usersLoadingF: ReducerWithoutAction = (state) => {
+const _usersLoading: ReducerWithoutAction = (state) => {
     if (state.loading === 'idle') {
         state.loading = 'pending';
     }
 };
 
-const usersDoneF: ReducerWithAction = (state, action) => {
+const _usersDoneF: ReducerWithAction = (state, action) => {
     if (state.loading === 'pending') {
         state.loading = 'idle';
         state.users = action.payload;
@@ -35,8 +35,8 @@ export const onlineUsersSlice = createSlice({
     name: 'onlineUsers',
     initialState,
     reducers: {
-        usersLoading: usersLoadingF,
-        usersDone: usersDoneF,
+        usersLoading: _usersLoading,
+        usersDone: _usersDoneF,
     },
 });
 
@@ -50,7 +50,5 @@ export const fetchUsers = () => async (dispatch: AppDispatch) => {
     const users = await userApi.fetchOnline();
     dispatch(usersDone(users))
 };
-
-// export const useFetchUsers = () => [fetchUsers, {online: useSelector(onlineUsers), isLoading: useSelector(onlineUsersLoading)}];
 
 export default onlineUsersSlice.reducer;

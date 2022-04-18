@@ -1,23 +1,26 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import Button from 'react-bootstrap/Button';
 
-import {
-    set,
-    selectForums,
-} from './forumsSlice';
+import {forumsList, fetchForums ,forumsIsLoading} from './forumsSlice';
 import ForumItem from './ForumItem';
 
 export default function Forums() {
-    const forums = useSelector(selectForums);
+    const forums = useSelector(forumsList);
+    const isLoading = useSelector(forumsIsLoading);
     const dispatch = useDispatch();
+    const fetch = fetchForums();
 
-    const forumsList = forums.map(it => {
-        return <ForumItem key={it} name={it}/>
-    });
+    useEffect(() => {
+        dispatch(fetch);
+    }, []);
+
+    // const forumsList = forums.map(it => {
+    //     return <ForumItem key={it} name={it}/>
+    // });
+    console.log('forums',forums);
     return (<div className='main-forums'>
         <div>Forums</div>
-        {forumsList}
-        <Button onClick={() => dispatch(set([1, 2, 3, 4]))}>click</Button>
+        { isLoading==='pending' ? 'loading' :'done'}
     </div>);
 }
