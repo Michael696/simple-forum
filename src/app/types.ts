@@ -1,9 +1,9 @@
-import {CaseReducer} from "@reduxjs/toolkit/dist/createReducer";
-
 export type LoadingType = 'idle' | 'pending' | 'error' ;
 
+export type Id = string | number;
+
 export interface User {
-    id: string,
+    id: Id,
     name: string
 }
 
@@ -13,10 +13,19 @@ export interface LastMessage {
 }
 
 export interface Forum {
-    id: string,
+    id: Id,
     name: string,
     description: string,
     themeCount: number,
     postCount: number
+    lastMessage: LastMessage
+}
+
+export interface ThreadItemType {
+    id:Id
+    author: User,
+    title: string,
+    themeCount: number,
+    postCount: number,
     lastMessage: LastMessage
 }

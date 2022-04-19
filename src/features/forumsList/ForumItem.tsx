@@ -1,11 +1,10 @@
 import React from 'react';
 import {forumWithId} from "./forumsSlice";
 import {useSelector} from "react-redux";
-import {Forum} from "../../app/types";
+import {Forum, Id} from "../../app/types";
 
-export default function ForumItem({id}: { id: string }) {
+export default function ForumItem({id}: { id: Id }) {
     const forum: Forum = useSelector(state => forumWithId(state, id));
-    console.log('forum ', id, forum);
     const handleForumClick = () => {
         console.log(`forum ${id} clicked`);
     };

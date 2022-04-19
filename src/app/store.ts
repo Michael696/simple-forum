@@ -2,6 +2,7 @@ import {configureStore} from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import {exampleMiddleware} from './middleware';
 import forumsReducer from '../features/forumsList/forumsSlice';
+import threadsReducer from '../features/threads/threadsSlice';
 import languageReducer from '../features/languageSelector/languageSelectorSlice';
 import onlineUsersReducer from '../features/onlineUsers/onlineUsersSlice';
 import currentUserReducer from '../features/currentUser/currentUserSlice';
@@ -28,6 +29,7 @@ export const store = configureStore({
         // [authUserApi.reducerPath]: authUserApi.reducer,
         // [authApi.reducerPath]: authApi.reducer,
         forums: forumsReducer,
+        threads: threadsReducer,
         language: languageReducer,
         onlineUsers: onlineUsersReducer,
         currentUser: currentUserReducer,

@@ -35,5 +35,14 @@ export const userApi = {
             console.error(e);
             return false;
         }
+    },
+    fetchThreads: async (id:string | number) => {
+        try {
+            const response = await httpApi.post('/threads',{id});
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
     }
 };

@@ -1,21 +1,15 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from "../../app/store";
-import {LoadingType} from "../../app/types";
-import {CaseReducer} from "@reduxjs/toolkit/dist/createReducer";
+import {Id, LastMessage, LoadingType} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {userApi} from "../../app/userApi";
-
-type ForumMessageType = {
-    lastMessage: string, // dateTime
-    user: string
-};
 
 type ForumItemType = {
     name: string,
     description: string,
     themeCount: number,
     postCount: number,
-    lastMessage: ForumMessageType
+    lastMessage: LastMessage
 };
 
 type InitialStateType = {
@@ -28,35 +22,27 @@ const initialState: InitialStateType = {
     isLoading: 'idle'
 };
 
-type ReducerWithoutAction = CaseReducer<InitialStateType>;
-type ReducerWithAction = CaseReducer<InitialStateType, PayloadAction<ForumItemType[]>>;
-
-const _forumsLoad: ReducerWithoutAction = (state: InitialStateType) => {
-    if (state.isLoading === 'idle') {
-        state.isLoading = 'pending';
-    }
-};
-
-const _forumsDone: ReducerWithAction = (state: InitialStateType, action) => {
-    if (state.isLoading === 'pending') {
-        state.isLoading = 'idle';
-        state.list = action.payload;
-    }
-};
-
 export const forumSlice = createSlice({
     name: 'forums',
     initialState,
     reducers: {
-        forumsLoad: _forumsLoad,
-        forumsDone: _forumsDone
-
+        forumsLoad: (state: InitialStateType) => {
+            if (state.isLoading === 'idle') {
+                state.isLoading = 'pending';
+            }
+        },
+        forumsDone: (state: InitialStateType, action: PayloadAction<ForumItemType[]>) => {
+            if (state.isLoading === 'pending') {
+                state.isLoading = 'idle';
+                state.list = action.payload;
+            }
+        }
     },
 });
 
 export const forumsIsLoading = state => state.forums.isLoading;
 export const forumsList = state => state.forums.list;
-export const forumWithId = (state, id: string) => state.forums.list.filter(forum => forum.id === id)[0];
+export const forumWithId = (state, id: Id) => state.forums.list.filter(forum => forum.id === id)[0];
 
 const {forumsLoad, forumsDone} = forumSlice.actions;
 
