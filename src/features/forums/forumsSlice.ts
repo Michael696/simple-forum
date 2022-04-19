@@ -56,6 +56,7 @@ export const forumSlice = createSlice({
 
 export const forumsIsLoading = state => state.forums.isLoading;
 export const forumsList = state => state.forums.list;
+export const forumWithId = (state, id: string) => state.forums.list.filter(forum => forum.id === id)[0];
 
 const {forumsLoad, forumsDone} = forumSlice.actions;
 

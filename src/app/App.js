@@ -5,7 +5,7 @@ import '../styles/App.sass';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Navigation from '../components/Navigation';
-import Forums from '../features/forums/Forums';
+import Forums from '../features/forums/Forums.tsx';
 import Faq from '../components/Faq';
 import Register from '../features/registerUser/Register.tsx';
 import Auth from '../features/currentUser/Auth';

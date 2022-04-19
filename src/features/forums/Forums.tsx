@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import Button from 'react-bootstrap/Button';
 
-import {forumsList, fetchForums ,forumsIsLoading} from './forumsSlice';
+import {forumsList, fetchForums, forumsIsLoading} from './forumsSlice';
 import ForumItem from './ForumItem';
 
 export default function Forums() {
@@ -11,16 +11,27 @@ export default function Forums() {
     const dispatch = useDispatch();
     const fetch = fetchForums();
 
-    useEffect(() => {
+    const updateForums = () => {
         dispatch(fetch);
+    };
+
+    const handleUpdate = () => {
+        updateForums();
+    };
+
+    useEffect(() => {
+        updateForums();
     }, []);
 
-    // const forumsList = forums.map(it => {
-    //     return <ForumItem key={it} name={it}/>
-    // });
-    console.log('forums',forums);
+    const forumList = forums.map(forum => {
+        return <ForumItem key={forum.id} id={forum.id}/>
+    });
+
     return (<div className='main-forums'>
         <div>Forums</div>
-        { isLoading==='pending' ? 'loading' :'done'}
+        <div>
+            {forumList}
+        </div>
+        <Button onClick={handleUpdate}>update</Button>
     </div>);
 }

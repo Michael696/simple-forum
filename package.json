@@ -13,7 +13,6 @@
     "@types/react-dom": "^18.0.0",
     "axios": "^0.25.0",
     "bootstrap": "^5.1.3",
-    "normalizr": "^3.6.2",
     "react": "^17.0.2",
     "react-bootstrap": "^2.2.3",
     "react-dom": "^16.14.0",
@@ -25,6 +24,7 @@
     "redux-thunk": "^2.4.1",
     "sass": "^1.50.0",
     "sass-loader": "^12.6.0",
+    "ts-normalizr": "0.0.11",
     "typescript": "^4.6.3"
   },
   "scripts": {
