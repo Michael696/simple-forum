@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Link} from "react-router-dom";
-// import Button from 'react-bootstrap/Button';
 
 import {forumsList, fetchForums, forumsIsLoading} from './forumsSlice';
 import ForumItem from './ForumItem';
@@ -16,28 +15,19 @@ export default function Forums() {
         dispatch(fetch);
     };
 
-    /*
-        const handleUpdate = () => {
-            updateForums();
-        };
-    */
-
     useEffect(() => {
         updateForums();
     }, []);
 
     const forumList = forums.map(forum => {
         return (
-            <Link to={`/forum/${forum.id}`} key={forum.id}>
+            <Link to={`/forum/${forum.id}`} key={forum.id} className='main-forum__link-as-text'>
                 <ForumItem key={forum.id} id={forum.id}/>
             </Link>);
     });
 
     return (<div className='main-forums'>
-        <div>Forums</div>
-        <div>
-            {forumList}
-        </div>
-        {/*<Button onClick={handleUpdate}>update</Button>*/}
+        <strong>Forums</strong>
+        {forumList}
     </div>);
 }
