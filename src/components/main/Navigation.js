@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux';
 
 import {
     currentUser,
-} from '../features/currentUser/currentUserSlice';
+} from '../../features/currentUser/currentUserSlice';
 
 export default function Navigation() {
     const user = useSelector(currentUser);

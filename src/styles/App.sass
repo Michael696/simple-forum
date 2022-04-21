@@ -2,9 +2,9 @@
   display: flex
   align-items: center
 
-body
-  text-align: center
-  min-width: max-content
+//body
+//  text-align: center
+//  min-width: max-content
 
 .sign-in
   max-width: 50%
@@ -63,13 +63,11 @@ body
 .main-forum__cell-constant
   @extend %flex-center-vertical
   border: 1px solid gray
-  padding: 0.5em
 
 .main-forum__cell-variable
   @extend %flex-center-vertical
   border: 1px solid gray
   width: 100%
-  padding: 0.5em
 
 .main-forum__link-as-text
   color: black
@@ -87,5 +85,17 @@ body
   border: 1px solid gray
 
 .main-forum-post__text
+  display: flex
+  justify-content: left
   border: 1px solid gray
+  width: 100%
+
+.main-forum-post__info
+  text-align: center
+
+.user-info
+  border: 1px solid gray
+
+.pad05
+  padding: 0.5em
 

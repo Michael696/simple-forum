@@ -1,14 +1,14 @@
 import React from 'react';
 import Logo from './Logo';
-import LanguageSelector from '../features/languageSelector/LanguageSelector';
-import OnlineUsers from '../features/onlineUsers/OnlineUsers';
-import DeAuth from '../features/currentUser/DeAuth';
+import LanguageSelector from '../../features/languageSelector/LanguageSelector';
+import OnlineUsers from '../../features/onlineUsers/OnlineUsers';
+import DeAuth from '../../features/currentUser/DeAuth';
 import {useSelector} from 'react-redux';
 
 import {
     currentUser,
-} from '../features/currentUser/currentUserSlice';
-import CurrentUser from '../features/currentUser/CurrentUser';
+} from '../../features/currentUser/currentUserSlice';
+import CurrentUser from '../../features/currentUser/CurrentUser';
 
 export default function Header() {
     const user = useSelector(currentUser);
