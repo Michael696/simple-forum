@@ -1,21 +1,28 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useParams} from 'react-router-dom';
-import {threadWithId} from "../threads/threadsSlice";
-import {useSelector} from "react-redux";
-import {Id, ThreadItemType} from "../../app/types";
+import {fetchPosts, postsList} from "./postsSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {PostItemType} from "../../app/types";
+import {AppDispatch} from "../../app/store";
+import Post from "./Post";
 
 export default function Posts() {
     const params = useParams();
-    // const thread: ThreadItemType = useSelector(state => threadWithId(state, params.id));
+    const posts: Array<PostItemType> = useSelector(postsList);
+    const dispatch: AppDispatch = useDispatch();
+    const fetch = fetchPosts(params.id);
 
-    console.log('Posts params', params);
+    useEffect(() => {
+        dispatch(fetch);
+    }, []);
 
-    const handleThreadClick = () => {
-        // console.log(`thread ${id} clicked`);
-    };
+    const postList = posts.map(post => {
+        return <Post key={post.id} id={post.id}/>
+    });
+
     return (
-        <div className='main-forum__thread' onClick={handleThreadClick}>
-            {`some posts of thread ${params.id} here`}
+        <div className='main-forum__posts'>
+            {postList}
         </div>
     );
 }

@@ -2,9 +2,16 @@ export type LoadingType = 'idle' | 'pending' | 'error' ;
 
 export type Id = string | number | undefined; // TODO get rid of undefined
 
+export type LikeDislike = 'like' | 'dislike' | false;
+
 export interface User {
     id: Id,
-    name: string
+    name: string,
+    registeredAt: Date,
+    posts: number,
+    location: string,
+    isBanned?: boolean,
+    isAdmin?: boolean,
 }
 
 export interface LastMessage {
@@ -22,10 +29,25 @@ export interface Forum {
 }
 
 export interface ThreadItemType {
-    id:Id
+    id: Id
     author: User,
     title: string,
-    themeCount: number,
     postCount: number,
+    viewCount: number,
+    likes: number,
+    dislikes: number,
+    isLiked: LikeDislike,
     lastMessage: LastMessage
+}
+
+export interface PostItemType {
+    id: Id
+    author: User,
+    title: string,
+    text: string,
+    likes: number,
+    dislikes: number,
+    isLiked: LikeDislike,
+    postedAt: Date,
+    editedAt: Date
 }

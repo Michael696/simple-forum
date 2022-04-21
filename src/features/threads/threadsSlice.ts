@@ -36,7 +36,7 @@ export const threadsSlice = createSlice({
     },
 });
 
-export const threadsIsLoading = state => state.threasd.isLoading;
+export const threadsIsLoading = state => state.threads.isLoading;
 export const threadsList = state => state.threads.list;
 export const threadWithId = (state, id: Id) => state.threads.list.filter(thread => thread.id === id)[0];
 

@@ -5,7 +5,6 @@ import {ActionCreatorWithPayload, PayloadAction} from "@reduxjs/toolkit/dist/cre
 
 
 function* watchRegister() {
-    //@ts-ignore
     yield takeLatest(registerStart, register);
     // yield takeLatest('abc', register);
 }
@@ -18,14 +17,13 @@ function* register(params: PayloadAction<RegisterParams>) {
         // yield put(registerStart);
         // const result: ReturnType<typeof userApi.register> = yield call(userApi.register, params.payload);
         result = yield call(userApi.register, params.payload);
-        // console.log('reg ok', result);
+        console.log('reg ok', result);
         yield put({type: registerDone.type});
-    } catch (e) {
+    } catch (e:any) {
         // console.log('reg error', e);
         // const message = {error:'abc'};
         let error;
         if (typeof e === 'object') {
-            // @ts-ignore
             error = e.message;
         } else {
             error = e;
@@ -50,7 +48,7 @@ function* register(params: PayloadAction<RegisterParams>) {
 }
 */
 
-export default function* registerFlow(params) {
+export default function* registerFlow(params) { // перевезем в Камазе один мешок картошки
     /*
         while (true) {
             const request = yield take(registerStart);

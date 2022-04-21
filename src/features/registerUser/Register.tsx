@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
+import React, {MutableRefObject, SetStateAction, useEffect, useRef, useState} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/cjs/Button';
 import {useDispatch} from 'react-redux';
@@ -23,14 +23,14 @@ export default function Register() {
 
     const regClear = () => {
         if (registering !== 'idle') {
-            dispatch(registerClear({}));
+            dispatch(registerClear());
         }
     };
 
     useEffect(() => {
         nameRef.current.focus();
         return () => {
-            dispatch(registerClear({}));
+            dispatch(registerClear());
         }
     }, []);
 

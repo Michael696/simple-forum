@@ -32,28 +32,28 @@ export const registerSlice = createSlice({
     name: 'register',
     initialState,
     reducers: {
-        registerStart: (register, action: PayloadAction<RegisterParams>) => {
+        registerStart: (state:RegisterRequest, action: PayloadAction<RegisterParams>) => {
             console.log('registerStart action', action);
-            if (register.state === 'idle') {
-                register.state = 'pending';
-                register.name = action.payload.name;
-                register.eMail = action.payload.eMail;
-                register.password = action.payload.password;
+            if (state.state === 'idle') {
+                state.state = 'pending';
+                state.name = action.payload.name;
+                state.eMail = action.payload.eMail;
+                state.password = action.payload.password;
             }
         },
-        registerDone: (register, action) => {
-            if (register.state === 'pending') {
-                register.state = 'done';
+        registerDone: (state:RegisterRequest) => {
+            if (state.state === 'pending') {
+                state.state = 'done';
             }
         },
-        registerError: (register, action) => {
+        registerError: (state:RegisterRequest, action) => {
             console.log('registerError action', action);
-            if (register.state === 'pending') {
-                register.state = 'error';
-                register.error = action.payload;
+            if (state.state === 'pending') {
+                state.state = 'error';
+                state.error = action.payload;
             }
         },
-        registerClear: (register, action) => {
+        registerClear: (register:RegisterRequest) => {
             register.state = 'idle';
         }
     },
@@ -68,15 +68,15 @@ export const register = (params: RegisterParams) => async (dispatch: AppDispatch
     const register = getState().register;
     if (register.state === 'idle') {
 // @ts-ignore
-        dispatch(registerStart());
+        dispatch(registerStart()); // TODO fix
         const result = await userApi.register(params);
         console.log('register result:', result);
         if (result) {
 // @ts-ignore
-            dispatch(registerDone());
+            dispatch(registerDone()); // TODO fix
         } else {
 // @ts-ignore
-            dispatch(registerError());
+            dispatch(registerError()); // TODO fix
         }
 
     }

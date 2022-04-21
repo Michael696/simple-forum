@@ -1,5 +1,6 @@
 import httpApi from './httpApi';
 import {RegisterParams} from "../features/registerUser/registerSlice";
+import {Id} from "./types";
 
 export const userApi = {
     auth: async () => {
@@ -36,9 +37,18 @@ export const userApi = {
             return false;
         }
     },
-    fetchThreads: async (id:string | number) => {
+    fetchThreads: async (id: Id) => {
         try {
-            const response = await httpApi.post('/threads',{id});
+            const response = await httpApi.post('/threads', {id}); // forum id
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
+    fetchPosts: async (id: Id) => {
+        try {
+            const response = await httpApi.post('/posts', {id}); // thread id
             return response.data;
         } catch (e) {
             console.error(e);

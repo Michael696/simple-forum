@@ -3,6 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import {exampleMiddleware} from './middleware';
 import forumsReducer from '../features/forumsList/forumsSlice';
 import threadsReducer from '../features/threads/threadsSlice';
+import postsReducer from '../features/post/postsSlice';
 import languageReducer from '../features/languageSelector/languageSelectorSlice';
 import onlineUsersReducer from '../features/onlineUsers/onlineUsersSlice';
 import currentUserReducer from '../features/currentUser/currentUserSlice';
@@ -30,6 +31,7 @@ export const store = configureStore({
         // [authApi.reducerPath]: authApi.reducer,
         forums: forumsReducer,
         threads: threadsReducer,
+        posts: postsReducer,
         language: languageReducer,
         onlineUsers: onlineUsersReducer,
         currentUser: currentUserReducer,
@@ -40,6 +42,5 @@ export const store = configureStore({
 
 sagaMiddleware.run(rootSaga);
 
-// @ts-ignore
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
