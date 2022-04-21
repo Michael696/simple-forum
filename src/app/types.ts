@@ -1,6 +1,6 @@
 export type LoadingType = 'idle' | 'pending' | 'error' ;
 
-export type Id = string | number;
+export type Id = string | number | undefined; // TODO get rid of undefined
 
 export interface User {
     id: Id,

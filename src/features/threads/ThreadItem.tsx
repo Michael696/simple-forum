@@ -3,8 +3,11 @@ import {threadWithId} from "./threadsSlice";
 import {useSelector} from "react-redux";
 import {Id, ThreadItemType} from "../../app/types";
 
-export default function ThreadItem({id}: { id: Id }) {
+export default function ThreadItem({id}: { id?: Id}) {
     const thread: ThreadItemType = useSelector(state => threadWithId(state, id));
+
+    console.log('ThreadItem thread', thread);
+
     const handleThreadClick = () => {
         console.log(`thread ${id} clicked`);
     };
@@ -14,7 +17,6 @@ export default function ThreadItem({id}: { id: Id }) {
                 <div className='main-forum__name'>{thread.author.name}</div>
                 <div className='main-forum__description'>{thread.title}</div>
             </div>
-            <div className='main-forum__cell-constant'>themes:{thread.themeCount}</div>
             <div className='main-forum__cell-constant'>posts:{thread.postCount}</div>
             <div className='main-forum__cell-constant flex-direction-vertical'>
                 <div>

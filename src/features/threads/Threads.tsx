@@ -16,20 +16,14 @@ export default function Threads() {
         dispatch(fetch)
     }, []);
 
-    useEffect(() => {
-        console.log('threads', threads);
-    });
+    console.log('Threads params', params);
+    console.log('Threads', threads);
 
-    const threadList = threads.map(thread=>{
-/*
+    const threadList = threads && threads.map(thread => {
         return (
-            <Link to={`/forum/${forum.id}/thread`} key={forum.id} className='main-forum__link-as-text'>
-                <ForumItem key={forum.id} id={forum.id}/>
+            <Link to={`/thread/${thread.id}`} key={thread.id} className='main-forum__link-as-text'>
+                <ThreadItem key={thread.id} id={thread.id}/>
             </Link>);
-*/
-                return (
-                        <ThreadItem key={thread.id} id={thread.id}/>
-                )
     });
 
     return (
