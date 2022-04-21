@@ -19,7 +19,5 @@ export default function OnlineUsers() {
 
     return (<div className='online-users'>
         Users online: {users.online.length} ({JSON.stringify(users)})
-        <br/>
-        isLoading:{users.state}
     </div>);
 }

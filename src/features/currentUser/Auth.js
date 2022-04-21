@@ -8,6 +8,10 @@ import {useSelector, useDispatch} from 'react-redux';
 // import {useAuthMutation} from '../../app/onlineUsersApi'
 
 
+/**
+ * @return {null}
+ */
+
 export default function Auth() {
     const user = useSelector(currentUser);
     const dispatch = useDispatch();
@@ -37,8 +41,8 @@ export default function Auth() {
 
     };
 // console.log('useAuthMutation data:',login);
-    return !user.name &&
-        (
+    if (!user.name) {
+        return (
             <div className='sign-in'>
                 <Form>
                     <Form.Group className="mb-3" controlId="formUserName">
@@ -65,4 +69,7 @@ export default function Auth() {
                 </Form>
             </div>
         );
+    } else {
+        return null; // TODO is it correct?
+    }
 }

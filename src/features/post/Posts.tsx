@@ -1,14 +1,14 @@
 import React from 'react';
 import {useParams} from 'react-router-dom';
-import {threadWithId} from "./threadsSlice";
+import {threadWithId} from "../threads/threadsSlice";
 import {useSelector} from "react-redux";
 import {Id, ThreadItemType} from "../../app/types";
 
-export default function Thread() {
+export default function Posts() {
     const params = useParams();
     // const thread: ThreadItemType = useSelector(state => threadWithId(state, params.id));
 
-    console.log('Thread params', params);
+    console.log('Posts params', params);
 
     const handleThreadClick = () => {
         // console.log(`thread ${id} clicked`);

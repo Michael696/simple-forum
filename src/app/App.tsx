@@ -5,11 +5,11 @@ import '../styles/App.sass';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Navigation from '../components/Navigation';
-import Forums from '../features/forumsList/Forums.tsx';
-import Threads from '../features/threads/Threads.tsx';
-import Thread from '../features/threads/Thread.tsx';
+import Forums from '../features/forumsList/Forums';
+import Threads from '../features/threads/Threads';
+import Posts from '../features/post/Posts';
 import Faq from '../components/Faq';
-import Register from '../features/registerUser/Register.tsx';
+import Register from '../features/registerUser/Register';
 import Auth from '../features/currentUser/Auth';
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
                 <Route path='/register' element={<Register/>}/>
                 <Route path='/signin' element={<Auth/>}/>
                 <Route path='/forum/:id' element={<Threads/>}/>
-                <Route path='/thread/:id' element={<Thread/>}/>
+                <Route path='/thread/:id' element={<Posts/>}/>
                 <Route path='/*' element={<Forums/>}/>
             </Routes>
             <Footer/>

@@ -15,10 +15,8 @@ export default function Header() {
 
     return (<div className='main-header'>
         <Logo/>
-        <div>Header</div>
-        <LanguageSelector/>
+        {/*<LanguageSelector/>*/}
         <OnlineUsers/>
         {user.name.length ? <><CurrentUser name={user.name}/> <DeAuth/> </> : ''}
-
     </div>);
 }
