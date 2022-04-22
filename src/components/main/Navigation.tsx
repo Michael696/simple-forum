@@ -4,18 +4,19 @@ import {LinkContainer} from 'react-router-bootstrap';
 import {useSelector} from 'react-redux';
 
 import {currentUser,} from '../../features/currentUser/currentUserSlice';
+import {url} from "../../app/urls";
 
 export default function Navigation() {
     const user = useSelector(currentUser);
 
     const signIn = (
-        <LinkContainer to='/signin'>
+        <LinkContainer to={url.SIGN_IN}>
             <span>Sign-in</span>
         </LinkContainer>
     );
 
     const signOut = (
-        <LinkContainer to='/sign-out'>
+        <LinkContainer to={url.SIGN_OUT}>
             <span>Sign-out</span>
         </LinkContainer>
     );
@@ -32,7 +33,7 @@ export default function Navigation() {
 
             <Nav.Link>
                 <span>
-                    <LinkContainer to='/register'>
+                    <LinkContainer to={url.REGISTER}>
                         <span>Register</span>
                     </LinkContainer>
                 </span>
@@ -40,7 +41,7 @@ export default function Navigation() {
 
             <Nav.Link>
                 <span>
-                    <LinkContainer to='/forums'>
+                    <LinkContainer to='/'>
                         <span>Forums</span>
                     </LinkContainer>
                 </span>

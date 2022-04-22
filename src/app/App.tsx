@@ -12,6 +12,7 @@ import Faq from '../components/main/Faq';
 import Register from '../features/registerUser/Register';
 import Auth from '../features/currentUser/Auth';
 import DeAuth from "../features/currentUser/DeAuth";
+import {url} from "./urls";
 
 function App() {
     return (
@@ -20,10 +21,10 @@ function App() {
             <Navigation/>
             <Routes>
                 <Route path='/faq' element={<Faq/>}/>
-                <Route path='/register' element={<Register/>}/>
-                <Route path='/signin' element={<Auth/>}/>
-                <Route path='/sign-out' element={<DeAuth/>}/>
-                <Route path='/forum/:id' element={<Threads/>}/>
+                <Route path={url.REGISTER} element={<Register/>}/>
+                <Route path={url.SIGN_IN} element={<Auth/>}/>
+                <Route path={url.SIGN_OUT} element={<DeAuth/>}/>
+                <Route path={`${url.FORUM}/:id`} element={<Threads/>}/>
                 <Route path='/thread/:id' element={<Posts/>}/>
                 <Route path='/*' element={<Forums/>}/>
             </Routes>

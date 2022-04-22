@@ -61,7 +61,7 @@ export const {authReq, authDone, authError, authClear} = currentUserSlice.action
 
 export const currentUser = state => state.currentUser;
 
-export const isUserAuthenticated = state => state.currentUser.name.length > 0 && state.currentUser.error.length === 0;
+export const isUserAuthenticated = state => (state.currentUser.name.length > 0 && state.currentUser.error.length === 0);
 
 export const authenticate = ({name, password}) => async (dispatch: AppDispatch) => {
     let authResult;

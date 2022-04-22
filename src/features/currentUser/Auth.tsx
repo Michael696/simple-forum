@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/cjs/Button';
 import {authenticate, currentUser, isUserAuthenticated} from './currentUserSlice';
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {url} from "../../app/urls";
 
 export default function Auth() {
     const user = useAppSelector(currentUser);
@@ -31,7 +32,7 @@ export default function Auth() {
 
     useEffect(() => {
         if (authOk) {
-            navigate('/forums');
+            navigate(url.FORUM);
         }
     }, [authOk]);
 

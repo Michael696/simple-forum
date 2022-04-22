@@ -1,23 +1,33 @@
 import React, {useEffect} from 'react';
-import {Link, useParams} from 'react-router-dom';
-import {useDispatch, useSelector} from "react-redux";
+import {Link, useNavigate, useParams} from 'react-router-dom';
 import {fetchThreads, threadsList} from "./threadsSlice";
 import {ThreadItemType} from "../../app/types";
 import {AppDispatch} from "../../app/store";
 import ThreadItem from "./ThreadItem";
+import NewThreadButton from "../../components/forum/NewThreadButton";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import {isUserAuthenticated} from "../currentUser/currentUserSlice";
+import {url} from "../../app/urls";
 
 export default function Threads() {
     const params = useParams();
-    const threads: Array<ThreadItemType> = useSelector(threadsList);
-    const dispatch: AppDispatch = useDispatch();
-    const fetch = fetchThreads(params.id);
+    const navigate= useNavigate();
+    const threads: Array<ThreadItemType> = useAppSelector(threadsList);
+    const dispatch: AppDispatch = useAppDispatch();
+    const isAuthenticated = useAppSelector(isUserAuthenticated);
+    const fetch = fetchThreads(params.id); // forumId
 
     useEffect(() => {
         dispatch(fetch)
     }, []);
 
-    // console.log('Threads params', params);
-    // console.log('Threads', threads);
+    const handleNewThread = () => {
+        if (isAuthenticated) {
+            console.log(`new thread for forum ${params.id}`);
+        } else {
+            navigate(url.SIGN_IN);
+        }
+    };
 
     const threadList = threads && threads.map(thread => {
         return (
@@ -29,6 +39,7 @@ export default function Threads() {
     return (
         <div className='main-threads'>
             <div>Forum id is {params.id}</div>
+            <NewThreadButton onClick={handleNewThread}/>
             {threadList ? threadList : `no threads in forum ${params.id}`}
         </div>
     );
