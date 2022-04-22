@@ -1,20 +1,18 @@
 import React, {useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {fetchUsers, onlineUsers, onlineUsersLoading} from './onlineUsersSlice';
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
 
 export default function OnlineUsers() {
     // const isLoading = useSelector(onlineUsersLoading);
     // const users = useSelector(onlineUsers);
     const users = {
-        online: useSelector(onlineUsers),
-        state: useSelector(onlineUsersLoading)
+        online: useAppSelector(onlineUsers),
+        state: useAppSelector(onlineUsersLoading)
     };
-    const fetch = fetchUsers();
-    // const [fetch, users] = useFetchUsers();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(fetch);
+        dispatch(fetchUsers());
     }, []);
 
     return (<div className='online-users'>

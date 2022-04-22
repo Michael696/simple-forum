@@ -1,14 +1,24 @@
 import React from 'react';
-import {Nav, Navbar, NavItem, Container, NavDropdown, Breadcrumb} from 'react-bootstrap';
+import {Nav, Navbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {useSelector} from 'react-redux';
 
-import {
-    currentUser,
-} from '../../features/currentUser/currentUserSlice';
+import {currentUser,} from '../../features/currentUser/currentUserSlice';
 
 export default function Navigation() {
     const user = useSelector(currentUser);
+
+    const signIn = (
+        <LinkContainer to='/signin'>
+            <span>Sign-in</span>
+        </LinkContainer>
+    );
+
+    const signOut = (
+        <LinkContainer to='/sign-out'>
+            <span>Sign-out</span>
+        </LinkContainer>
+    );
 
     return (
         <Navbar className="navbar navbar-fixed-top">
@@ -36,15 +46,11 @@ export default function Navigation() {
                 </span>
             </Nav.Link>
 
-            {!user.name && (
-                <Nav.Link>
-                    <span>
-                        <LinkContainer to='/signin'>
-                            <span>Sign-in</span>
-                        </LinkContainer>
-                    </span>
-                </Nav.Link>
-            )}
+            <Nav.Link>
+                <span>
+                    {user.name ? signOut : signIn}
+                </span>
+            </Nav.Link>
         </Navbar>
     );
 }

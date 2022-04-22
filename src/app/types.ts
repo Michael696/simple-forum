@@ -4,22 +4,31 @@ export type Id = string | number | undefined; // TODO get rid of undefined
 
 export type LikeDislike = 'like' | 'dislike' | false;
 
-export interface User {
+export type Password = {
+    password: string;
+}
+
+export type UserCredentials = {
+    name: string,
+} & Password;
+
+export type User = {
     id: Id,
     name: string,
-    registeredAt: Date,
+    realName: string,
+    registeredAt: Date | 0,
     posts: number,
     location: string,
     isBanned?: boolean,
     isAdmin?: boolean,
 }
 
-export interface LastMessage {
+export type LastMessage = {
     dateTime: string,
     user: User
 }
 
-export interface Forum {
+export type Forum = {
     id: Id,
     name: string,
     description: string,
@@ -28,7 +37,7 @@ export interface Forum {
     lastMessage: LastMessage
 }
 
-export interface ThreadItemType {
+export type ThreadItemType = {
     id: Id
     author: User,
     title: string,
@@ -40,7 +49,7 @@ export interface ThreadItemType {
     lastMessage: LastMessage
 }
 
-export interface PostItemType {
+export type PostItemType = {
     id: Id
     author: User,
     title: string,
@@ -48,6 +57,6 @@ export interface PostItemType {
     likes: number,
     dislikes: number,
     isLiked: LikeDislike,
-    postedAt: Date,
-    editedAt: Date
+    postedAt: Date | 0,
+    editedAt: Date | 0
 }

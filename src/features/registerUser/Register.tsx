@@ -1,11 +1,9 @@
-import React, {MutableRefObject, SetStateAction, useEffect, useRef, useState} from 'react';
+import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/cjs/Button';
-import {useDispatch} from 'react-redux';
-import {registerState, registerClear, registerStart, registerErrorMessage} from './registerSlice';
-import {useAppSelector} from "../../app/hooks";
+import {registerClear, registerErrorMessage, registerStart, registerState} from './registerSlice';
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {AppDispatch} from "../../app/store";
-
 
 export default function Register() {
     const nameRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
@@ -17,7 +15,7 @@ export default function Register() {
 
     const registering = useAppSelector(registerState);
     const errorMessage = useAppSelector(registerErrorMessage);
-    const dispatch: AppDispatch = useDispatch();
+    const dispatch: AppDispatch = useAppDispatch();
 
     // console.log('registering', registering);
 
@@ -133,7 +131,7 @@ export default function Register() {
 
             {
                 error ? (
-                    <Form.Group className='register__error'>
+                    <Form.Group className='error-message'>
                         <Form.Label>{error}</Form.Label>
                     </Form.Group>
                 ) : ''
