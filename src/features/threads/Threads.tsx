@@ -16,8 +16,8 @@ export default function Threads() {
         dispatch(fetch)
     }, []);
 
-    console.log('Threads params', params);
-    console.log('Threads', threads);
+    // console.log('Threads params', params);
+    // console.log('Threads', threads);
 
     const threadList = threads && threads.map(thread => {
         return (
@@ -29,7 +29,7 @@ export default function Threads() {
     return (
         <div className='main-threads'>
             <div>Forum id is {params.id}</div>
-            {threadList}
+            {threadList ? threadList : `no threads in forum ${params.id}`}
         </div>
     );
 }

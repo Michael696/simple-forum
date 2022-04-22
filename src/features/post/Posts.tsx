@@ -16,13 +16,13 @@ export default function Posts() {
         dispatch(fetch);
     }, []);
 
-    const postList = posts.map(post => {
+    const postList = posts && posts.map(post => {
         return <Post key={post.id} id={post.id}/>
     });
 
     return (
         <div className='main-forum__posts'>
-            {postList}
+            {postList ? postList : `no posts in thread ${params.id}`}
         </div>
     );
 }
