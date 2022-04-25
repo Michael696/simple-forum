@@ -1,8 +1,6 @@
 export type LoadingType = 'idle' | 'pending' | 'error' ;
 
-export type Id = string | number | undefined; // TODO get rid of undefined
-
-export type LikeDislike = 'like' | 'dislike' | false;
+export type Id = string | number | undefined; // TODO get rid of undefined ?
 
 export type Password = {
     password: string;
@@ -19,8 +17,8 @@ export type User = {
     registeredAt: Date | 0,
     posts: number,
     location: string,
-    isBanned?: boolean,
-    isAdmin?: boolean,
+    isBanned: boolean,
+    isAdmin: boolean,
 }
 
 export type LastMessage = {
@@ -45,7 +43,6 @@ export type ThreadItemType = {
     viewCount: number,
     likes: number,
     dislikes: number,
-    isLiked: LikeDislike,
     lastMessage: LastMessage
 }
 
@@ -56,7 +53,6 @@ export type PostItemType = {
     text: string,
     likes: number,
     dislikes: number,
-    isLiked: LikeDislike,
     postedAt: Date | 0,
     editedAt: Date | 0
 }

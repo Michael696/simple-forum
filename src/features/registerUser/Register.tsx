@@ -131,7 +131,7 @@ export default function Register() {
 
             {
                 error ? (
-                    <Form.Group className='error-message'>
+                    <Form.Group className='error-message margin1'>
                         <Form.Label>{error}</Form.Label>
                     </Form.Group>
                 ) : ''

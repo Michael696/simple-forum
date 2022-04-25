@@ -16,6 +16,12 @@ const initialState: InitialStateType = {
     isLoading: 'idle'
 };
 
+const findPostById = (list: Array<PostItemType>, id: Id) => list.filter(post => post.id === id)[0];
+
+export const postsIsLoading = state => state.posts.isLoading;
+export const postsList = state => state.posts.list;
+export const postWithId = (state, id: Id) => findPostById(state.posts.list, id);
+
 export const postsSlice = createSlice({
     name: 'threads',
     initialState,
@@ -32,15 +38,21 @@ export const postsSlice = createSlice({
                 state.isLoading = 'idle';
                 state.list = action.payload;
             }
+        },
+        postLike: (state: InitialStateType, action: PayloadAction<Id>) => {
+            const post = findPostById(state.list, action.payload);
+            post.likes++;
+        },
+        postDislike: (state: InitialStateType, action: PayloadAction<Id>) => {
+            const post = findPostById(state.list, action.payload);
+            post.dislikes++;
         }
     },
 });
 
-export const postsIsLoading = state => state.posts.isLoading;
-export const postsList = state => state.posts.list;
-export const postWithId = (state, id: Id) => state.posts.list.filter(post => post.id === id)[0];
 
 const {postsLoad, postsDone} = postsSlice.actions;
+export const {postLike, postDislike} = postsSlice.actions;
 
 export const fetchPosts = (threadId) => async (dispatch: AppDispatch) => {
     dispatch(postsLoad());

@@ -1,7 +1,7 @@
 import React from 'react';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Id, PostItemType} from "../../app/types";
-import {postWithId} from "./postsSlice";
+import {postWithId, postLike, postDislike} from "./postsSlice";
 import UserInfo from "../../components/forum/UserInfo";
 import PostText from "../../components/forum/PostText";
 import PostInfo from "../../components/forum/PostInfo";
@@ -11,11 +11,15 @@ import {isUserAuthenticated} from "../currentUser/currentUserSlice";
 import {url} from "../../app/urls";
 import {useNavigate} from "react-router";
 
+export type LikeDislike = {
+    label: 'likes' | 'dislikes';
+}
 
 export default function Post({id}: { id: Id }) {
     const navigate = useNavigate();
     const post: PostItemType = useSelector(state => postWithId(state, id));
     const isAuthenticated = useAppSelector(isUserAuthenticated);
+    const dispatch = useDispatch();
 
     const handleReply = () => {
         if (isAuthenticated) {
@@ -25,13 +29,24 @@ export default function Post({id}: { id: Id }) {
         }
     };
 
+    const likesClicked = (props) => {
+        switch (props.label) {  // TODO type check here !
+            case 'likes':
+                dispatch(postLike(id));
+                break;
+            case 'dislikes':
+                dispatch(postDislike(id));
+                break;
+        }
+    };
+
     return (
         <>
             <div className='main-forum-post'>
                 <UserInfo user={post.author}/>
                 <PostText text={post.text}/>
             </div>
-            <PostInfo post={post}/>
+            <PostInfo post={post} onClick={likesClicked}/>
             <ReplyButton onClick={handleReply}/>
         </>
     );

@@ -25,7 +25,7 @@ export default function Auth() {
     };
 
     const error = user.error.length > 0 ? (
-        <div className='error-message'>
+        <div className='error-message margin1'>
             {user.error}
         </div>
     ) : '';
