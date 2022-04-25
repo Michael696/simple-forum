@@ -41,8 +41,8 @@ export type ThreadItemType = {
     title: string,
     postCount: number,
     viewCount: number,
-    likes: number,
-    dislikes: number,
+    likes: Array<User>,
+    dislikes: Array<User>,
     lastMessage: LastMessage
 }
 
@@ -51,8 +51,8 @@ export type PostItemType = {
     author: User,
     title: string,
     text: string,
-    likes: number,
-    dislikes: number,
+    likes: Array<User>,
+    dislikes: Array<User>,
     postedAt: Date | 0,
     editedAt: Date | 0
 }

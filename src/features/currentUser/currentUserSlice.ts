@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {LoadingType, User} from "../../app/types";
+import {Id, LoadingType, User} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {AppDispatch} from "../../app/store";
 import {userApi} from "../../app/userApi";
@@ -56,6 +56,8 @@ export const currentUserSlice = createSlice({
         },
     },
 });
+
+export const findUserById = (list: Array<User>, id: Id) => list.filter(user => user.id === id)[0];
 
 export const {authReq, authDone, authError, authClear} = currentUserSlice.actions;
 
