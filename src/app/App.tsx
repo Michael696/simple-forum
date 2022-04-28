@@ -24,8 +24,8 @@ function App() {
                 <Route path={url.REGISTER} element={<Register/>}/>
                 <Route path={url.SIGN_IN} element={<Auth/>}/>
                 <Route path={url.SIGN_OUT} element={<DeAuth/>}/>
-                <Route path={`${url.FORUM}/:id`} element={<Threads/>}/>
-                <Route path='/thread/:id' element={<Posts/>}/>
+                <Route path={`${url.FORUM}/:forumId`} element={<Threads/>}/>
+                <Route path={`${url.FORUM}/:forumId${url.THREAD}/:threadId`} element={<Posts/>}/>
                 <Route path='/*' element={<Forums/>}/>
             </Routes>
             <Footer/>

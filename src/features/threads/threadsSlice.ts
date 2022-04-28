@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {AppDispatch, RootState} from "../../app/store";
+import {AppDispatch} from "../../app/store";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {userApi} from "../../app/userApi";
 import {Id, LoadingType, ThreadItemType} from "../../app/types";
@@ -15,6 +15,8 @@ const initialState: InitialStateType = {
     forumId: '',
     isLoading: 'idle'
 };
+
+const findThreadById = (threads, id: Id): ThreadItemType => threads.find(thread => thread.id === id);
 
 export const threadsSlice = createSlice({
     name: 'threads',
@@ -32,20 +34,38 @@ export const threadsSlice = createSlice({
                 state.isLoading = 'idle';
                 state.list = action.payload;
             }
+        },
+        addViewCount: (state: InitialStateType, action: PayloadAction<Id>) => {
+            const thread = findThreadById(state.list, action.payload);
+            console.log('addViewCount state keys', Object.keys(state));
+            console.log('addViewCount state.list.length', state.list.length);
+            console.log('addViewCount payload', action.payload);
+            if (thread) {
+                console.log('addViewCount for', action.payload);
+                thread.viewCount++;
+            }
         }
     },
 });
 
 export const threadsIsLoading = state => state.threads.isLoading;
 export const threadsList = state => state.threads.list;
-export const threadWithId = (state, id: Id) => state.threads.list.filter(thread => thread.id === id)[0];
+export const threadWithId = (state, id: Id) => findThreadById(state.threads.list, id);
 
 const {threadsLoad, threadsDone} = threadsSlice.actions;
+export const {addViewCount} = threadsSlice.actions;
 
 export const fetchThreads = (id) => async (dispatch: AppDispatch) => {
+    console.log('fetchThreads', id);
     dispatch(threadsLoad(id));
     const threads = await userApi.fetchThreads(id);
     dispatch(threadsDone(threads));
+};
+
+export const fetchThreadsAndView = (forumId, threadId) => async (dispatch: AppDispatch) => {
+    console.log('fetchThreadsAndView', forumId, threadId);
+    await dispatch(fetchThreads(forumId));
+    await dispatch(addViewCount(threadId));
 };
 
 export default threadsSlice.reducer;

@@ -15,7 +15,7 @@ export default function Threads() {
     const threads: Array<ThreadItemType> = useAppSelector(threadsList);
     const dispatch: AppDispatch = useAppDispatch();
     const isAuthenticated = useAppSelector(isUserAuthenticated);
-    const fetch = fetchThreads(params.id); // forumId
+    const fetch = fetchThreads(params.forumId); // forumId
 
     useEffect(() => {
         dispatch(fetch)
@@ -23,24 +23,26 @@ export default function Threads() {
 
     const handleNewThread = () => {
         if (isAuthenticated) {
-            console.log(`new thread for forum ${params.id}`);
+            console.log(`new thread for forum ${params.forumId}`);
         } else {
             navigate(url.SIGN_IN);
         }
     };
 
     const threadList = threads && threads.map(thread => {
+        const linkTo =`${url.FORUM}/${params.forumId}${url.THREAD}/${thread.id}`;
+        console.log('linkTo',linkTo);
         return (
-            <Link to={`/thread/${thread.id}`} key={thread.id} className='main-forum__link-as-text'>
+            <Link to={linkTo} key={thread.id} className='main-forum__link-as-text'>
                 <ThreadItem key={thread.id} id={thread.id}/>
             </Link>);
     });
 
     return (
         <div className='main-threads'>
-            <div>Forum id is {params.id}</div>
+            <div>Forum id is {params.forumId}</div>
             <NewThreadButton onClick={handleNewThread}/>
-            {threadList ? threadList : `no threads in forum ${params.id}`}
+            {threadList ? threadList : `no threads in forum ${params.forumId}`}
         </div>
     );
 }
