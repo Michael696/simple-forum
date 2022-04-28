@@ -33,13 +33,13 @@ export default function Threads() {
         const linkTo =`${url.FORUM}/${params.forumId}${url.THREAD}/${thread.id}`;
         console.log('linkTo',linkTo);
         return (
-            <Link to={linkTo} key={thread.id} className='main-forum__link-as-text'>
+            <Link to={linkTo} key={thread.id} className='link-as-text'>
                 <ThreadItem key={thread.id} id={thread.id}/>
             </Link>);
     });
 
     return (
-        <div className='main-threads'>
+        <div className='threads'>
             <div>Forum id is {params.forumId}</div>
             <NewThreadButton onClick={handleNewThread}/>
             {threadList ? threadList : `no threads in forum ${params.forumId}`}

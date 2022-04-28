@@ -26,7 +26,7 @@ export default function Posts() {
     });
 
     return (
-        <div className='main-forum__posts'>
+        <div className='post-list'>
             {postList ? postList : `no posts in thread ${params.threadId}`}
         </div>
     );

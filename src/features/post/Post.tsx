@@ -2,7 +2,7 @@ import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Id, PostItemType} from "../../app/types";
 import {postWithId, postLike, postDislike} from "./postsSlice";
-import UserInfo from "../../components/forum/UserInfo";
+import UserInfo from "../../components/forum/UserInfo/UserInfo";
 import PostText from "../../components/forum/PostText";
 import PostInfo from "../../components/forum/PostInfo";
 import ReplyButton from "../../components/forum/ReplyButton";
@@ -10,6 +10,7 @@ import {useAppSelector} from "../../app/hooks";
 import {isUserAuthenticated, currentUser} from "../currentUser/currentUserSlice";
 import {url} from "../../app/urls";
 import {useNavigate} from "react-router";
+import './Post.sass';
 
 export type LikeDislike = 'likes' | 'dislikes';
 
@@ -44,7 +45,7 @@ export default function Post({id}: { id: Id }) {
 
     return (
         <>
-            <div className='main-forum-post'>
+            <div className='post'>
                 <UserInfo user={post.author}/>
                 <PostText text={post.text}/>
             </div>

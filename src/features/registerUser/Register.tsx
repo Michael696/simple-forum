@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/cjs/Button';
 import {registerClear, registerErrorMessage, registerStart, registerState} from './registerSlice';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {AppDispatch} from "../../app/store";
+import './Register.sass';
 
 export default function Register() {
     const nameRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;

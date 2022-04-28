@@ -1,5 +1,6 @@
 import React from 'react';
-import {User} from "../../app/types";
+import {User} from "../../../app/types";
+import './UserInfo.sass';
 
 export default function UserInfo({user}: { user: User }) {
     return (

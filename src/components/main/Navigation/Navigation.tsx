@@ -3,8 +3,9 @@ import {Nav, Navbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {useSelector} from 'react-redux';
 
-import {currentUser,} from '../../features/currentUser/currentUserSlice';
-import {url} from "../../app/urls";
+import {currentUser,} from '../../../features/currentUser/currentUserSlice';
+import {url} from "../../../app/urls";
+import './Navigation.sass';
 
 export default function Navigation() {
     const user = useSelector(currentUser);

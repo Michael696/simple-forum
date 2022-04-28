@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import {forumsList, fetchForums, forumsIsLoading} from './forumsSlice';
 import ForumItem from './ForumItem';
 import {AppDispatch} from "../../app/store";
+import './Forums.sass';
 
 export default function Forums() {
     const forums = useSelector(forumsList);
@@ -21,12 +22,12 @@ export default function Forums() {
 
     const forumList = forums.map(forum => {
         return (
-            <Link to={`/forum/${forum.id}`} key={forum.id} className='main-forum__link-as-text'>
+            <Link to={`/forum/${forum.id}`} key={forum.id} className='link-as-text'>
                 <ForumItem key={forum.id} id={forum.id}/>
             </Link>);
     });
 
-    return (<div className='main-forums'>
+    return (<div className='forums'>
         <strong>Forums</strong>
         {forumList}
     </div>);
