@@ -60,5 +60,15 @@ export const userApi = {
             console.error(e);
             return false;
         }
-    }
+    },
+    addThreadViewCount: async (id: Id) => {
+        try {
+            const response = await httpApi.post('/add-threadViewCount', {id}); // thread id
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
+
 };

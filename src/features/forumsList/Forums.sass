@@ -1,9 +1,12 @@
 .forums
+  display: grid
+  grid-template-rows: auto
   border: 1px solid gray
   border-radius: 0.5em
 
 .forum__item
-  display: flex
-
-  &:hover
-    background-color: #b8d3fc
+  display: grid
+  grid-template-columns: auto 6em 6em 10em
+  a
+    &:hover
+      background-color: #86b7fe

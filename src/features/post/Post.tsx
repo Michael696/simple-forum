@@ -50,7 +50,8 @@ export default function Post({id}: { id: Id }) {
                 <PostText text={post.text}/>
             </div>
             <PostInfo post={post} onClick={likesClicked}/>
-            <ReplyButton onClick={handleReply}/>
+            {isAuthenticated ? <ReplyButton onClick={handleReply}/> : ''}
+
         </>
     );
 }

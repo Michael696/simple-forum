@@ -35,7 +35,7 @@ export const threadsSlice = createSlice({
                 state.list = action.payload;
             }
         },
-        addViewCount: (state: InitialStateType, action: PayloadAction<Id>) => {
+        viewed: (state: InitialStateType, action: PayloadAction<Id>) => {
             const thread = findThreadById(state.list, action.payload);
             console.log('addViewCount state keys', Object.keys(state));
             console.log('addViewCount state.list.length', state.list.length);
@@ -53,7 +53,7 @@ export const threadsList = state => state.threads.list;
 export const threadWithId = (state, id: Id) => findThreadById(state.threads.list, id);
 
 const {threadsLoad, threadsDone} = threadsSlice.actions;
-export const {addViewCount} = threadsSlice.actions;
+export const {viewed} = threadsSlice.actions;
 
 export const fetchThreads = (id) => async (dispatch: AppDispatch) => {
     console.log('fetchThreads', id);
@@ -62,10 +62,16 @@ export const fetchThreads = (id) => async (dispatch: AppDispatch) => {
     dispatch(threadsDone(threads));
 };
 
+export const addThreadViewCount = (threadId)=> async (dispatch: AppDispatch) => {
+    console.log('addThreadViewCount', threadId);
+    await userApi.addThreadViewCount(threadId);
+};
+
 export const fetchThreadsAndView = (forumId, threadId) => async (dispatch: AppDispatch) => {
     console.log('fetchThreadsAndView', forumId, threadId);
     await dispatch(fetchThreads(forumId));
-    await dispatch(addViewCount(threadId));
+    await dispatch(addThreadViewCount(threadId));
+    await dispatch(viewed(threadId));
 };
 
 export default threadsSlice.reducer;

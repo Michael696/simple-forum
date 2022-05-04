@@ -11,7 +11,7 @@ import {url} from "../../app/urls";
 
 export default function Threads() {
     const params = useParams();
-    const navigate= useNavigate();
+    const navigate = useNavigate();
     const threads: Array<ThreadItemType> = useAppSelector(threadsList);
     const dispatch: AppDispatch = useAppDispatch();
     const isAuthenticated = useAppSelector(isUserAuthenticated);
@@ -30,8 +30,8 @@ export default function Threads() {
     };
 
     const threadList = threads && threads.map(thread => {
-        const linkTo =`${url.FORUM}/${params.forumId}${url.THREAD}/${thread.id}`;
-        console.log('linkTo',linkTo);
+        const linkTo = `${url.FORUM}/${params.forumId}${url.THREAD}/${thread.id}`;
+        // console.log('linkTo', linkTo);
         return (
             <Link to={linkTo} key={thread.id} className='link-as-text'>
                 <ThreadItem key={thread.id} id={thread.id}/>
@@ -41,7 +41,7 @@ export default function Threads() {
     return (
         <div className='threads'>
             <div>Forum id is {params.forumId}</div>
-            <NewThreadButton onClick={handleNewThread}/>
+            {isAuthenticated ? <NewThreadButton onClick={handleNewThread}/> : ''}
             {threadList ? threadList : `no threads in forum ${params.forumId}`}
         </div>
     );
