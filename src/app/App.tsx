@@ -1,5 +1,5 @@
-import React from 'react';
-import {Routes, Route} from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {Routes, Route, useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../styles/App.sass';
 import Header from '../components/main/Header/Header';
@@ -13,6 +13,21 @@ import Register from '../features/registerUser/Register';
 import Auth from '../features/currentUser/Auth';
 import DeAuth from "../features/currentUser/DeAuth";
 import {url} from "./urls";
+import {useAppSelector} from "./hooks";
+import {isUserAuthenticated} from "../features/currentUser/currentUserSlice";
+import NewThreadForm from "../components/main/NewThreadForm/NewThreadForm";
+
+const PrivateRoute = ({children}) => {
+    const isAuthenticated = useAppSelector(isUserAuthenticated);
+    const navigate = useNavigate();
+    if (isAuthenticated) {
+        console.log('PrivateRoute auth OK');
+        return children;
+    }
+    console.log('PrivateRoute auth ERROR');
+    navigate(url.SIGN_IN); // TODO make redirect
+    return '';
+};
 
 function App() {
     return (
@@ -26,6 +41,12 @@ function App() {
                 <Route path={url.SIGN_OUT} element={<DeAuth/>}/>
                 <Route path={`${url.FORUM}/:forumId`} element={<Threads/>}/>
                 <Route path={`${url.FORUM}/:forumId${url.THREAD}/:threadId`} element={<Posts/>}/>
+                <Route path={`${url.NEW_THREAD}/:forumId`} element={
+                    <PrivateRoute>
+                        <NewThreadForm/>
+                    </PrivateRoute>
+                }/>
+
                 <Route path='/*' element={<Forums/>}/>
             </Routes>
             <Footer/>

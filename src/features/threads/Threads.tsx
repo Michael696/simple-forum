@@ -23,7 +23,7 @@ export default function Threads() {
 
     const handleNewThread = () => {
         if (isAuthenticated) {
-            console.log(`new thread for forum ${params.forumId}`);
+            navigate(`${url.NEW_THREAD + '/' + params.forumId}`);
         } else {
             navigate(url.SIGN_IN);
         }
