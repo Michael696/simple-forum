@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {AppDispatch, RootState} from "../../app/store";
+import {AppDispatch} from "../../app/store";
 import {Id, LastMessage, LoadingType} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {userApi} from "../../app/userApi";
@@ -42,7 +42,7 @@ export const forumSlice = createSlice({
 
 export const forumsIsLoading = state => state.forums.isLoading;
 export const forumsList = state => state.forums.list;
-export const forumWithId = (state, id: Id) => state.forums.list.filter(forum => forum.id === id)[0];
+export const forumWithId = (state, id: Id) => state.forums.list.find(forum => forum.id === id);
 
 const {forumsLoad, forumsDone} = forumSlice.actions;
 

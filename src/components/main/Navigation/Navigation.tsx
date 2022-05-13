@@ -1,15 +1,15 @@
 import React from 'react';
 import {Nav, Navbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
-import {useSelector} from 'react-redux';
-
 import {currentUser, isUserAuthenticated} from '../../../features/currentUser/currentUserSlice';
 import {url} from "../../../app/urls";
 import './Navigation.sass';
 import {useAppSelector} from "../../../app/hooks";
+import CustomBreadcrumb from "../CustomBreadcrumb/CustomBreadcrumb";
+
 
 export default function Navigation() {
-    const user = useSelector(currentUser);
+    const user = useAppSelector(currentUser);
     const authOk = useAppSelector(isUserAuthenticated);
 
     const signIn = (
@@ -25,38 +25,41 @@ export default function Navigation() {
     );
 
     return (
-        <Navbar className="navbar navbar-fixed-top">
-            <Nav.Link>
+        <>
+            <Navbar className="navbar navbar-fixed-top">
+                <Nav.Link>
                 <span>
                     <LinkContainer to='/faq'>
                         <span>FAQ</span>
                     </LinkContainer>
                 </span>
-            </Nav.Link>
+                </Nav.Link>
 
-            {!authOk ?
-                (<Nav.Link>
+                {!authOk ?
+                    (<Nav.Link>
                 <span>
                     <LinkContainer to={url.REGISTER}>
                         <span>Register</span>
                     </LinkContainer>
                 </span>
-                </Nav.Link>) : ''
-            }
+                    </Nav.Link>) : ''
+                }
 
-            <Nav.Link>
+                <Nav.Link>
                 <span>
                     <LinkContainer to='/'>
                         <span>Forums</span>
                     </LinkContainer>
                 </span>
-            </Nav.Link>
+                </Nav.Link>
 
-            <Nav.Link>
+                <Nav.Link>
                 <span>
                     {user.name ? signOut : signIn}
                 </span>
-            </Nav.Link>
-        </Navbar>
+                </Nav.Link>
+            </Navbar>
+            <CustomBreadcrumb/>
+        </>
     );
 }
