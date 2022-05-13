@@ -4,7 +4,6 @@ import Button from 'react-bootstrap/cjs/Button';
 import {registerClear, registerErrorMessage, registerStart, registerState} from './registerSlice';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {AppDispatch} from "../../app/store";
-import './Register.sass';
 import {isUserAuthenticated} from "../currentUser/currentUserSlice";
 import {useNavigate} from "react-router";
 import {url} from "../../app/urls";
@@ -73,7 +72,7 @@ export default function Register() {
 
     // TODO refactor onChange handlers
     const formRegister = (
-        <div className='sign-in'>
+        <div className='form-width-50'>
             <Form.Group className="mb-3" controlId="formUserName">
                 <Form.Label>Username</Form.Label>
                 <Form.Control

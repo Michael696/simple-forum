@@ -77,5 +77,14 @@ export const userApi = {
             return false;
         }
     },
+    createThread: async ({name, forumId, userId}: { name: string, forumId: Id, userId: Id }) => {
+        try {
+            const response = await httpApi.post('/create-thread', {title: name, forumId, author: userId});
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
 
 };

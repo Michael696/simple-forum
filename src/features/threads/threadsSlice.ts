@@ -62,7 +62,7 @@ export const fetchThreads = (id) => async (dispatch: AppDispatch) => {
     dispatch(threadsDone(threads));
 };
 
-export const addThreadViewCount = (threadId)=> async (dispatch: AppDispatch) => {
+export const addThreadViewCount = (threadId) => async () => {
     console.log('addThreadViewCount', threadId);
     await userApi.addThreadViewCount(threadId);
 };

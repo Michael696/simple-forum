@@ -42,7 +42,7 @@ export default function Auth() {
     }, [authOk]);
 
     return (
-        <div className='sign-in'>
+        <div className='form-width-50'>
             <Form>
                 <Form.Group className="mb-3" controlId="formUserName">
                     <Form.Label>Username</Form.Label>
