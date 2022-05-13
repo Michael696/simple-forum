@@ -76,6 +76,17 @@ export const authenticate = ({name, password}) => async (dispatch: AppDispatch) 
     }
 };
 
+export const checkAuth = () => async (dispatch: AppDispatch) => {
+    let checkResult;
+    dispatch(authReq());
+    try {
+        checkResult = await userApi.currentUser();
+        dispatch(authDone(checkResult));
+    } catch (e: any) {
+        dispatch(authError(e.message || 'unknown error'));
+    }
+};
+
 export const deAuthenticate = () => async (dispatch: AppDispatch) => {
     try {
         await userApi.deAuth();

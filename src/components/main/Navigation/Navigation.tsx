@@ -3,12 +3,14 @@ import {Nav, Navbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 import {useSelector} from 'react-redux';
 
-import {currentUser,} from '../../../features/currentUser/currentUserSlice';
+import {currentUser, isUserAuthenticated} from '../../../features/currentUser/currentUserSlice';
 import {url} from "../../../app/urls";
 import './Navigation.sass';
+import {useAppSelector} from "../../../app/hooks";
 
 export default function Navigation() {
     const user = useSelector(currentUser);
+    const authOk = useAppSelector(isUserAuthenticated);
 
     const signIn = (
         <LinkContainer to={url.SIGN_IN}>
@@ -32,13 +34,15 @@ export default function Navigation() {
                 </span>
             </Nav.Link>
 
-            <Nav.Link>
+            {!authOk ?
+                (<Nav.Link>
                 <span>
                     <LinkContainer to={url.REGISTER}>
                         <span>Register</span>
                     </LinkContainer>
                 </span>
-            </Nav.Link>
+                </Nav.Link>) : ''
+            }
 
             <Nav.Link>
                 <span>

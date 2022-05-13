@@ -5,6 +5,9 @@ import {registerClear, registerErrorMessage, registerStart, registerState} from 
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {AppDispatch} from "../../app/store";
 import './Register.sass';
+import {isUserAuthenticated} from "../currentUser/currentUserSlice";
+import {useNavigate} from "react-router";
+import {url} from "../../app/urls";
 
 export default function Register() {
     const nameRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
@@ -17,8 +20,8 @@ export default function Register() {
     const registering = useAppSelector(registerState);
     const errorMessage = useAppSelector(registerErrorMessage);
     const dispatch: AppDispatch = useAppDispatch();
-
-    // console.log('registering', registering);
+    const navigate = useNavigate();
+    const authOk = useAppSelector(isUserAuthenticated);
 
     const regClear = () => {
         if (registering !== 'idle') {
@@ -32,6 +35,13 @@ export default function Register() {
             dispatch(registerClear());
         }
     }, []);
+
+    useEffect(() => {
+        if (authOk) {
+            console.log('cannot register authenticated user');
+            navigate(url.FORUM);
+        }
+    }, [authOk]);
 
     useEffect(() => {
         if (registering === 'error') {

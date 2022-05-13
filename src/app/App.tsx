@@ -13,8 +13,8 @@ import Register from '../features/registerUser/Register';
 import Auth from '../features/currentUser/Auth';
 import DeAuth from "../features/currentUser/DeAuth";
 import {url} from "./urls";
-import {useAppSelector} from "./hooks";
-import {isUserAuthenticated} from "../features/currentUser/currentUserSlice";
+import {useAppDispatch, useAppSelector} from "./hooks";
+import {isUserAuthenticated, checkAuth} from "../features/currentUser/currentUserSlice";
 import NewThreadForm from "../components/main/NewThreadForm/NewThreadForm";
 
 const PrivateRoute = ({children}) => {
@@ -30,6 +30,12 @@ const PrivateRoute = ({children}) => {
 };
 
 function App() {
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(checkAuth());
+    }, []);
+
     return (
         <div className="App">
             <Header/>

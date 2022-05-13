@@ -10,6 +10,13 @@ export const userApi = {
         }
         return response.data;
     },
+    currentUser: async () => {
+        const response = await httpApi.post('/current-user', {});
+        if (response && response.data && response.data.error) {
+            throw response.data.error;
+        }
+        return response.data;
+    },
     deAuth: async () => {
         try {
             await httpApi.post('/deauth');
