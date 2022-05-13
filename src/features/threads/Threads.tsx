@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
-import {fetchThreads, threadsList} from "./threadsSlice";
+import {addThreadViewCount, fetchThreads, threadsList} from "./threadsSlice";
 import {ThreadItemType} from "../../app/types";
 import {AppDispatch} from "../../app/store";
 import ThreadItem from "./ThreadItem";
@@ -31,9 +31,11 @@ export default function Threads() {
 
     const threadList = threads && threads.map(thread => {
         const linkTo = `${url.FORUM}/${params.forumId}${url.THREAD}/${thread.id}`;
-        // console.log('linkTo', linkTo);
+        const addView = () => {
+            dispatch(addThreadViewCount(thread.id));
+        };
         return (
-            <Link to={linkTo} key={thread.id} className='link-as-text'>
+            <Link to={linkTo} key={thread.id} className='link-as-text' onClick={addView}>
                 <ThreadItem key={thread.id} id={thread.id}/>
             </Link>);
     });
@@ -42,7 +44,7 @@ export default function Threads() {
         <div className='threads'>
             <div>Forum id is {params.forumId}</div>
             {isAuthenticated ? <NewThreadButton onClick={handleNewThread}/> : ''}
-            {threadList ? threadList : `no threads in forum ${params.forumId}`}
+            {threadList.length ? threadList : `no threads in forum ${params.forumId}`}
         </div>
     );
 }

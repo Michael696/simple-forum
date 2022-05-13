@@ -37,9 +37,6 @@ export const threadsSlice = createSlice({
         },
         viewed: (state: InitialStateType, action: PayloadAction<Id>) => {
             const thread = findThreadById(state.list, action.payload);
-            console.log('addViewCount state keys', Object.keys(state));
-            console.log('addViewCount state.list.length', state.list.length);
-            console.log('addViewCount payload', action.payload);
             if (thread) {
                 console.log('addViewCount for', action.payload);
                 thread.viewCount++;
@@ -67,11 +64,13 @@ export const addThreadViewCount = (threadId) => async () => {
     await userApi.addThreadViewCount(threadId);
 };
 
-export const fetchThreadsAndView = (forumId, threadId) => async (dispatch: AppDispatch) => { // FIXME adds 2 views instead of 1
+/*
+export const fetchThreadsAndView = (forumId, threadId) => async (dispatch: AppDispatch) => {
     console.log('fetchThreadsAndView', forumId, threadId);
     await dispatch(fetchThreads(forumId));
     await dispatch(addThreadViewCount(threadId));
     await dispatch(viewed(threadId));
 };
+*/
 
 export default threadsSlice.reducer;

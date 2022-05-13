@@ -1,23 +1,18 @@
 import React, {useEffect} from 'react';
 import {useParams} from 'react-router-dom';
-import {fetchPosts, postsList} from "./postsSlice";
+import {fetchPosts, postsIsLoading, postsList} from "./postsSlice";
 import {useSelector} from "react-redux";
 import {PostItemType} from "../../app/types";
 import Post from "./Post";
-import {useAppDispatch} from "../../app/hooks";
-import {fetchThreadsAndView} from "../threads/threadsSlice";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
 
 export default function Posts() {
     const params = useParams();
     const posts: Array<PostItemType> = useSelector(postsList);
+    const isLoading = useAppSelector(postsIsLoading);
     const dispatch = useAppDispatch();
 
-    console.log('Posts params', params);
-
     useEffect(() => {
-        console.log(`Posts ${params.threadId} mount`);
-        dispatch(fetchThreadsAndView(params.forumId, params.threadId));
-        // dispatch(addViewCount(thread.id));
         dispatch(fetchPosts(params.threadId));
     }, []);
 
@@ -27,7 +22,10 @@ export default function Posts() {
 
     return (
         <div className='post-list'>
-            {postList ? postList : `no posts in thread ${params.threadId}`}
+            {isLoading === 'pending' ?
+                'loading posts...'
+                : (postList.length ? postList : `no posts in thread ${params.threadId}`)
+            }
         </div>
     );
 }
