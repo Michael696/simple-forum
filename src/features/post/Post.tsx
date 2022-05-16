@@ -1,13 +1,13 @@
 import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Id, PostItemType} from "../../app/types";
-import {postWithId, postLike, postDislike} from "./postsSlice";
+import {postDislike, postLike, postWithId} from "./postsSlice";
 import UserInfo from "../../components/forum/UserInfo/UserInfo";
 import PostText from "../../components/forum/PostText";
 import PostInfo from "../../components/forum/PostInfo";
 import ReplyButton from "../../components/forum/ReplyButton";
 import {useAppSelector} from "../../app/hooks";
-import {isUserAuthenticated, currentUser} from "../currentUser/currentUserSlice";
+import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
 import {url} from "../../app/urls";
 import {useNavigate} from "react-router";
 import './Post.sass';
@@ -30,7 +30,7 @@ export default function Post({id}: { id: Id }) {
     };
 
     const likesClicked =
-        isAuthenticated ?
+        (isAuthenticated && !user.isBanned) ?
             (props: { label: LikeDislike }) => {
                 switch (props.label) {
                     case 'likes':
@@ -50,7 +50,7 @@ export default function Post({id}: { id: Id }) {
                 <PostText text={post.text}/>
             </div>
             <PostInfo post={post} onClick={likesClicked}/>
-            {isAuthenticated ? <ReplyButton onClick={handleReply}/> : ''}
+            {(isAuthenticated && !user.isBanned) ? <ReplyButton onClick={handleReply}/> : ''}
 
         </>
     );

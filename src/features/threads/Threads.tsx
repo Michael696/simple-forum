@@ -6,7 +6,7 @@ import {AppDispatch} from "../../app/store";
 import ThreadItem from "./ThreadItem";
 import NewThreadButton from "../../components/forum/NewThreadButton";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {isUserAuthenticated} from "../currentUser/currentUserSlice";
+import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
 import {url} from "../../app/urls";
 
 export default function Threads() {
@@ -15,6 +15,7 @@ export default function Threads() {
     const threads: Array<ThreadItemType> = useAppSelector(threadsList);
     const dispatch: AppDispatch = useAppDispatch();
     const isAuthenticated = useAppSelector(isUserAuthenticated);
+    const user = useAppSelector(currentUser);
     const fetch = fetchThreads(params.forumId); // forumId
 
     useEffect(() => {
@@ -43,7 +44,7 @@ export default function Threads() {
     return (
         <div className='threads'>
             <div>Forum id is {params.forumId}</div>
-            {isAuthenticated ? <NewThreadButton onClick={handleNewThread}/> : ''}
+            {(isAuthenticated && !user.isBanned) ? <NewThreadButton onClick={handleNewThread}/> : ''}
             {threadList.length ? threadList : `no threads in forum ${params.forumId}`}
         </div>
     );
