@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {MutableRefObject, useEffect, useRef, useState} from "react";
 import Button from "react-bootstrap/cjs/Button";
 import Form from "react-bootstrap/Form";
 import {Id} from "../../../app/types";
@@ -14,6 +14,7 @@ export default function NewPostForm({forumId, threadId, text}: { forumId: Id, th
     const user = useAppSelector(currentUser);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const textRef = useRef<HTMLTextAreaElement>() as MutableRefObject<HTMLTextAreaElement>;
 
     const handleCreate = async e => {
         console.log('create post for thread', threadId);
@@ -27,6 +28,11 @@ export default function NewPostForm({forumId, threadId, text}: { forumId: Id, th
         }
     };
 
+    useEffect(() => {
+        setPostText(text);
+        textRef.current.focus();
+    }, [text]);
+
     return (
         <>
             <Form.Group className="mb-3" controlId="formPostName">
@@ -35,6 +41,7 @@ export default function NewPostForm({forumId, threadId, text}: { forumId: Id, th
                     as="textarea"
                     placeholder=""
                     value={postText}
+                    ref={textRef}
                     onChange={(e) => {
                         setPostText(e.target.value);
                     }}

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import {fetchPosts, postsIsLoading, postsList} from "./postsSlice";
 import {useSelector} from "react-redux";
@@ -12,13 +12,26 @@ export default function Posts() {
     const posts: Array<PostItemType> = useSelector(postsList);
     const isLoading = useAppSelector(postsIsLoading);
     const dispatch = useAppDispatch();
+    const [postText, setPostText] = useState('');
 
     useEffect(() => {
         dispatch(fetchPosts(params.threadId));
     }, []);
 
     const postList = posts && posts.map(post => {
-        return <Post key={post.id} id={post.id}/>
+        const handleReply = (() => {
+            return () => {
+                const found = posts.find(p => p.id === post.id);
+                console.log('reply to', found);
+                const text = `user '${post.author.name}' wrote at ${post.postedAt}:\r\n` +
+                    `===========================\r\n` +
+                    `${post.text}\r\n` +
+                    `===========================\r\n`;
+                console.log('reply text', text);
+                setPostText(text);
+            };
+        })();
+        return <Post key={post.id} id={post.id} onReply={handleReply}/>
     });
 
     return (
@@ -29,7 +42,8 @@ export default function Posts() {
                     : (postList.length ? postList : `no posts in thread ${params.threadId}`)
                 }
             </div>
-            <NewPostForm text={''} threadId={params.threadId} forumId={params.forumId}/>
+            {/*<Button onClick={()=>{setPostText('zxzxvcdvdfv')}}/>*/}
+            <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>
         </>
     );
 }

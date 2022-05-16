@@ -8,25 +8,18 @@ import PostInfo from "../../components/forum/PostInfo";
 import ReplyButton from "../../components/forum/ReplyButton";
 import {useAppSelector} from "../../app/hooks";
 import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
-import {url} from "../../app/urls";
-import {useNavigate} from "react-router";
 import './Post.sass';
 
 export type LikeDislike = 'likes' | 'dislikes';
 
-export default function Post({id}: { id: Id }) {
-    const navigate = useNavigate();
+export default function Post({id, onReply}: { id: Id, onReply: (id: Id) => void }) {
     const post: PostItemType = useSelector(state => postWithId(state, id));
     const isAuthenticated = useAppSelector(isUserAuthenticated);
     const dispatch = useDispatch();
     const user = useAppSelector(currentUser);
 
     const handleReply = () => {
-        if (isAuthenticated) {
-            console.log(`new reply for post ${id}`);
-        } else {
-            navigate(url.SIGN_IN);
-        }
+        onReply(id);
     };
 
     const likesClicked =
