@@ -5,6 +5,7 @@ import {useSelector} from "react-redux";
 import {PostItemType} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import NewPostForm from "../../components/main/NewPostForm/NewPostForm";
 
 export default function Posts() {
     const params = useParams();
@@ -21,11 +22,14 @@ export default function Posts() {
     });
 
     return (
-        <div className='post-list'>
-            {isLoading === 'pending' ?
-                'loading posts...'
-                : (postList.length ? postList : `no posts in thread ${params.threadId}`)
-            }
-        </div>
+        <>
+            <div className='post-list'>
+                {isLoading === 'pending' ?
+                    'loading posts...'
+                    : (postList.length ? postList : `no posts in thread ${params.threadId}`)
+                }
+            </div>
+            <NewPostForm text={''} threadId={params.threadId} forumId={params.forumId}/>
+        </>
     );
 }

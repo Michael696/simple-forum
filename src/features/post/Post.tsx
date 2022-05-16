@@ -43,6 +43,7 @@ export default function Post({id}: { id: Id }) {
             }
             : undefined;
 
+    // TODO move ReplyButton to PostInfo as child component
     return (
         <>
             <div className='post'>
@@ -51,7 +52,6 @@ export default function Post({id}: { id: Id }) {
             </div>
             <PostInfo post={post} onClick={likesClicked}/>
             {(isAuthenticated && !user.isBanned) ? <ReplyButton onClick={handleReply}/> : ''}
-
         </>
     );
 }
