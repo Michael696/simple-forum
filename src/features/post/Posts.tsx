@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import {fetchPosts, postsIsLoading, postsList} from "./postsSlice";
 import {useSelector} from "react-redux";
@@ -18,19 +18,20 @@ export default function Posts() {
         dispatch(fetchPosts(params.threadId));
     }, []);
 
+    const handleReply = useCallback((id) => {
+        const found = posts.find(p => p.id === id);
+        if (found) {
+            console.log('reply to', found);
+            const text = `user '${found.author.name}' wrote at ${found.postedAt}:\r\n` +
+                `===========================\r\n` +
+                `${found.text}\r\n` +
+                `===========================\r\n`;
+            console.log('reply text', text);
+            setPostText(text);
+        }
+    }, []);
+
     const postList = posts && posts.map(post => {
-        const handleReply = (() => {
-            return () => {
-                const found = posts.find(p => p.id === post.id);
-                console.log('reply to', found);
-                const text = `user '${post.author.name}' wrote at ${post.postedAt}:\r\n` +
-                    `===========================\r\n` +
-                    `${post.text}\r\n` +
-                    `===========================\r\n`;
-                console.log('reply text', text);
-                setPostText(text);
-            };
-        })();
         return <Post key={post.id} id={post.id} onReply={handleReply}/>
     });
 
@@ -42,7 +43,6 @@ export default function Posts() {
                     : (postList.length ? postList : `no posts in thread ${params.threadId}`)
                 }
             </div>
-            {/*<Button onClick={()=>{setPostText('zxzxvcdvdfv')}}/>*/}
             <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>
         </>
     );

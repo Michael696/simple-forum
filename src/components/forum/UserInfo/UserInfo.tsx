@@ -2,7 +2,7 @@ import React from 'react';
 import {User} from "../../../app/types";
 import './UserInfo.sass';
 
-export default function UserInfo({user}: { user: User }) {
+const UserInfo = function ({user}: { user: User }) {
     return (
         <div className='user-info pad05'>
             <div>{user.name}</div>
@@ -13,4 +13,6 @@ export default function UserInfo({user}: { user: User }) {
             <div>{`location:${user.location}`}</div>
         </div>
     );
-}
+};
+
+export default React.memo(UserInfo);

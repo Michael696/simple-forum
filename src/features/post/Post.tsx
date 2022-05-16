@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Id, PostItemType} from "../../app/types";
 import {postDislike, postLike, postWithId} from "./postsSlice";
@@ -12,15 +12,15 @@ import './Post.sass';
 
 export type LikeDislike = 'likes' | 'dislikes';
 
-export default function Post({id, onReply}: { id: Id, onReply: (id: Id) => void }) {
+const Post = function ({id, onReply}: { id: Id, onReply: (id: Id) => void }) {
     const post: PostItemType = useSelector(state => postWithId(state, id));
     const isAuthenticated = useAppSelector(isUserAuthenticated);
     const dispatch = useDispatch();
     const user = useAppSelector(currentUser);
 
-    const handleReply = () => {
+    const handleReply = useCallback(() => {
         onReply(id);
-    };
+    }, []);
 
     const likesClicked =
         (isAuthenticated && !user.isBanned) ?
@@ -47,4 +47,6 @@ export default function Post({id, onReply}: { id: Id, onReply: (id: Id) => void 
             {(isAuthenticated && !user.isBanned) ? <ReplyButton onClick={handleReply}/> : ''}
         </>
     );
-}
+};
+
+export default React.memo(Post);
