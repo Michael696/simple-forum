@@ -5,12 +5,14 @@ import {useSelector} from "react-redux";
 import {PostItemType} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import NewPostForm from "../../components/main/NewPostForm/NewPostForm";
+import NewPostForm from "../../components/forum/NewPostForm/NewPostForm";
+import {isUserAuthenticated} from "../currentUser/currentUserSlice";
 
 export default function Posts() {
     const params = useParams();
     const posts: Array<PostItemType> = useSelector(postsList);
     const isLoading = useAppSelector(postsIsLoading);
+    const isAuthenticated = useAppSelector(isUserAuthenticated);
     const dispatch = useAppDispatch();
     const [postText, setPostText] = useState('');
 
@@ -43,7 +45,9 @@ export default function Posts() {
                     : (postList.length ? postList : `no posts in thread ${params.threadId}`)
                 }
             </div>
-            <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>
+            {isAuthenticated ? (<NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>)
+                : (<div>Please, sign-in to create new threads or posts</div>)
+            }
         </>
     );
 }

@@ -52,4 +52,5 @@ const NewPostForm = function ({forumId, threadId, text}: { forumId: Id, threadId
     )
 };
 
-export default React.memo(NewPostForm);
+const NewPostFormWithMemo = React.memo(NewPostForm);
+export default NewPostFormWithMemo;

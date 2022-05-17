@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Routes, Route, useNavigate} from 'react-router-dom';
+import {Route, Routes, useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../styles/App.sass';
 import Header from '../components/main/Header/Header';
@@ -14,8 +14,8 @@ import Auth from '../features/currentUser/Auth';
 import DeAuth from "../features/currentUser/DeAuth";
 import {url} from "./urls";
 import {useAppDispatch, useAppSelector} from "./hooks";
-import {isUserAuthenticated, checkAuth} from "../features/currentUser/currentUserSlice";
-import NewThreadForm from "../components/main/NewThreadForm/NewThreadForm";
+import {checkAuth, isUserAuthenticated} from "../features/currentUser/currentUserSlice";
+import NewThreadForm from "../components/forum/NewThreadForm/NewThreadForm";
 
 const PrivateRoute = ({children}) => {
     const isAuthenticated = useAppSelector(isUserAuthenticated);
