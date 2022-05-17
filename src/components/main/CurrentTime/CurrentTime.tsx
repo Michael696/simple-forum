@@ -8,17 +8,15 @@ export default function CurrentTime() {
     const [time, setTime] = useState(getTimeString());
     let interval;
     useEffect(() => {
-        console.log('set interval');
         interval = setInterval(() => {
             setTime(getTimeString());
         }, 10 * 1000);
         return () => {
-            console.log('cleared interval');
             clearInterval(interval);
         }
     }, []);
     return (
-        <div className='float-right'>
+        <div className=''>
             Current time is: {time}
         </div>);
 }

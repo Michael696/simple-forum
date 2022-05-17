@@ -8,6 +8,7 @@ import PostInfo from "../../components/forum/PostInfo";
 import ReplyButton from "../../components/forum/ReplyButton";
 import {useAppSelector} from "../../app/hooks";
 import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
+import AdminPostPanel from '../../components/forum/adminPostPanel/AdminPostPanel';
 import './Post.sass';
 
 export type LikeDislike = 'likes' | 'dislikes';
@@ -45,6 +46,7 @@ const Post = function ({id, onReply}: { id: Id, onReply: (id: Id) => void }) {
             </div>
             <PostInfo post={post} onClick={likesClicked}/>
             {(isAuthenticated && !user.isBanned) ? <ReplyButton onClick={handleReply}/> : ''}
+            {user.isAdmin ? <AdminPostPanel post={post}/> : ''}
         </>
     );
 };

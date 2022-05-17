@@ -1,10 +1,11 @@
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/cjs/Button';
-import {authenticate, currentUser, isUserAuthenticated, authClear} from './currentUserSlice';
+import {authClear, authenticate, currentUser, isUserAuthenticated} from './currentUserSlice';
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {url} from "../../app/urls";
+import {fetchUsers} from "../onlineUsers/onlineUsersSlice";
 
 export default function Auth() {
     const user = useAppSelector(currentUser);
@@ -37,6 +38,7 @@ export default function Auth() {
 
     useEffect(() => {
         if (authOk) {
+            dispatch(fetchUsers());
             navigate(url.FORUM);
         }
     }, [authOk]);

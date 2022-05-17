@@ -25,6 +25,22 @@ export const userApi = {
             return false;
         }
     },
+    banUser: async (id) => {
+        try {
+            await httpApi.post('/ban-user', {id});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    },
+    unbanUser: async (id) => {
+        try {
+            await httpApi.post('/unban-user', {id});
+            return true;
+        } catch (e) {
+            return false;
+        }
+    },
     register: async (params: RegisterParams) => {
         const response = await httpApi.post('/register', params);
         if (response && response.data && response.data.error) {
