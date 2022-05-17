@@ -31,12 +31,12 @@ export type Forum = {
     name: string,
     description: string,
     themeCount: number,
-    postCount: number
+    postCount: number,
     lastMessage: LastMessage
 }
 
 export type ThreadItemType = {
-    id: Id
+    id: Id,
     author: User,
     title: string,
     postCount: number,
@@ -47,7 +47,7 @@ export type ThreadItemType = {
 }
 
 export type PostItemType = {
-    id: Id
+    id: Id,
     author: User,
     title: string,
     text: string,

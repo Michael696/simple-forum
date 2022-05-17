@@ -4,10 +4,10 @@ import {addThreadViewCount, fetchThreads, threadsList} from "./threadsSlice";
 import {ThreadItemType} from "../../app/types";
 import {AppDispatch} from "../../app/store";
 import ThreadItem from "./ThreadItem";
-import NewThreadButton from "../../components/forum/NewThreadButton";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
 import {url} from "../../app/urls";
+import Button from "react-bootstrap/cjs/Button";
 
 export default function Threads() {
     const params = useParams();
@@ -16,10 +16,9 @@ export default function Threads() {
     const dispatch: AppDispatch = useAppDispatch();
     const isAuthenticated = useAppSelector(isUserAuthenticated);
     const user = useAppSelector(currentUser);
-    const fetch = fetchThreads(params.forumId); // forumId
 
     useEffect(() => {
-        dispatch(fetch)
+        dispatch(fetchThreads(params.forumId));
     }, []);
 
     const handleNewThread = () => {
@@ -44,7 +43,7 @@ export default function Threads() {
     return (
         <div className='threads'>
             <div>Forum id is {params.forumId}</div>
-            {(isAuthenticated && !user.isBanned) ? <NewThreadButton onClick={handleNewThread}/> : ''}
+            {(isAuthenticated && !user.isBanned) ? <Button onClick={handleNewThread}>create thread</Button> : ''}
             {threadList.length ? threadList : `no threads in forum ${params.forumId}`}
         </div>
     );

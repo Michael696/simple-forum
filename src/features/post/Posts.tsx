@@ -6,17 +6,23 @@ import {PostItemType} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import NewPostForm from "../../components/forum/NewPostForm/NewPostForm";
-import {isUserAuthenticated} from "../currentUser/currentUserSlice";
+import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
+import Button from "react-bootstrap/cjs/Button";
+import {fetchThreads, threadWithId} from "../threads/threadsSlice";
+import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHintMessage";
 
 export default function Posts() {
     const params = useParams();
     const posts: Array<PostItemType> = useSelector(postsList);
     const isLoading = useAppSelector(postsIsLoading);
+    const user = useAppSelector(currentUser);
     const isAuthenticated = useAppSelector(isUserAuthenticated);
     const dispatch = useAppDispatch();
     const [postText, setPostText] = useState('');
+    const thread = useAppSelector(state => threadWithId(state, params.threadId)); // TODO component fails to reload, fetch threads first ?
 
     useEffect(() => {
+        dispatch(fetchThreads(params.forumId));
         dispatch(fetchPosts(params.threadId));
     }, []);
 
@@ -33,21 +39,40 @@ export default function Posts() {
         }
     }, []);
 
-    const postList = posts && posts.map(post => {
-        return <Post key={post.id} id={post.id} onReply={handleReply}/>
-    });
+    if (thread) {
+        const postList = posts && posts.map(post => {
+            return <Post key={post.id} id={post.id} thread={thread} onReply={handleReply}/>
+        });
 
-    return (
-        <>
-            <div className='post-list'>
-                {isLoading === 'pending' ?
-                    'loading posts...'
-                    : (postList.length ? postList : `no posts in thread ${params.threadId}`)
+        const threadTitle = [`'${thread.title}', author '${thread.author.name}'`];
+        if (thread.author.id === user.id) {
+            threadTitle.push('it\'s You');
+        }
+        if (thread.author.isAdmin) {
+            threadTitle.push('admin');
+        }
+        if (thread.author.isBanned) {
+            threadTitle.push('banned');
+        }
+
+        return (
+            <>
+                <div>Thread {threadTitle.join(',')}</div>
+                <div className='post-list'>
+                    {isLoading === 'pending' ?
+                        'loading posts...'
+                        : (postList.length ? postList : `no posts in thread ${params.threadId}`)
+                    }
+                </div>
+                <StatusHintMessage>
+                    <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>
+                </StatusHintMessage>
+
+                {user.id === thread.author.id ? <Button>remove thread</Button> : ''
                 }
-            </div>
-            {isAuthenticated ? (<NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>)
-                : (<div>Please, sign-in to create new threads or posts</div>)
-            }
-        </>
-    );
+            </>
+        );
+    } else {
+        return <></>;
+    }
 }
