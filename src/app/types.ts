@@ -14,7 +14,7 @@ export type User = {
     id: Id,
     name: string,
     realName: string,
-    registeredAt: Date | 0,
+    registeredAt: string,
     posts: number,
     location: string,
     isBanned: boolean,
