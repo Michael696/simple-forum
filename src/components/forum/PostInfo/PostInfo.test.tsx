@@ -4,7 +4,7 @@
 
 import React from 'react'
 import '@testing-library/jest-dom';
-import {render, screen} from '@testing-library/react'
+import {render} from '@testing-library/react'
 import PostInfo from "./PostInfo";
 import {PostItemType, User} from "../../../app/types";
 import userEvent from '@testing-library/user-event'
@@ -41,17 +41,17 @@ test('Post info', async () => {
                 break;
         }
     };
-    render(
+    const {getByText} = render(
         <PostInfo post={post} onClick={clickHandler}>
             <div>children here</div>
         </PostInfo>
     );
-    expect(screen.getByText(/2022-02-01 12:13:14/)).toBeInTheDocument();
-    const likes = screen.getByText(/likes:2/);
+    expect(getByText(/2022-02-01 12:13:14/)).toBeInTheDocument();
+    const likes = getByText(/likes:2/);
     expect(likes).toBeInTheDocument();
-    const dislikes = screen.getByText(/dislikes:3/);
+    const dislikes = getByText(/dislikes:3/);
     expect(dislikes).toBeInTheDocument();
-    expect(screen.getByText(/children here/)).toBeInTheDocument();
+    expect(getByText(/children here/)).toBeInTheDocument();
 
     userEvent.click(likes);
     userEvent.click(dislikes);

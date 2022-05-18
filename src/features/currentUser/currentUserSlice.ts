@@ -1,15 +1,10 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {Id, LoadingType, User} from "../../app/types";
+import {CurrentUserType, Id, User} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {AppDispatch} from "../../app/store";
 import {userApi} from "../../app/userApi";
 
-type InitialStateType = User & {
-    isAuthPending: LoadingType;
-    error: string;
-};
-
-const initialState: InitialStateType = {
+const initialState: CurrentUserType = {
     realName: "",
     error: "",
     isAuthPending: 'idle',
@@ -19,19 +14,19 @@ const initialState: InitialStateType = {
     location: "",
     name: "",
     posts: 0,
-    registeredAt: 0
+    registeredAt: ''
 };
 
 export const currentUserSlice = createSlice({
     name: 'currentUser',
     initialState,
     reducers: {
-        authReq: (state: InitialStateType) => {
+        authReq: (state: CurrentUserType) => {
             if (state.isAuthPending === 'idle' || state.isAuthPending === 'error') {
                 state.isAuthPending = 'pending';
             }
         },
-        authDone: (state: InitialStateType, action: PayloadAction<User>) => {
+        authDone: (state: CurrentUserType, action: PayloadAction<User>) => {
             if (state.isAuthPending === 'pending') {
                 state.isAuthPending = 'idle';
                 state.error = '';
@@ -41,13 +36,13 @@ export const currentUserSlice = createSlice({
                 })
             }
         },
-        authError: (state: InitialStateType, action: PayloadAction<string>) => {
+        authError: (state: CurrentUserType, action: PayloadAction<string>) => {
             if (state.isAuthPending === 'pending') {
                 state.isAuthPending = 'error';
                 state.error = action.payload;
             }
         },
-        authClear: (state: InitialStateType) => {
+        authClear: (state: CurrentUserType) => {
             if (state.isAuthPending === 'idle' || state.isAuthPending === 'error') {
                 Object.keys(initialState).forEach(key => {
                     state[key] = initialState[key];

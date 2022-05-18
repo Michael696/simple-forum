@@ -2,15 +2,9 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppDispatch} from "../../app/store";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {userApi} from "../../app/userApi";
-import {Id, LoadingType, ThreadItemType} from "../../app/types";
+import {Id, ThreadItemType, ThreadsStateType} from "../../app/types";
 
-type InitialStateType = {
-    list: Array<ThreadItemType>,
-    forumId: Id,
-    isLoading: LoadingType
-}
-
-const initialState: InitialStateType = {
+const initialState: ThreadsStateType = {
     list: [],
     forumId: '',
     isLoading: 'idle'
@@ -22,20 +16,20 @@ export const threadsSlice = createSlice({
     name: 'threads',
     initialState,
     reducers: {
-        threadsLoad: (state: InitialStateType, action: PayloadAction<Id>) => {
+        threadsLoad: (state: ThreadsStateType, action: PayloadAction<Id>) => {
             if (state.isLoading === 'idle') {
                 state.isLoading = 'pending';
                 state.list = [];
                 state.forumId = action.payload;
             }
         },
-        threadsDone: (state: InitialStateType, action: PayloadAction<ThreadItemType[]>) => {
+        threadsDone: (state: ThreadsStateType, action: PayloadAction<ThreadItemType[]>) => {
             if (state.isLoading === 'pending') {
                 state.isLoading = 'idle';
                 state.list = action.payload;
             }
         },
-        viewed: (state: InitialStateType, action: PayloadAction<Id>) => {
+        viewed: (state: ThreadsStateType, action: PayloadAction<Id>) => {
             const thread = findThreadById(state.list, action.payload);
             if (thread) {
                 console.log('addViewCount for', action.payload);

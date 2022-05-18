@@ -21,6 +21,11 @@ export type User = {
     isAdmin: boolean,
 }
 
+export type CurrentUserType = User & {
+    isAuthPending: LoadingType;
+    error: string;
+};
+
 export type LastMessage = {
     dateTime: string,
     user: User
@@ -35,8 +40,15 @@ export type Forum = {
     lastMessage: LastMessage
 }
 
+export type ThreadsStateType = {
+    list: Array<ThreadItemType>,
+    forumId: Id,
+    isLoading: LoadingType
+}
+
 export type ThreadItemType = {
     id: Id,
+    forumId: Id,
     author: User,
     title: string,
     postCount: number,
