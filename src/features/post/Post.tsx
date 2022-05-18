@@ -4,7 +4,7 @@ import {Id, PostItemType, ThreadItemType} from "../../app/types";
 import {postDislike, postLike, postWithId} from "./postsSlice";
 import UserInfo from "../../components/forum/UserInfo/UserInfo";
 import PostText from "../../components/forum/PostText";
-import PostInfo from "../../components/forum/PostInfo";
+import PostInfo from "../../components/forum/PostInfo/PostInfo";
 import {useAppSelector} from "../../app/hooks";
 import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
 import AdminPostPanel from '../../components/forum/adminPostPanel/AdminPostPanel';

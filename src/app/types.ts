@@ -53,6 +53,6 @@ export type PostItemType = {
     text: string,
     likes: Array<User>,
     dislikes: Array<User>,
-    postedAt: Date | 0,
-    editedAt: Date | 0
+    postedAt: string,
+    editedAt: string
 }
