@@ -91,7 +91,7 @@ test('Threads: has threads in forum', async () => {
     server.close();
 });
 
-test.only('Threads: should show "create thread" button for authenticated user', async () => {
+test('Threads: should show "create thread" button for authenticated and not banned user ', async () => {
     const user: User = {
         id: undefined, isAdmin: false, isBanned: false, location: "", name: "", posts: 0, realName: "", registeredAt: ""
     };

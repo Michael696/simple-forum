@@ -2,11 +2,11 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import {fetchPosts, postsIsLoading, postsList} from "./postsSlice";
 import {useSelector} from "react-redux";
-import {PostItemType} from "../../app/types";
+import {PostItemType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import NewPostForm from "../../components/forum/NewPostForm/NewPostForm";
-import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
+import {currentUser} from "../currentUser/currentUserSlice";
 import Button from "react-bootstrap/cjs/Button";
 import {fetchThreads, threadWithId} from "../threads/threadsSlice";
 import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHintMessage";
@@ -15,8 +15,7 @@ export default function Posts() {
     const params = useParams();
     const posts: Array<PostItemType> = useSelector(postsList);
     const isLoading = useAppSelector(postsIsLoading);
-    const user = useAppSelector(currentUser);
-    const isAuthenticated = useAppSelector(isUserAuthenticated);
+    const user: User = useAppSelector(currentUser);
     const dispatch = useAppDispatch();
     const [postText, setPostText] = useState('');
     const thread = useAppSelector(state => threadWithId(state, params.threadId)); // TODO component fails to reload, fetch threads first ?
@@ -67,9 +66,7 @@ export default function Posts() {
                 <StatusHintMessage>
                     <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>
                 </StatusHintMessage>
-
-                {user.id === thread.author.id ? <Button>remove thread</Button> : ''
-                }
+                {(user.id === thread.author.id || user.isAdmin) ? <Button>remove thread</Button> : ''}
             </>
         );
     } else {

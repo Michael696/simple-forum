@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {Id, PostItemType, ThreadItemType} from "../../app/types";
+import {Id, PostItemType, ThreadItemType, User} from "../../app/types";
 import {postDislike, postLike, postWithId} from "./postsSlice";
 import UserInfo from "../../components/forum/UserInfo/UserInfo";
 import PostText from "../../components/forum/PostText";
@@ -17,7 +17,7 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
     const post: PostItemType = useSelector(state => postWithId(state, id));
     const isAuthenticated = useAppSelector(isUserAuthenticated);
     const dispatch = useDispatch();
-    const user = useAppSelector(currentUser);
+    const user: User = useAppSelector(currentUser);
 
     const handleReply = useCallback(() => {
         onReply(id);
@@ -49,10 +49,10 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
             </div>
             <PostInfo post={post} onClick={likesClicked}>
                 {(isAuthenticated && !user.isBanned) ? <Button onClick={handleReply}>reply</Button> : ''}
-                {(isAuthenticated && !user.isBanned && user.id === post.author.id) ?
+                {(isAuthenticated && !user.isBanned && user.id === post.author.id || user.isAdmin) ?
                     <Button onClick={handleRemove}>remove</Button> : ''
                 }
-                {(isAuthenticated && !user.isBanned && user.id === thread.author.id) ?
+                {(isAuthenticated && !user.isBanned && user.id === thread.author.id || user.isAdmin) ?
                     <Button onClick={handleRemove}>edit</Button> : ''
                 }
             </PostInfo>
@@ -61,4 +61,5 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
     );
 };
 
-export default React.memo(Post);
+const PostMemo = React.memo(Post);
+export default PostMemo;

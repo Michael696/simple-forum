@@ -41,7 +41,7 @@ const addLikeDislike = (first: Array<User>, second: Array<User>, postId: Id, use
 };
 
 export const postsSlice = createSlice({
-    name: 'threads',
+    name: 'posts',
     initialState,
     reducers: {
         postsLoad: (state: InitialStateType, action: PayloadAction<Id>) => {
