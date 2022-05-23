@@ -34,7 +34,7 @@ const NewPostForm = function ({forumId, threadId, text}: { forumId: Id, threadId
     }, [text]);
 
     return (
-        <>
+        <div className='margin05'>
             <Form.Group className="mb-3" controlId="formPostName">
                 <Form.Label>post text</Form.Label>
                 <Form.Control
@@ -48,7 +48,7 @@ const NewPostForm = function ({forumId, threadId, text}: { forumId: Id, threadId
                 />
             </Form.Group>
             <Button onClick={handleCreate}>create post</Button>
-        </>
+        </div>
     )
 };
 

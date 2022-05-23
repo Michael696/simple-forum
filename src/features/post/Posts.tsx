@@ -62,7 +62,7 @@ export default function Posts() {
         if (thread.author.isBanned) {
             threadTitle.push('banned');
         }
-
+// TODO add pagination
         return (
             <>
                 <div>Thread {threadTitle.join(',')}</div>

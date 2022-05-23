@@ -20,8 +20,18 @@ export default function Forums() {
 
     const forumList = forums.map(forum => <ForumItem key={forum.id} id={forum.id}/>);
 
+    forumList.unshift(
+        <div className='forum__header'>
+            <div className='cell-variable flex-direction-vertical center pad05'>
+                Forums
+            </div>
+            <div className='cell-constant flex-center-vertical center pad05'>Themes</div>
+            <div className='cell-constant flex-center-vertical center pad05'>Posts</div>
+            <div className='cell-constant flex-direction-vertical center flex-center-vertical pad05'> Last message</div>
+        </div>
+    );
+
     return (<div className='forums margin05'>
-        <div className='center bold'>Forums</div>
         {forumList}
     </div>);
 }
