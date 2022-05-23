@@ -129,5 +129,13 @@ export const userApi = {
             return false;
         }
     },
-
+    removeThread: async (id: Id) => {
+        try {
+            const response = await httpApi.post('/remove-thread', {id});
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
 };

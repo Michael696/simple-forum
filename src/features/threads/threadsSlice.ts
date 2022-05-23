@@ -35,7 +35,10 @@ export const threadsSlice = createSlice({
                 console.log('addViewCount for', action.payload);
                 thread.viewCount++;
             }
-        }
+        },
+        threadRemove: (state: ThreadsStateType, action: PayloadAction<{ id: Id }>) => {
+            state.list = state.list.filter(thread => thread.id !== action.payload.id);
+        },
     },
 });
 
@@ -43,13 +46,22 @@ export const threadsIsLoading = state => state.threads.isLoading;
 export const threadsList = state => state.threads.list;
 export const threadWithId = (state, id: Id) => findThreadById(state.threads.list, id);
 
-const {threadsLoad, threadsDone} = threadsSlice.actions;
+const {threadsLoad, threadsDone, threadRemove} = threadsSlice.actions;
 export const {viewed} = threadsSlice.actions;
 
 export const fetchThreads = (id) => async (dispatch: AppDispatch) => {
     dispatch(threadsLoad(id));
     const threads = await userApi.fetchThreads(id);
     dispatch(threadsDone(threads));
+};
+
+export const removeThread = (id) => async (dispatch: AppDispatch) => {
+    const result = await userApi.removeThread(id);
+    if (!!result && !result.error) {
+        dispatch(threadRemove({id}));
+    } else {
+        console.log(`cannot remove thread ${id}: server error`);
+    }
 };
 
 export const addThreadViewCount = (threadId) => async () => {

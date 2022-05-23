@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {fetchPosts, postsIsLoading, postsList} from "./postsSlice";
 import {PostItemType, User} from "../../app/types";
 import Post from "./Post";
@@ -7,8 +7,9 @@ import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import NewPostForm from "../../components/forum/NewPostForm/NewPostForm";
 import {currentUser} from "../currentUser/currentUserSlice";
 import Button from "react-bootstrap/cjs/Button";
-import {fetchThreads, threadWithId} from "../threads/threadsSlice";
+import {fetchThreads, removeThread, threadWithId} from "../threads/threadsSlice";
 import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHintMessage";
+import {url} from "../../app/urls";
 
 export default function Posts() {
     const params = useParams();
@@ -18,11 +19,11 @@ export default function Posts() {
     const dispatch = useAppDispatch();
     const [postText, setPostText] = useState('');
     const thread = useAppSelector(state => threadWithId(state, params.threadId)); // TODO component fails to reload, fetch threads first ?
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(fetchThreads(params.forumId));
         dispatch(fetchPosts(params.threadId));
-        console.log('posts are ', posts);
     }, []);
 
     const handleReply = useCallback((id) => {
@@ -39,6 +40,12 @@ export default function Posts() {
         }
         window.scrollTo(0, document.body.scrollHeight); // scroll to bottom
     }, [posts]);
+
+    const handleRemoveThread = useCallback(() => {
+        console.log('removing thread ', params.threadId);
+        dispatch(removeThread(params.threadId));
+        navigate(`${url.FORUM}/${params.forumId}`);
+    }, [params.threadId, params.forumId]);
 
     if (thread) {
         const postList = posts && posts.map(post => {
@@ -65,7 +72,8 @@ export default function Posts() {
                         : (postList.length ? postList : `no posts in thread ${params.threadId}`)
                     }
                 </div>
-                {(user.id === thread.author.id || user.isAdmin) ? <Button>remove thread</Button> : ''}
+                {(user.id === thread.author.id || user.isAdmin) ?
+                    <Button onClick={handleRemoveThread}>remove thread</Button> : ''}
                 <StatusHintMessage>
                     <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>
                 </StatusHintMessage>

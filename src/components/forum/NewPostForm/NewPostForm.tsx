@@ -17,7 +17,7 @@ const NewPostForm = function ({forumId, threadId, text}: { forumId: Id, threadId
     const textRef = useRef<HTMLTextAreaElement>() as MutableRefObject<HTMLTextAreaElement>;
 
     const handleCreate = useCallback(async e => {
-        console.log('create post for thread', threadId);
+        console.log('create post for thread', threadId, postText);
         const postId = await userApi.createPost({forumId, threadId, userId: user.id, text: postText});
         console.log('created post with id:', postId);
         if (!postId) {
@@ -26,7 +26,7 @@ const NewPostForm = function ({forumId, threadId, text}: { forumId: Id, threadId
             dispatch(fetchPosts(threadId));
             setPostText('');
         }
-    }, []);
+    }, [postText]);
 
     useEffect(() => {
         setPostText(text);
