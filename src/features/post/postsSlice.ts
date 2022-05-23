@@ -94,11 +94,17 @@ export const postsSlice = createSlice({
             if (post) {
                 post.text = action.payload.text;
             }
+        },
+        postRemove: (state: PostStateType, action: PayloadAction<{ id: Id }>) => {
+            const post = findPostById(state.list, action.payload.id);
+            if (post) {
+                state.list = state.list.filter(post => post.id !== action.payload.id);
+            }
         }
     },
 });
 
-const {postsLoad, postsDone, postText} = postsSlice.actions;
+const {postsLoad, postsDone, postText, postRemove} = postsSlice.actions;
 export const {postLike, postDislike} = postsSlice.actions;
 
 export const fetchPosts = (threadId) => async (dispatch: AppDispatch) => {
@@ -109,10 +115,19 @@ export const fetchPosts = (threadId) => async (dispatch: AppDispatch) => {
 
 export const setPostText = (postId, text) => async (dispatch: AppDispatch) => {
     const result = await userApi.setPostText({text, postId});
-    if (!result.error) { // TODO is that ok ? (false positives possible)
+    if (!!result && !result.error) { // TODO is that ok ? (false positives possible?)
         dispatch(postText({postId, text}));
     } else {
         console.log(`cannot set post ${postId} text: server error`);
+    }
+};
+
+export const removePost = (id) => async (dispatch: AppDispatch) => {
+    const result = await userApi.removePost({id});
+    if (!!result && !result.error) {
+        dispatch(postRemove({id}));
+    } else {
+        console.log(`cannot remove post ${id}: server error`);
     }
 };
 

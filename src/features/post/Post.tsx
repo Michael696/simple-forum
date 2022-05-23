@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Id, PostItemType, ThreadItemType, User} from "../../app/types";
-import {postDislike, postLike, postWithId, setPostText} from "./postsSlice";
+import {postDislike, postLike, postWithId, removePost, setPostText} from "./postsSlice";
 import UserInfo from "../../components/forum/UserInfo/UserInfo";
 import PostText from "../../components/forum/PostText";
 import PostInfo from "../../components/forum/PostInfo/PostInfo";
@@ -26,6 +26,7 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
 
         const handleRemove = useCallback(() => {
             console.log('remove post', id);
+            dispatch(removePost(id))
         }, []);
 
         const handleEdit = useCallback(() => {

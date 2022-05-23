@@ -120,5 +120,14 @@ export const userApi = {
             return false;
         }
     },
+    removePost: async ({id}: { id: Id }) => {
+        try {
+            const response = await httpApi.post('/remove-post', {id});
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
 
 };
