@@ -11,7 +11,7 @@ import userEvent from '@testing-library/user-event'
 
 test('Post info', async () => {
     const user: User = {
-        id: undefined,
+        id: '01',
         isAdmin: false,
         isBanned: false,
         location: "",
@@ -42,7 +42,7 @@ test('Post info', async () => {
         }
     };
     const {getByText} = render(
-        <PostInfo post={post} onClick={clickHandler}>
+        <PostInfo post={post} user={user} onClick={clickHandler}>
             <div>children here</div>
         </PostInfo>
     );

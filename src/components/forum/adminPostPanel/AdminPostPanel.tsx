@@ -9,7 +9,7 @@ export default function AdminPostPanel({post}: { post: PostItemType }) {
     const user = useAppSelector(currentUser);
     const [isBanned, setBanned] = useState(post.author.isBanned);
 
-    const handleBanChange = async () => {
+    const handleBanChange = async () => { // TODO update banned user status in all posts
         if (isBanned) {
             const result = await userApi.unbanUser(post.author.id);
             if (result) {

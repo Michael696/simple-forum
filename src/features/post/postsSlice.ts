@@ -2,16 +2,10 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppDispatch} from "../../app/store";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {userApi} from "../../app/userApi";
-import {Id, LoadingType, PostItemType, User} from "../../app/types";
+import {Id, PostItemType, PostStateType, User} from "../../app/types";
 import {findUserById} from "../currentUser/currentUserSlice";
 
-type InitialStateType = {
-    list: Array<PostItemType>,
-    threadId: Id,
-    isLoading: LoadingType
-}
-
-const initialState: InitialStateType = {
+const initialState: PostStateType = {
     list: [],
     threadId: '',
     isLoading: 'idle'
@@ -23,55 +17,80 @@ export const postsIsLoading = state => state.posts.isLoading;
 export const postsList = state => state.posts.list;
 export const postWithId = (state, id: Id) => findPostById(state.posts.list, id);
 
-type LikeDislikeReducer = {
-    state: InitialStateType,
-    action: PayloadAction<{ postId: Id, user: User }>
+const addOnly = (first: Array<User>, user: User) => {
+    const userLiked = findUserById(first, user.id);
+    let firstRes = [...first];
+    if (!userLiked) {
+        firstRes.push(user);
+    }
+    return firstRes;
 };
 
-const addLikeDislike = (first: Array<User>, second: Array<User>, postId: Id, user: User) => {
-    const userLiked = findUserById(first, user.id);
-    const userDisliked = findUserById(second, user.id);
-    if (!userLiked) {
-        first.push(user);
-    }
-    if (userDisliked) {
-        second = second.filter(u => u.id !== user.id);
-    }
-    return {first, second};
+const removeLikeDislike = (first: Array<User>, user: User) => {
+    return first.filter(u => u.id !== user.id);
+};
+
+const removeAll = (first: Array<User>, second: Array<User>, user: User) => {
+    const firstRes = removeLikeDislike(first, user);
+    const secondRes = removeLikeDislike(second, user);
+    return {first: firstRes, second: secondRes};
+};
+
+const addLike2 = (likes: Array<User>, dislikes: Array<User>, user: User) => {
+    const {first, second} = removeAll(likes, dislikes, user);
+    return {first: addOnly(likes, user), second};
+};
+
+const addDislike2 = (likes: Array<User>, dislikes: Array<User>, user: User) => {
+    const {first, second} = removeAll(likes, dislikes, user);
+    return {first, second: addOnly(dislikes, user)};
+};
+
+const hasLikeDislike = (first: Array<User>, user: User) => {
+    return first.some(u => u.id === user.id);
 };
 
 export const postsSlice = createSlice({
     name: 'posts',
     initialState,
     reducers: {
-        postsLoad: (state: InitialStateType, action: PayloadAction<Id>) => {
+        postsLoad: (state: PostStateType, action: PayloadAction<Id>) => {
             if (state.isLoading === 'idle') {
                 state.isLoading = 'pending';
                 state.list = [];
                 state.threadId = action.payload;
             }
         },
-        postsDone: (state: InitialStateType, action: PayloadAction<PostItemType[]>) => {
+        postsDone: (state: PostStateType, action: PayloadAction<PostItemType[]>) => {
             if (state.isLoading === 'pending') {
                 state.isLoading = 'idle';
                 state.list = action.payload;
             }
         },
-        postLike: (state: InitialStateType, action: PayloadAction<{ postId: Id, user: User }>) => { // TODO declare as type
+        postLike: (state: PostStateType, action: PayloadAction<{ postId: Id, user: User }>) => {
             const post = findPostById(state.list, action.payload.postId);
-            const {first, second} = addLikeDislike(post.likes, post.dislikes, action.payload.postId, action.payload.user);
-            post.likes = first;
-            post.dislikes = second;
+            const user = action.payload.user;
+            if (hasLikeDislike(post.likes, user)) { // has likes
+                post.likes = removeLikeDislike(post.likes, user);
+            } else {
+                const {first, second} = addLike2(post.likes, post.dislikes, action.payload.user);
+                post.likes = first;
+                post.dislikes = second;
+            }
         },
-        postDislike: (state: InitialStateType, action: PayloadAction<{ postId: Id, user: User }>) => { // TODO declare as type
+        postDislike: (state: PostStateType, action: PayloadAction<{ postId: Id, user: User }>) => {
             const post = findPostById(state.list, action.payload.postId);
-            const {first, second} = addLikeDislike(post.dislikes, post.likes, action.payload.postId, action.payload.user);
-            post.dislikes = first;
-            post.likes = second;
+            const user = action.payload.user;
+            if (hasLikeDislike(post.dislikes, user)) { // has dislikes
+                post.dislikes = removeLikeDislike(post.dislikes, user);
+            } else {
+                const {first, second} = addDislike2(post.likes, post.dislikes, action.payload.user);
+                post.likes = first;
+                post.dislikes = second;
+            }
         }
     },
 });
-
 
 const {postsLoad, postsDone} = postsSlice.actions;
 export const {postLike, postDislike} = postsSlice.actions;

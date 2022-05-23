@@ -21,7 +21,7 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
 
     const handleReply = useCallback(() => {
         onReply(id);
-    }, []);
+    }, [onReply, id]);
 
     const handleRemove = useCallback(() => {
         console.log('remove post', id);
@@ -47,12 +47,12 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
                 <UserInfo user={post.author}/>
                 <PostText text={post.text}/>
             </div>
-            <PostInfo post={post} onClick={likesClicked}>
+            <PostInfo post={post} onClick={likesClicked} user={user}>
                 {(isAuthenticated && !user.isBanned) ? <Button onClick={handleReply}>reply</Button> : ''}
-                {(isAuthenticated && !user.isBanned && user.id === post.author.id || user.isAdmin) ?
+                {((isAuthenticated && !user.isBanned && user.id === post.author.id) || user.isAdmin) ?
                     <Button onClick={handleRemove}>remove</Button> : ''
                 }
-                {(isAuthenticated && !user.isBanned && user.id === thread.author.id || user.isAdmin) ?
+                {((isAuthenticated && !user.isBanned && user.id === thread.author.id) || user.isAdmin) ?
                     <Button onClick={handleRemove}>edit</Button> : ''
                 }
             </PostInfo>

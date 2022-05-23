@@ -58,6 +58,12 @@ export type ThreadItemType = {
     lastMessage: LastMessage
 }
 
+export type PostStateType = {
+    list: Array<PostItemType>,
+    threadId: Id,
+    isLoading: LoadingType
+}
+
 export type PostItemType = {
     id: Id,
     author: User,
