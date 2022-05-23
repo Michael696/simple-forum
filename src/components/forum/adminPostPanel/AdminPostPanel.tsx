@@ -34,7 +34,6 @@ export default function AdminPostPanel({post}: { post: PostItemType }) {
                     onChange={handleBanChange}
                 />) : ''
             }
-            {JSON.stringify(post)}
         </div>
     )
 }

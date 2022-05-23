@@ -9,15 +9,15 @@ export default function ForumItem({id}: { id: Id }) {
     const forum: Forum = useSelector(state => forumWithId(state, id));
     return (
         <div className='forum__item'>
-            <div className='cell-variable flex-direction-vertical'>
+            <div className='cell-variable flex-direction-vertical pad05'>
                 <Link to={`/forum/${id}`} key={id}>
                     <div className='main-forum__name'>{forum.name}</div>
                 </Link>
                 <div className='main-forum__description'>{forum.description}</div>
             </div>
-            <div className='cell-constant flex-center-vertical'>themes:{forum.themeCount}</div>
-            <div className='cell-constant flex-center-vertical'>posts:{forum.postCount}</div>
-            <div className='cell-constant flex-direction-vertical flex-center-vertical'>
+            <div className='cell-constant flex-center-vertical pad05'>themes:{forum.themeCount}</div>
+            <div className='cell-constant flex-center-vertical pad05'>posts:{forum.postCount}</div>
+            <div className='cell-constant flex-direction-vertical flex-center-vertical pad05'>
                 <div>
                     {forum.lastMessage.dateTime}
                 </div>

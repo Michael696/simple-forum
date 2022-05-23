@@ -20,8 +20,8 @@ export default function Forums() {
 
     const forumList = forums.map(forum => <ForumItem key={forum.id} id={forum.id}/>);
 
-    return (<div className='forums'>
-        <strong>Forums</strong>
+    return (<div className='forums margin05'>
+        <div className='center bold'>Forums</div>
         {forumList}
     </div>);
 }

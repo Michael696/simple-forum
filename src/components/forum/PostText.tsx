@@ -32,8 +32,8 @@ const PostText = function ({text, editable, onSave, onCancel}:
                         />
                     </Form.Group>
                     <div>
-                        <Button variant='primary' onClick={handleSave}>save</Button>
-                        <Button variant='primary' onClick={handleCancel}>cancel</Button>
+                        <Button onClick={handleSave}>save</Button>
+                        <Button onClick={handleCancel}>cancel</Button>
                     </div>
                 </div>)
             }

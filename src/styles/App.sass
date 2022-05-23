@@ -1,6 +1,7 @@
 body
   font-size: small
 
+
 .App
   // FIXME this is workaround for footer
   margin-bottom: 3em
@@ -14,6 +15,9 @@ body
 
 .margin05
   margin: 0.5em
+
+.margin025
+  margin: 0.25em
 
 .error-message
   background-color: #ffa1ab
@@ -41,6 +45,9 @@ body
 a
   cursor: pointer
 
+.bold
+  font-weight: bold
+
 .center
   text-align: center
 
@@ -51,3 +58,11 @@ a
   border: 1px solid gray
   border-radius: 0.5em
   padding: 1em
+
+// bad for BEM (modifying existing style)
+.btn
+  font-size: small
+  padding: 0 0.25em
+  background-color: #86b7fe
+  color: black
+  @extend .margin025

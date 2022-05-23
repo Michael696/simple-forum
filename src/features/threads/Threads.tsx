@@ -41,7 +41,7 @@ export default function Threads() {
     });
 
     return (
-        <div className='threads'>
+        <div className='threads margin05'>
             <div>Forum id is {params.forumId}</div>
             {(isAuthenticated && !user.isBanned) ? <Button onClick={handleNewThread}>create thread</Button> : ''}
             {threadList.length ? threadList : `no threads in forum ${params.forumId}`}

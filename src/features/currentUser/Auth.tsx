@@ -43,6 +43,7 @@ export default function Auth() {
         }
     }, [authOk]);
 
+    // TODO fix 'request failed' message after form reload
     return (
         <div className='form-width-50'>
             <Form>
@@ -65,9 +66,7 @@ export default function Auth() {
                     />
                 </Form.Group>
                 {error}
-                <Button variant="primary" onClick={submitAuth}>
-                    Submit
-                </Button>
+                <Button onClick={submitAuth}> Login </Button>
             </Form>
         </div>
     );

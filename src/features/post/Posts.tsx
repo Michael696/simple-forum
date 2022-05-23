@@ -66,7 +66,7 @@ export default function Posts() {
         return (
             <>
                 <div>Thread {threadTitle.join(',')}</div>
-                <div className='post-list'>
+                <div className='post-list margin05'>
                     {isLoading === 'pending' ?
                         'loading posts...'
                         : (postList.length ? postList : `no posts in thread ${params.threadId}`)

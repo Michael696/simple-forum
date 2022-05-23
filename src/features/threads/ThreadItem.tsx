@@ -8,13 +8,13 @@ export default function ThreadItem({id}: { id?: Id }) {
 
     return (
         <div className='forum__item'>
-            <div className='cell-variable flex-direction-vertical'>
-                <div className='main-forum__name'>{thread.author.name}</div>
+            <div className='cell-variable flex-direction-vertical pad05'>
                 <div className='main-forum__description'>{thread.title}</div>
+                <div className='main-forum__name'>Author: {thread.author.name}</div>
             </div>
-            <div className='cell-constant flex-center-vertical'>posts:{thread.postCount}</div>
-            <div className='cell-constant flex-center-vertical'>views:{thread.viewCount}</div>
-            <div className='cell-constant flex-direction-vertical flex-center-vertical'>
+            <div className='cell-constant flex-center-vertical pad05'>posts:{thread.postCount}</div>
+            <div className='cell-constant flex-center-vertical pad05'>views:{thread.viewCount}</div>
+            <div className='cell-constant flex-direction-vertical flex-center-vertical pad05'>
                 <div>
                     {thread.lastMessage.dateTime}
                 </div>

@@ -46,7 +46,7 @@ export default function NewThreadForm() {
                     }}
                 />
             </Form.Group>
-            <Button variant='primary' onClick={handleCreate} {...buttonOptions}>Create</Button>
+            <Button onClick={handleCreate} {...buttonOptions}>Create</Button>
         </div>
     ) : <></>;
 }

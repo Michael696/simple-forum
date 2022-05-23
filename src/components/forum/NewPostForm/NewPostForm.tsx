@@ -47,7 +47,7 @@ const NewPostForm = function ({forumId, threadId, text}: { forumId: Id, threadId
                     }}
                 />
             </Form.Group>
-            <Button variant='primary' onClick={handleCreate}>create post</Button>
+            <Button onClick={handleCreate}>create post</Button>
         </>
     )
 };
