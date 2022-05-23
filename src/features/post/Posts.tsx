@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import {fetchPosts, postsIsLoading, postsList} from "./postsSlice";
-import {useSelector} from "react-redux";
 import {PostItemType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
@@ -13,7 +12,7 @@ import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHi
 
 export default function Posts() {
     const params = useParams();
-    const posts: Array<PostItemType> = useSelector(postsList);
+    const posts: Array<PostItemType> = useAppSelector(postsList);
     const isLoading = useAppSelector(postsIsLoading);
     const user: User = useAppSelector(currentUser);
     const dispatch = useAppDispatch();
@@ -23,9 +22,11 @@ export default function Posts() {
     useEffect(() => {
         dispatch(fetchThreads(params.forumId));
         dispatch(fetchPosts(params.threadId));
+        console.log('posts are ', posts);
     }, []);
 
     const handleReply = useCallback((id) => {
+        console.log('searching for post ', id, posts);
         const found = posts.find(p => p.id === id);
         if (found) {
             console.log('reply to', found);
@@ -36,7 +37,8 @@ export default function Posts() {
             console.log('reply text', text);
             setPostText(text);
         }
-    }, []);
+        window.scrollTo(0, document.body.scrollHeight); // scroll to bottom
+    }, [posts]);
 
     if (thread) {
         const postList = posts && posts.map(post => {
@@ -63,10 +65,10 @@ export default function Posts() {
                         : (postList.length ? postList : `no posts in thread ${params.threadId}`)
                     }
                 </div>
+                {(user.id === thread.author.id || user.isAdmin) ? <Button>remove thread</Button> : ''}
                 <StatusHintMessage>
                     <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>
                 </StatusHintMessage>
-                {(user.id === thread.author.id || user.isAdmin) ? <Button>remove thread</Button> : ''}
             </>
         );
     } else {

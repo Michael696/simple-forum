@@ -109,7 +109,7 @@ test('Posts: should show no buttons for non-authenticated user ', async () => {
     server.close();
 });
 
-test('Posts: current user regular - should show "reply", "edit", "remove"  for own posts', async () => {
+test('Posts: current user regular - should show "reply", "edit", "remove"  for own posts in any thread', async () => {
     const user: User = {
         id: 'u01',
         isAdmin: false,
@@ -120,6 +120,18 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  for o
         realName: "",
         registeredAt: ""
     };
+
+    const user2: User = {
+        id: 'u02',
+        isAdmin: false,
+        isBanned: false,
+        location: "",
+        name: "user02",
+        posts: 0,
+        realName: "",
+        registeredAt: ""
+    };
+
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
@@ -146,7 +158,7 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  for o
                 context.json([{
                         id: 't01',
                         forumId: 'f01',
-                        author: user,
+                    author: user2,
                         title: 'forum id1 thread title 1',
                         postCount: 10,
                         viewCount: 123,
@@ -164,17 +176,7 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  for o
     server.use(
         rest.post('http://127.0.0.1:1337/api/current-user', ((req, res, context) => {
             return res(
-                context.json({
-                        id: 'u01',
-                        name: 'user01',
-                        realName: '',
-                        registeredAt: '',
-                        eMail: '',
-                        posts: 0,
-                        location: '',
-                        isBanned: false
-                    }
-                )
+                context.json(user)
             );
         }))
     );
@@ -207,9 +209,114 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  for o
     expect(await screen.findByText(/^remove$/)).toBeInTheDocument();
     expect(await screen.findByText(/^edit$/)).toBeInTheDocument();
     expect(await screen.findByText(/^create post$/)).toBeInTheDocument();
-    expect(await screen.findByText(/^remove thread$/)).toBeInTheDocument();
+    expect(await screen.queryByText(/^remove thread$/)).not.toBeInTheDocument();
     server.close();
 });
+
+test('Posts: current user regular - should show "reply", "edit", "remove"  "remove thread" for own thread', async () => {
+    const user: User = {
+        id: 'u01',
+        isAdmin: false,
+        isBanned: false,
+        location: "",
+        name: "user01",
+        posts: 0,
+        realName: "",
+        registeredAt: ""
+    };
+
+    const user2: User = {
+        id: 'u02',
+        isAdmin: false,
+        isBanned: false,
+        location: "",
+        name: "user02",
+        posts: 0,
+        realName: "",
+        registeredAt: ""
+    };
+
+    const server = setupServer(
+        rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
+            return res(
+                ctx.json([{
+                        id: 'p01',
+                        threadId: 't01',
+                        forumId: 'f01',
+                        author: user,
+                        title: 'post 1 title',
+                        text: 'post 1 long text',
+                        likes: [],
+                        dislikes: [],
+                        postedAt: '2022-04-05T13:19:13',
+                        editedAt: '2022-04-05T13:19:15',
+                    }]
+                ),
+            )
+        }),
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/threads', ((req, res, context) => {
+            return res(
+                context.json([{
+                        id: 't01',
+                        forumId: 'f01',
+                        author: user2,
+                        title: 'forum id1 thread title 1',
+                        postCount: 10,
+                        viewCount: 123,
+                        likes: [],
+                        dislikes: [],
+                        lastMessage: {
+                            dateTime: '2022-03-03T16:18:20', user
+                        },
+                    }]
+                )
+            );
+        }))
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/current-user', ((req, res, context) => {
+            return res(
+                context.json(user)
+            );
+        }))
+    );
+
+    server.listen();
+
+    const store = configureStore({
+        reducer: {
+            threads: threadsReducer,
+            posts: postsReducer,
+            currentUser: currentUserReducer,
+        },
+    });
+
+    await checkAuth()(store.dispatch);
+
+    act(() => {
+        render(
+            <Provider store={store}>
+                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01`]}>
+                    <Routes>
+                        <Route path={`${url.FORUM}/:forumId/thread/:threadId`} element={<Posts/>}/>
+                    </Routes>
+                </MemoryRouter>
+            </Provider>
+        );
+    });
+
+    expect(await screen.findByText(/^reply$/)).toBeInTheDocument();
+    expect(await screen.findByText(/^remove$/)).toBeInTheDocument();
+    expect(await screen.findByText(/^edit$/)).toBeInTheDocument();
+    expect(await screen.findByText(/^create post$/)).toBeInTheDocument();
+    expect(await screen.queryByText(/^remove thread$/)).not.toBeInTheDocument();
+    server.close();
+});
+
 
 test('Posts: current user regular - should show "reply" for other posts', async () => {
     const user: User = {

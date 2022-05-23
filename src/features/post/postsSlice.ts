@@ -88,17 +88,32 @@ export const postsSlice = createSlice({
                 post.likes = first;
                 post.dislikes = second;
             }
+        },
+        postText: (state: PostStateType, action: PayloadAction<{ postId: Id, text: string }>) => {
+            const post = findPostById(state.list, action.payload.postId);
+            if (post) {
+                post.text = action.payload.text;
+            }
         }
     },
 });
 
-const {postsLoad, postsDone} = postsSlice.actions;
+const {postsLoad, postsDone, postText} = postsSlice.actions;
 export const {postLike, postDislike} = postsSlice.actions;
 
 export const fetchPosts = (threadId) => async (dispatch: AppDispatch) => {
     dispatch(postsLoad());
     const posts = await userApi.fetchPosts(threadId); // id  threadId
     dispatch(postsDone(posts));
+};
+
+export const setPostText = (postId, text) => async (dispatch: AppDispatch) => {
+    const result = await userApi.setPostText({text, postId});
+    if (!result.error) { // TODO is that ok ? (false positives possible)
+        dispatch(postText({postId, text}));
+    } else {
+        console.log(`cannot set post ${postId} text: server error`);
+    }
 };
 
 export default postsSlice.reducer;

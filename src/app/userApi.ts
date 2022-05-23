@@ -111,5 +111,14 @@ export const userApi = {
             return false;
         }
     },
+    setPostText: async ({text, postId}: { text: string, postId: Id }) => {
+        try {
+            const response = await httpApi.post('/set-post-text', {text, id: postId});
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
 
 };
