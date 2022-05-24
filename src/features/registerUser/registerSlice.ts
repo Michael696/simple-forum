@@ -1,6 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
-import {CaseReducer} from "@reduxjs/toolkit/dist/createReducer";
 import {AppDispatch, RootState} from "../../app/store";
 import {userApi} from "../../app/userApi";
 
@@ -46,7 +45,7 @@ export const registerSlice = createSlice({
                 state.state = 'done';
             }
         },
-        registerError: (state:RegisterRequest, action) => {
+        registerError: (state: RegisterRequest, action: PayloadAction<string>) => {
             console.log('registerError action', action);
             if (state.state === 'pending') {
                 state.state = 'error';
@@ -67,18 +66,14 @@ export const registerErrorMessage = (state: RootState) => state.register.error;
 export const register = (params: RegisterParams) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const register = getState().register;
     if (register.state === 'idle') {
-// @ts-ignore
-        dispatch(registerStart()); // TODO fix
+        dispatch(registerStart(params));
         const result = await userApi.register(params);
         console.log('register result:', result);
         if (result) {
-// @ts-ignore
-            dispatch(registerDone()); // TODO fix
+            dispatch(registerDone());
         } else {
-// @ts-ignore
-            dispatch(registerError()); // TODO fix
+            dispatch(registerError('register error'));
         }
-
     }
 };
 

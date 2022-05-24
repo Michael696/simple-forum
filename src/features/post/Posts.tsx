@@ -18,7 +18,7 @@ export default function Posts() {
     const user: User = useAppSelector(currentUser);
     const dispatch = useAppDispatch();
     const [postText, setPostText] = useState('');
-    const thread = useAppSelector(state => threadWithId(state, params.threadId)); // TODO component fails to reload, fetch threads first ?
+    const thread = useAppSelector(state => threadWithId(state, params.threadId));
     const navigate = useNavigate();
 
     useEffect(() => {

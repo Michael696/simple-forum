@@ -4,7 +4,7 @@ import {userApi} from "../../app/userApi";
 import {AppDispatch} from "../../app/store";
 import {LoadingType} from '../../app/types';
 
-type OnlineUsersArray = Array<object>; // TODO specify object format
+type OnlineUsersArray = Array<string>;
 
 type OnlineUsersList = {
     loading: LoadingType
