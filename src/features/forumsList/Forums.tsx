@@ -21,7 +21,7 @@ export default function Forums() {
     const forumList = forums.map(forum => <ForumItem key={forum.id} id={forum.id}/>);
 
     forumList.unshift(
-        <div className='forum__header'>
+        <div className='forum__header' key='title'>
             <div className='cell-variable flex-direction-vertical center pad05'>
                 Forums
             </div>

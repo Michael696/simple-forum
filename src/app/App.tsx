@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Route, Routes, useNavigate} from 'react-router-dom';
+import {Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../styles/App.sass';
 import Header from '../components/main/Header/Header';
@@ -20,20 +20,27 @@ import NewThreadForm from "../components/forum/NewThreadForm/NewThreadForm";
 const PrivateRoute = ({children}) => {
     const isAuthenticated = useAppSelector(isUserAuthenticated);
     const navigate = useNavigate();
-    if (isAuthenticated) {
-        console.log('PrivateRoute auth OK');
-        return children;
-    }
-    console.log('PrivateRoute auth ERROR');
-    navigate(url.SIGN_IN); // TODO make redirect
-    return '';
+    let component = null;
+    useEffect(() => {
+        if (isAuthenticated) {
+            console.log('PrivateRoute auth OK');
+            component = children;
+        } else {
+            console.log('PrivateRoute auth ERROR');
+            navigate(url.SIGN_IN); // TODO avoid 'request failed' message while redirecting from PrivateRoute to Sign-in
+        }
+    }, [isAuthenticated, children]);
+    return component;
 };
 
 function App() {
     const dispatch = useAppDispatch();
+    const location = useLocation();
 
     useEffect(() => {
-        dispatch(checkAuth());
+        if (location.pathname !== url.SIGN_IN) {
+            dispatch(checkAuth());
+        }
     }, []);
 
     return (

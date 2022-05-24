@@ -39,7 +39,7 @@ export default function Auth() {
     useEffect(() => {
         if (authOk) {
             dispatch(fetchUsers());
-            navigate(url.FORUM);
+            navigate(url.FORUM, {replace: true});
         }
     }, [authOk]);
 

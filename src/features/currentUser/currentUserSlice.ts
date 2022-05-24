@@ -47,6 +47,8 @@ export const currentUserSlice = createSlice({
                 Object.keys(initialState).forEach(key => {
                     state[key] = initialState[key];
                 });
+            } else {
+                console.log('auth IS PENDING');
             }
         },
     },
