@@ -25,9 +25,10 @@ export default function Forums() {
             <div className='cell-variable flex-direction-vertical center pad05'>
                 Forums
             </div>
-            <div className='cell-constant flex-center-vertical center pad05'>Themes</div>
-            <div className='cell-constant flex-center-vertical center pad05'>Posts</div>
-            <div className='cell-constant flex-direction-vertical center flex-center-vertical pad05'> Last message</div>
+            <div className='cell-constant flex-center-horizontal center pad05'>Themes</div>
+            <div className='cell-constant flex-center-horizontal center pad05'>Posts</div>
+            <div className='cell-constant flex-direction-vertical center flex-center-horizontal pad05'> Last message
+            </div>
         </div>
     );
 

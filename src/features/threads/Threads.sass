@@ -1,2 +1,17 @@
+@import "../../styles/vars.sass"
+
 .threads
-  border: 1px solid gray
+//border: 1px solid gray
+
+.thread__item
+  display: grid
+  grid-template-columns: auto 6em 6em 6em 10em
+
+  a
+    &:hover
+      background-color: $header-color
+
+.threads__header
+  @extend .thread__item
+  font-weight: bold
+  background-color: $header-color

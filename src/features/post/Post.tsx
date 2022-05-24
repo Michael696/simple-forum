@@ -70,10 +70,11 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
                     />
                 </div>
                 <PostInfo post={post} onClick={likesClicked} user={user}>
-                    {(isAuthenticated && !user.isBanned) ? <Button onClick={handleReply}>reply</Button> : ''}
+                    {(isAuthenticated && !user.isBanned) ?
+                        <Button onClick={handleReply} {...(editable ? {disabled: true} : '')}>reply</Button> : ''}
                     {(isAuthenticated && (!user.isBanned && user.id === post.author.id) || user.isAdmin) ?
                         (<>
-                            <Button onClick={handleRemove}>remove</Button>
+                            <Button onClick={handleRemove} {...(editable ? {disabled: true} : '')}>remove</Button>
                             <Button onClick={handleEdit} {...(editable ? {disabled: true} : '')}>edit</Button>
                         </>)
                         : ''

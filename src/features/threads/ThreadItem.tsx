@@ -2,19 +2,20 @@ import React from 'react';
 import {threadWithId} from "./threadsSlice";
 import {useSelector} from "react-redux";
 import {Id, ThreadItemType} from "../../app/types";
+import './Threads.sass';
 
 export default function ThreadItem({id}: { id?: Id }) {
     const thread: ThreadItemType = useSelector(state => threadWithId(state, id));
 
     return (
-        <div className='forum__item'>
+        <div className='thread__item'>
             <div className='cell-variable flex-direction-vertical pad05'>
-                <div className='main-forum__description'>{thread.title}</div>
-                <div className='main-forum__name'>Author: {thread.author.name}</div>
+                <div className='bold'>{thread.title}</div>
             </div>
-            <div className='cell-constant flex-center-vertical pad05'>posts:{thread.postCount}</div>
-            <div className='cell-constant flex-center-vertical pad05'>views:{thread.viewCount}</div>
-            <div className='cell-constant flex-direction-vertical flex-center-vertical pad05'>
+            <div className='cell-constant flex-center-horizontal pad05'>{thread.author.name}</div>
+            <div className='cell-constant flex-center-horizontal pad05'>{thread.postCount}</div>
+            <div className='cell-constant flex-center-horizontal pad05'>{thread.viewCount}</div>
+            <div className='cell-constant flex-direction-vertical flex-center-horizontal pad05'>
                 <div>
                     {thread.lastMessage.dateTime}
                 </div>
