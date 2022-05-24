@@ -30,10 +30,10 @@ body
   flex-direction: column
 
 .cell-constant
-  border: 1px solid gray
+  border: 1px solid $border-color
 
 .cell-variable
-  border: 1px solid gray
+  border: 1px solid $border-color
   width: 100%
 
 .link-as-text
@@ -52,11 +52,14 @@ a
 .center
   text-align: center
 
+.round025
+  border-radius: 0.25em
+
 .form-width-50
   max-width: 50%
   margin-left: auto
   margin-right: auto
-  border: 1px solid gray
+  border: 1px solid $border-color
   border-radius: 0.5em
   padding: 1em
 
@@ -68,5 +71,17 @@ a
   color: black
   @extend .margin025
 
+.form-check
+  margin-bottom: unset
+
 .btn:disabled
   opacity: 0.3
+
+.border-1-gray-top
+  border-top: 1px solid $border-color
+
+.border-1-gray-right
+  border-right: 1px solid $border-color
+
+.border-1-gray-left
+  border-left: 1px solid $border-color

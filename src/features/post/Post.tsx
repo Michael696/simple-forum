@@ -61,26 +61,40 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
         return (
             <>
                 <div className='post'>
-                    <UserInfo user={post.author}/>
-                    <PostText
-                        text={post.text}
-                        editable={editable}
-                        onSave={editSave}
-                        onCancel={editCancel}
-                    />
+                    <div className='post__body'>
+                        <div className='post__body_header'>
+                            <div
+                                className='center border-1-gray-right border-1-gray-left border-1-gray-top bold'>Author
+                            </div>
+                            <div className='center border-1-gray-top border-1-gray-right bold'>Message</div>
+                        </div>
+                        <div className='post__body_data'>
+                            <UserInfo user={post.author}/>
+                            <PostText
+                                text={post.text}
+                                editable={editable}
+                                onSave={editSave}
+                                onCancel={editCancel}
+                            />
+                        </div>
+                    </div>
+                    <div className='post__info'>
+                        <PostInfo post={post} onClick={likesClicked} user={user}>
+                            {(isAuthenticated && !user.isBanned) ?
+                                <Button
+                                    onClick={handleReply} {...(editable ? {disabled: true} : '')}>reply</Button> : ''}
+                            {(isAuthenticated && (!user.isBanned && user.id === post.author.id) || user.isAdmin) ?
+                                (<>
+                                    <Button
+                                        onClick={handleRemove} {...(editable ? {disabled: true} : '')}>remove</Button>
+                                    <Button onClick={handleEdit} {...(editable ? {disabled: true} : '')}>edit</Button>
+                                </>)
+                                : ''
+                            }
+                        </PostInfo>
+                        {user.isAdmin ? <AdminPostPanel post={post}/> : ''}
+                    </div>
                 </div>
-                <PostInfo post={post} onClick={likesClicked} user={user}>
-                    {(isAuthenticated && !user.isBanned) ?
-                        <Button onClick={handleReply} {...(editable ? {disabled: true} : '')}>reply</Button> : ''}
-                    {(isAuthenticated && (!user.isBanned && user.id === post.author.id) || user.isAdmin) ?
-                        (<>
-                            <Button onClick={handleRemove} {...(editable ? {disabled: true} : '')}>remove</Button>
-                            <Button onClick={handleEdit} {...(editable ? {disabled: true} : '')}>edit</Button>
-                        </>)
-                        : ''
-                    }
-                </PostInfo>
-                {user.isAdmin ? <AdminPostPanel post={post}/> : ''}
             </>
         );
     }

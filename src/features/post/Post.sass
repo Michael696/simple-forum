@@ -1,12 +1,50 @@
+@import "../../styles/vars"
+
 .post
   display: flex
-  border: 1px solid gray
+  flex-direction: column
+
+.post__body
+  display: grid
+  grid-template-rows: auto auto
+
+.post__body_header
+  display: grid
+  grid-template-columns: 13em auto
+  background-color: $header-color
+
+.post__body_data
+  display: grid
+  grid-template-columns: 13em auto
 
 .post__text
   display: flex
   justify-content: left
-  border: 1px solid gray
+  border-top: 1px solid $border-color
+  border-right: 1px solid $border-color
   width: 100%
 
+.post__controls
+  display: grid
+  grid-template-columns: 50% 50%
+
 .post__info
-  text-align: center
+// some styles here
+
+.post__info_align-left
+  display: flex
+  align-items: center
+  justify-content: flex-start
+  margin-left: 1em
+
+.post__info_align-right
+  display: flex
+  align-items: center
+  justify-content: flex-end
+  margin-right: 1em
+
+.post__admin-panel
+  border-top: 1px solid $border-color
+  border-right: 1px solid $border-color
+  border-left: 1px solid $border-color
+  background-color: #f5c2c7

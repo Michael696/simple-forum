@@ -5,12 +5,12 @@ import './UserInfo.sass';
 const UserInfo = function ({user}: { user: User }) {
     return (
         <div className='user-info pad05'>
-            <div>{user.name}</div>
-            <div>{user.isAdmin ? 'admin' : 'regular'}</div>
+            <div className='bold center'>{user.name}</div>
+            <div className='center'>{user.isAdmin ? 'admin' : 'regular'}</div>
             {user.isBanned && <div>banned</div>}
-            <div>{`messages:${user.posts}`}</div>
-            <div>{`registered:${user.registeredAt}`}</div>
-            <div>{`location:${user.location}`}</div>
+            <div><span className='bold'>messages: </span>{user.posts}</div>
+            <div><span className='bold'>registered: </span>{user.registeredAt}</div>
+            <div><span className='bold'>location: </span>{user.location}</div>
         </div>
     );
 };

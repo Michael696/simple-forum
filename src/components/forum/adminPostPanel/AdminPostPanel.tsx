@@ -24,7 +24,7 @@ export default function AdminPostPanel({post}: { post: PostItemType }) {
     };
 
     return (
-        <div>
+        <div className='post__admin-panel'>
             {post.author.id !== user.id ?
                 (<Form.Check
                     type="switch"
