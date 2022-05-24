@@ -48,24 +48,36 @@ export default function Posts() {
     }, [params.threadId, params.forumId]);
 
     if (thread) {
+
+        const threadTitle = [`'${thread.title}', author '${thread.author.name}'`];
+        if (thread.author.id === user.id) {
+            threadTitle.push('hey, it\'s You !');
+        }
+        /*
+                if (thread.author.isAdmin) {
+                    threadTitle.push('admin');
+                }
+        */
+        if (thread.author.isBanned) {
+            threadTitle.push('banned');
+        }
+
         const postList = posts && posts.map(post => {
             return <Post key={post.id} id={post.id} thread={thread} onReply={handleReply}/>
         });
 
-        const threadTitle = [`'${thread.title}', author '${thread.author.name}'`];
-        if (thread.author.id === user.id) {
-            threadTitle.push('it\'s You');
-        }
-        if (thread.author.isAdmin) {
-            threadTitle.push('admin');
-        }
-        if (thread.author.isBanned) {
-            threadTitle.push('banned');
-        }
+        postList.unshift(
+            <div
+                className='forum-title border-1-gray-right border-1-gray-top border-1-gray-left bold border-top-round025'>
+                Thread {threadTitle.join(', ')}
+            </div>
+        );
+
 // TODO add pagination
         return (
             <>
-                <div>Thread {threadTitle.join(',')}</div>
+
+
                 <div className='post-list margin05'>
                     {isLoading === 'pending' ?
                         'loading posts...'

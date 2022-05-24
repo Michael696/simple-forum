@@ -1,13 +1,14 @@
 import React, {useEffect} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import {addThreadViewCount, fetchThreads, threadsList} from "./threadsSlice";
-import {ThreadItemType, User} from "../../app/types";
+import {ForumItemType, ThreadItemType, User} from "../../app/types";
 import {AppDispatch} from "../../app/store";
 import ThreadItem from "./ThreadItem";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
 import {url} from "../../app/urls";
 import Button from "react-bootstrap/cjs/Button";
+import {forumWithId} from "../forumsList/forumsSlice";
 
 function CreateThreadButton({isAuthenticated, isBanned, onClick}: { isAuthenticated: boolean, isBanned: boolean, onClick: (e: any) => void }) {
     return <>{(isAuthenticated && !isBanned) ? <Button onClick={onClick}>create thread</Button> : null}</>
@@ -20,6 +21,7 @@ export default function Threads() {
     const dispatch: AppDispatch = useAppDispatch();
     const isAuthenticated = useAppSelector(isUserAuthenticated);
     const user: User = useAppSelector(currentUser);
+    const forum: ForumItemType = useAppSelector(state => forumWithId(state, params.forumId));
 
     useEffect(() => {
         dispatch(fetchThreads(params.forumId));
@@ -63,8 +65,9 @@ export default function Threads() {
 
     return (
         <div className='threads margin05'>
-            <div>Forum id is {params.forumId}</div>
-            <CreateThreadButton isAuthenticated={isAuthenticated} isBanned={user.isBanned} onClick={handleNewThread}/>
+            {forum && <div
+                className='forum-title border-1-gray-right border-1-gray-top border-1-gray-left bold border-top-round025'>Forum {forum.name}</div>}
+            {/*<CreateThreadButton isAuthenticated={isAuthenticated} isBanned={user.isBanned} onClick={handleNewThread}/>*/}
             {threadList.length ? threadList : <div>no threads in forum {params.forumId}</div>}
             <CreateThreadButton isAuthenticated={isAuthenticated} isBanned={user.isBanned} onClick={handleNewThread}/>
         </div>

@@ -1,5 +1,8 @@
 @import "../../styles/vars"
 
+.post-list
+  border-bottom: 1px solid $border-color
+
 .post
   display: flex
   flex-direction: column
@@ -35,16 +38,22 @@
   display: flex
   align-items: center
   justify-content: flex-start
-  margin-left: 1em
 
 .post__info_align-right
   display: flex
   align-items: center
   justify-content: flex-end
-  margin-right: 1em
 
 .post__admin-panel
   border-top: 1px solid $border-color
   border-right: 1px solid $border-color
   border-left: 1px solid $border-color
   background-color: #ffe4e0
+  padding-left: 1em
+
+  input[type="checkbox"]
+    cursor: pointer
+
+
+.new-post-form
+  border: 1px solid $border-color

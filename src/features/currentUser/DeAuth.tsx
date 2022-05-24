@@ -3,6 +3,7 @@ import {useDispatch} from 'react-redux';
 import {deAuthenticate} from './currentUserSlice';
 import {AppDispatch} from "../../app/store";
 import {fetchUsers} from "../onlineUsers/onlineUsersSlice";
+import './CurrentUser.sass'
 
 export default function DeAuth() {
     const dispatch: AppDispatch = useDispatch();
@@ -13,8 +14,8 @@ export default function DeAuth() {
     }, []);
 
     return (
-        <div>
+        <h6 className='sign-out-message'>
             You have signed out !
-        </div>
+        </h6>
     );
 }

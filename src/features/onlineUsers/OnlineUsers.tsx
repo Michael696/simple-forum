@@ -1,10 +1,9 @@
 import React, {useEffect} from 'react';
 import {fetchUsers, onlineUsers, onlineUsersLoading} from './onlineUsersSlice';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import './OnlineUsers.sass';
 
 export default function OnlineUsers() {
-    // const isLoading = useSelector(onlineUsersLoading);
-    // const users = useSelector(onlineUsers);
     const users = {
         online: useAppSelector(onlineUsers),
         state: useAppSelector(onlineUsersLoading)
@@ -15,7 +14,10 @@ export default function OnlineUsers() {
         dispatch(fetchUsers());
     }, []);
 
-    return (<div className='online-users'>
-        Users online: {users.online.length} ({JSON.stringify(users)})
-    </div>);
+    return (
+        <div className='online-users margin1-top pad05'>
+            <div>Total users online: {users.online.length}</div>
+            <div>Users: {users.online.join(', ')}</div>
+        </div>
+    );
 }

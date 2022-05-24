@@ -4,6 +4,7 @@ import {fetchForums, forumsList} from './forumsSlice';
 import ForumItem from './ForumItem';
 import {AppDispatch} from "../../app/store";
 import './Forums.sass';
+import OnlineUsers from "../onlineUsers/OnlineUsers";
 
 export default function Forums() {
     const forums = useSelector(forumsList);
@@ -32,7 +33,10 @@ export default function Forums() {
         </div>
     );
 
-    return (<div className='forums margin05'>
-        {forumList}
-    </div>);
+    return (
+        <div className='forums margin05'>
+            {forumList}
+            <OnlineUsers/>
+        </div>
+    );
 }

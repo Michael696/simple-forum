@@ -14,8 +14,10 @@ import Auth from '../features/currentUser/Auth';
 import DeAuth from "../features/currentUser/DeAuth";
 import {url} from "./urls";
 import {useAppDispatch, useAppSelector} from "./hooks";
-import {checkAuth, isUserAuthenticated} from "../features/currentUser/currentUserSlice";
+import {checkAuth, currentUser, isUserAuthenticated} from "../features/currentUser/currentUserSlice";
 import NewThreadForm from "../components/forum/NewThreadForm/NewThreadForm";
+import CurrentTime from "../components/main/CurrentTime/CurrentTime";
+import CurrentUser from "../features/currentUser/CurrentUser";
 
 const PrivateRoute = ({children}) => {
     const isAuthenticated = useAppSelector(isUserAuthenticated);
@@ -36,6 +38,7 @@ const PrivateRoute = ({children}) => {
 function App() {
     const dispatch = useAppDispatch();
     const location = useLocation();
+    const user = useAppSelector(currentUser);
 
     useEffect(() => {
         if (location.pathname !== url.SIGN_IN) {
@@ -47,6 +50,8 @@ function App() {
         <div className="App">
             <Header/>
             <Navigation/>
+            <CurrentTime/>
+            <CurrentUser user={user}/>
             <Routes>
                 <Route path='/faq' element={<Faq/>}/>
                 <Route path={url.REGISTER} element={<Register/>}/>

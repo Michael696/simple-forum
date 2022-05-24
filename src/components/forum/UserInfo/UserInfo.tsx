@@ -7,7 +7,7 @@ const UserInfo = function ({user}: { user: User }) {
         <div className='user-info pad05'>
             <div className='bold center'>{user.name}</div>
             <div className='center'>{user.isAdmin ? 'admin' : 'regular'}</div>
-            {user.isBanned && <div>banned</div>}
+            {user.isBanned && <div className='center'>banned</div>}
             <div><span className='bold'>messages: </span>{user.posts}</div>
             <div><span className='bold'>registered: </span>{user.registeredAt}</div>
             <div><span className='bold'>location: </span>{user.location}</div>

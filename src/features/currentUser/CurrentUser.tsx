@@ -1,12 +1,19 @@
 import React from 'react';
+import {User} from "../../app/types";
+import './CurrentUser.sass';
 
-export default function CurrentUser({name, isAdmin, isBanned}: { name: string, isAdmin: boolean, isBanned: boolean }) {
-    let msg = `You are logged in as: ${name}`;
-    if (isAdmin) {
-        msg += ` (admin)`;
+export default function CurrentUser({user}: { user: User }) {
+    let msg = '';
+    if (user.name) {
+        msg = `You are logged in as: ${user.name}`;
+        if (user.isAdmin) {
+            msg += ` (admin)`;
+        }
+        if (user.isBanned) {
+            msg += ` (banned)`;
+        }
+    } else {
+        msg = 'You are a guest now';
     }
-    if (isBanned) {
-        msg += ` (banned)`;
-    }
-    return (<div className='current-user'>{msg}</div>);
+    return (<div className='current-user margin1-right'>{msg}</div>);
 }

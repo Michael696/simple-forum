@@ -8,6 +8,7 @@ import {currentUser} from "../../../features/currentUser/currentUserSlice";
 import {useNavigate} from "react-router-dom";
 import {url} from "../../../app/urls";
 import {fetchPosts} from "../../../features/post/postsSlice";
+import '../../../features/post/Post.sass';
 
 const NewPostForm = function ({forumId, threadId, text}: { forumId: Id, threadId: Id, text: string }) {
     const [postText, setPostText] = useState(text);
@@ -34,9 +35,9 @@ const NewPostForm = function ({forumId, threadId, text}: { forumId: Id, threadId
     }, [text]);
 
     return (
-        <div className='margin05'>
+        <div className='new-post-form margin05 pad05'>
             <Form.Group className="mb-3" controlId="formPostName">
-                <Form.Label>post text</Form.Label>
+                <Form.Label className='bold'>New post text</Form.Label>
                 <Form.Control
                     as="textarea"
                     placeholder=""

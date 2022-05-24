@@ -8,13 +8,13 @@ export default function PostInfo({children, post, user, onClick}: { children?, p
     const ClickableCount = clickable(ShowCount, onClick);
     const alreadyLiked = post.likes.some(u => u.id === user.id);
     const alreadyDisliked = post.dislikes.some(u => u.id === user.id);
-    const likesClassName = (onClick ? (alreadyLiked ? 'counter_clicked ' : 'counter_enabled ') : '') + 'pad05 margin05 round025';
-    const dislikesClassName = (onClick ? (alreadyDisliked ? 'counter_clicked ' : 'counter_enabled ') : '') + 'pad05 margin05 round025';
+    const likesClassName = (onClick ? (alreadyLiked ? 'counter_clicked ' : 'counter_enabled ') : '') + 'pad05 margin05 border-round025';
+    const dislikesClassName = (onClick ? (alreadyDisliked ? 'counter_clicked ' : 'counter_enabled ') : '') + 'pad05 margin05 border-round025';
     // TODO post likes/dislikes to backend
     return (
         <div className='post__controls border-1-gray-left border-1-gray-right border-1-gray-top'>
-            <span className='post__info_align-left'>{children}</span>
-            <span className='post__info_align-right'>
+            <span className='post__info_align-left margin1-left'>{children}</span>
+            <span className='post__info_align-right margin1-right'>
                 <ClickableCount label='likes' count={post.likes.length} className={likesClassName}/>
                 <ClickableCount label='dislikes' count={post.dislikes.length} className={dislikesClassName}/>
                 <span>{`postedAt:${post.postedAt}`}</span>

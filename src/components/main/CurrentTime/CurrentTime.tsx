@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import './CurrentTime.sass';
 
 export default function CurrentTime() {
     const getTimeString = () => {
@@ -16,7 +17,7 @@ export default function CurrentTime() {
         }
     }, []);
     return (
-        <div className=''>
+        <div className='current-time margin1-right'>
             Current time is: {time}
         </div>);
 }
