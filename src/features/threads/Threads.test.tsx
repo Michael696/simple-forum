@@ -12,29 +12,10 @@ import {setupServer} from "msw/node";
 import {rest} from 'msw';
 import Threads from "./Threads";
 import threadsReducer from "./threadsSlice";
+import forumsReducer from "../forumsList/forumsSlice";
 import currentUserReducer, {checkAuth} from "../currentUser/currentUserSlice";
 import {url} from "../../app/urls";
 import {User} from "../../app/types";
-
-test('Threads: no threads in forum', () => {
-    const store = configureStore({
-        reducer: {
-            threads: threadsReducer,
-            currentUser: currentUserReducer,
-        },
-    });
-
-    const {container, getByText} = render(
-        <Provider store={store}>
-            <MemoryRouter initialEntries={[`${url.FORUM}/01`]}>
-                <Routes>
-                    <Route path={`${url.FORUM}/:forumId`} element={<Threads/>}/>
-                </Routes>
-            </MemoryRouter>
-        </Provider>
-    );
-    expect(getByText(/no threads in forum 01/)).toBeInTheDocument();// forum__item
-});
 
 test('Threads: has threads in forum', async () => {
     const user: User = {
@@ -63,10 +44,32 @@ test('Threads: has threads in forum', async () => {
         }),
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/forums', (req, res, ctx) => {
+            return res(
+                ctx.json(
+                    [
+                        {
+                            id: 'f01',
+                            name: 'forum1',
+                            description: 'forum1 long description',
+                            themeCount: 10,
+                            postCount: 100,
+                            lastMessage: {
+                                dateTime: '2022-01-01T12:13:14', user
+                            }
+                        }
+                    ]
+                ),
+            )
+        }),
+    );
+
     server.listen();
 
     const store = configureStore({
         reducer: {
+            forums: forumsReducer,
             threads: threadsReducer,
             currentUser: currentUserReducer,
         },
@@ -85,8 +88,8 @@ test('Threads: has threads in forum', async () => {
     });
 
     expect(await screen.findByText(/forum id1 thread title 1/)).toBeInTheDocument();
-    expect(await screen.findByText(/posts:10/)).toBeInTheDocument();
-    expect(await screen.findByText(/views:123/)).toBeInTheDocument();
+    expect(await screen.findByText(/10/)).toBeInTheDocument();
+    expect(await screen.findByText(/123/)).toBeInTheDocument();
     expect(await screen.findByText(/2022-03-03T16:18:20/)).toBeInTheDocument();
     server.close();
 });
@@ -134,10 +137,32 @@ test('Threads: should show "create thread" button for authenticated and not bann
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/forums', (req, res, ctx) => {
+            return res(
+                ctx.json(
+                    [
+                        {
+                            id: 'f01',
+                            name: 'forum1',
+                            description: 'forum1 long description',
+                            themeCount: 10,
+                            postCount: 100,
+                            lastMessage: {
+                                dateTime: '2022-01-01T12:13:14', user
+                            }
+                        }
+                    ]
+                ),
+            )
+        }),
+    );
+
     server.listen();
 
     const store = configureStore({
         reducer: {
+            forums: forumsReducer,
             threads: threadsReducer,
             currentUser: currentUserReducer,
         },

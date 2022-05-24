@@ -67,8 +67,8 @@ export default function Posts() {
         });
 
         postList.unshift(
-            <div
-                className='forum-title border-1-gray-right border-1-gray-top border-1-gray-left bold border-top-round025'>
+            <div key='title'
+                 className='forum-title border-1-gray-right border-1-gray-top border-1-gray-left bold border-top-round025'>
                 Thread {threadTitle.join(', ')}
             </div>
         );

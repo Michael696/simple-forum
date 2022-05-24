@@ -48,7 +48,7 @@ export const fetchForums = () => async (dispatch: AppDispatch, getState: () => R
     const now = new Date();
     const lastFetch = new Date(forumsSlice.lastFetch);
     //@ts-ignore
-    if (!isValidDate(lastFetch) || forumsSlice.list.length === 0 || now - lastFetch > FETCH_PERIOD) {
+    if (!isValidDate(lastFetch) || forumsSlice.list.length === 0 || now - lastFetch > FETCH_PERIOD) { // TODO subtract dates nicer?
         console.log('fetch forums');
         dispatch(forumsLoad());
         const forums = await userApi.fetchForums();

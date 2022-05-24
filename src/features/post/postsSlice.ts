@@ -65,7 +65,7 @@ export const postsSlice = createSlice({
                 state.lastFetch = new Date().toISOString();
             }
         },
-        postsDone: (state: PostStateType, action: PayloadAction<PostItemType[]>) => {
+        postsDone: (state: PostStateType, action: PayloadAction<PostItemType[]>) => { // TODO feed threadId to this action ?
             if (state.isLoading === 'pending') {
                 state.isLoading = 'idle';
                 state.list = action.payload;
@@ -116,9 +116,9 @@ export const fetchPosts = (threadId) => async (dispatch: AppDispatch, getState: 
     const now = new Date();
     const lastFetch = new Date(postsSlice.lastFetch);
     //@ts-ignore
-    if (!isValidDate(lastFetch) || postsSlice.list.length === 0 || now - lastFetch > FETCH_PERIOD || threadId !== postsSlice.threadId) {
+    if (!isValidDate(lastFetch) || postsSlice.list.length === 0 || now - lastFetch > FETCH_PERIOD || threadId !== postsSlice.threadId) { // TODO subtract dates nicer?
         console.log('fetch posts', threadId);
-        dispatch(postsLoad());
+        dispatch(postsLoad(threadId));
         const posts = await userApi.fetchPosts(threadId); // id  threadId
         dispatch(postsDone(posts));
     } else {
