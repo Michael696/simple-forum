@@ -50,6 +50,7 @@ const {threadsLoad, threadsDone, threadRemove} = threadsSlice.actions;
 export const {viewed} = threadsSlice.actions;
 
 export const fetchThreads = (id) => async (dispatch: AppDispatch) => {
+    console.log('fetch threads', id);
     dispatch(threadsLoad(id));
     const threads = await userApi.fetchThreads(id);
     dispatch(threadsDone(threads));

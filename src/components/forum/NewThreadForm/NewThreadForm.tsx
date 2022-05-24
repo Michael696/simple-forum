@@ -3,7 +3,7 @@ import Button from "react-bootstrap/cjs/Button";
 import Form from "react-bootstrap/Form";
 import {useNavigate, useParams} from "react-router";
 import {fetchForums, forumWithId} from '../../../features/forumsList/forumsSlice';
-import {Forum} from "../../../app/types";
+import {ForumItemType} from "../../../app/types";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {AppDispatch} from "../../../app/store";
 import {userApi} from "../../../app/userApi";
@@ -15,7 +15,7 @@ export default function NewThreadForm() {
     const {forumId} = useParams();
     const navigate = useNavigate();
     const dispatch: AppDispatch = useAppDispatch();
-    const forum: Forum = useAppSelector(state => forumWithId(state, forumId));
+    const forum: ForumItemType = useAppSelector(state => forumWithId(state, forumId));
     const user = useAppSelector(currentUser);
 
     useEffect(() => {

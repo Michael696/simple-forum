@@ -1,105 +1,77 @@
-import React from "react";
-import {useLocation, useParams} from "react-router";
+import React, {useEffect} from "react";
+import {useLocation} from "react-router";
+import {LinkContainer} from 'react-router-bootstrap';
 import {Breadcrumb} from "react-bootstrap/cjs";
-import {useAppDispatch} from "../../../app/hooks";
-
-/*
-import {Breadcrumb} from "react-bootstrap/cjs";
-import {useAppSelector} from "../../../app/hooks";
-import {forumWithId} from "../../../features/forumsList/forumsSlice";
-import {threadWithId} from "../../../features/threads/threadsSlice";
-import React from "react";
-
-const breadcrumbItems: Array<JSX.Element> = [];
-
-const pathItems = location.pathname.split('/').filter(item => item);
-let forumName,threadName;
-
-for (let idx = 0; idx < pathItems.length; idx++) {
-    const proc = locationProc[pathItems[idx]];
-    const active = {active: idx === pathItems.length - 1};
-    if (proc) {
-        const name = proc(pathItems, idx);
-        idx++;
-        breadcrumbItems.push(<Breadcrumb.Item key={pathItems[idx]} {...active}>{name}</Breadcrumb.Item>);
-    } else {
-        breadcrumbItems.push(<Breadcrumb.Item key={pathItems[idx]} {...active}>{pathItems[idx]}</Breadcrumb.Item>);
-    }
-}
-
-
-const locationProc = {
-        'forum': (all, idx) => {
-            const findForum = useAppSelector(state => forumWithId(state, all[idx + 1]));
-            return findForum.name;
-        },
-        'thread': (all, idx) => {
-            const findThread = useAppSelector(state => threadWithId(state, all[idx + 1]));
-            return findThread.title;
-        },
-    }
-;
-*/
-
+import {useAppDispatch, useAppSelector} from "../../../app/hooks";
+import {fetchForums, forumWithId} from "../../../features/forumsList/forumsSlice";
+import {fetchThreads, threadWithId} from "../../../features/threads/threadsSlice";
+import {ForumItemType, ThreadItemType} from "../../../app/types";
+import './CustomBreadcrumb.sass';
+import {url} from '../../../app/urls';
 
 export default function CustomBreadcrumb() {
     const location = useLocation();
     const dispatch = useAppDispatch();
-    const params = useParams();
-    // const pathItems = location.pathname.split('/').filter(item => item);
-
-
+    let currForum: ForumItemType, currThread: ThreadItemType, currPage: string;
     let forumId, threadId;
     const pathItems = location.pathname.split('/').filter(item => item);
-    const breadcrumbItems = pathItems.map(it => {
-        return <Breadcrumb.Item key={it}>{it}</Breadcrumb.Item>
-    });
+    const breadcrumbItems: Array<{ name: string, href: string }> = [];
 
-    /*
-        console.log('pathItems', pathItems);
+    console.log('pathItems', pathItems);
 
+    // TODO need to reconstruct all breadcrumb subsystem !  but ok for now...
+
+    if (pathItems.length) {
         for (let idx = 0; idx < pathItems.length; idx++) {
-            if (pathItems[idx] === 'forum') { // TODO link with urls
+            if (pathItems[idx] === url.FORUM.substring(1)) { // strip first slash
                 forumId = pathItems[idx + 1];
                 idx++;
-            }
-            if (pathItems[idx] === 'thread') { // TODO link with urls
+            } else if (pathItems[idx] === url.THREAD.substring(1)) {
                 threadId = pathItems[idx + 1];
                 idx++;
+            } else {
+                breadcrumbItems.push({name: pathItems[idx], href: ''});
             }
         }
+    } else {
+        breadcrumbItems.push({name: 'Forums', href: ''});
+    }
 
+    currForum = useAppSelector(state => forumWithId(state, forumId));
+    currThread = useAppSelector(state => threadWithId(state, threadId));
 
-        let currForum, currThread;
-
-        useEffect(() => {
-            dispatch(fetchForums());
-            dispatch(fetchThreads(params.forumId));
-        }, []);
-
-        console.log('forumId', forumId);
-        console.log('threadId', threadId);
-
-        currForum = useAppSelector(state => forumWithId(state, forumId));
-        currThread = useAppSelector(state => threadWithId(state, threadId));
-        let breadcrumbItems: Array<JSX.Element> = [];
-
-        console.log('currForum', currForum);
-        console.log('currThread', currThread);
-
-        if (currForum && !currThread) {
-            breadcrumbItems.push(<Breadcrumb.Item key={currForum.name} active>{currForum.name}</Breadcrumb.Item>);
-        } else if (currForum && currThread) {
-            breadcrumbItems.push(<Breadcrumb.Item key={currForum.name}>{currForum.name}</Breadcrumb.Item>);
-            breadcrumbItems.push(<Breadcrumb.Item key={currThread.title} active>{currThread.title}</Breadcrumb.Item>);
-        } else {
-            breadcrumbItems.push(<Breadcrumb.Item key={pathItems[0]}>{pathItems[0]}</Breadcrumb.Item>);
+    useEffect(() => {
+        dispatch(fetchForums());
+        if (forumId) {
+            dispatch(fetchThreads(forumId));
         }
-    */
+    }, []);
+
+    // console.log('currForum', JSON.stringify(currForum));
+    // console.log('currThread', JSON.stringify(currThread));
+
+    if (currForum && currForum.name) {
+        breadcrumbItems.push({name: currForum.name, href: `${url.FORUM}/${forumId}`})
+    }
+    if (currThread && currThread.title) {
+        breadcrumbItems.push({name: currThread.title, href: `${url.FORUM}/${forumId}/${url.THREAD}/${threadId}`});
+    }
 
     return (
-        <Breadcrumb>
-            {breadcrumbItems}
-        </Breadcrumb>
+        <div className='main__breadcrumb pad05 bold'>
+            {
+                breadcrumbItems.map((it, index, all) => {
+                    if (index === all.length - 1) {
+                        return <Breadcrumb.Item as='div' key={it.name} active>{it.name}</Breadcrumb.Item>
+                    } else {
+                        return <Breadcrumb.Item as='div' href={it.href} key={it.name}>
+                            <LinkContainer to={it.href}>
+                                <span>{it.name}</span>
+                            </LinkContainer>
+                        </Breadcrumb.Item>
+                    }
+                })
+            }
+        </div>
     )
 }

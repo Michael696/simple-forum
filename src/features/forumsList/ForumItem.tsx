@@ -1,12 +1,12 @@
 import React from 'react';
 import {forumWithId} from "./forumsSlice";
 import {useSelector} from "react-redux";
-import {Forum, Id} from "../../app/types";
+import {ForumItemType, Id} from "../../app/types";
 import './Forums.sass';
 import {Link} from "react-router-dom";
 
 export default function ForumItem({id}: { id: Id }) {
-    const forum: Forum = useSelector(state => forumWithId(state, id));
+    const forum: ForumItemType = useSelector(state => forumWithId(state, id));
     return (
         <div className='forum__item'>
             <div className='cell-variable flex-direction-vertical pad05'>

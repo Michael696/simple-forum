@@ -47,6 +47,7 @@ export const forumWithId = (state, id: Id) => state.forums.list.find(forum => fo
 const {forumsLoad, forumsDone} = forumSlice.actions;
 
 export const fetchForums = () => async (dispatch: AppDispatch) => {
+    console.log('fetch forums');
     dispatch(forumsLoad());
     const forums = await userApi.fetchForums();
     dispatch(forumsDone(forums));

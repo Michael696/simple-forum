@@ -31,7 +31,7 @@ export type LastMessage = {
     user: User
 }
 
-export type Forum = {
+export type ForumItemType = {
     id: Id,
     name: string,
     description: string,
