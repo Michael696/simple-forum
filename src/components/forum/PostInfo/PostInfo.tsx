@@ -10,7 +10,7 @@ export default function PostInfo({children, post, user, onClick}: { children?, p
     const alreadyDisliked = post.dislikes.some(u => u.id === user.id);
     const likesClassName = (onClick ? (alreadyLiked ? 'counter_clicked ' : 'counter_enabled ') : '') + 'pad05 margin05 round025';
     const dislikesClassName = (onClick ? (alreadyDisliked ? 'counter_clicked ' : 'counter_enabled ') : '') + 'pad05 margin05 round025';
-    // TODO do some makeup
+    // TODO post likes/dislikes to backend
     return (
         <div className='post__controls border-1-gray-left border-1-gray-right border-1-gray-top'>
             <span className='post__info_align-left'>{children}</span>

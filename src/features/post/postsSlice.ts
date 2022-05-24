@@ -1,13 +1,16 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {AppDispatch} from "../../app/store";
+import {AppDispatch, RootState} from "../../app/store";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {userApi} from "../../app/userApi";
 import {Id, PostItemType, PostStateType, User} from "../../app/types";
 import {findUserById} from "../currentUser/currentUserSlice";
+import {isValid as isValidDate} from "date-fns";
+import {FETCH_PERIOD} from "../../app/settings";
 
 const initialState: PostStateType = {
     list: [],
     threadId: '',
+    lastFetch: '',
     isLoading: 'idle'
 };
 
@@ -59,6 +62,7 @@ export const postsSlice = createSlice({
                 state.isLoading = 'pending';
                 state.list = [];
                 state.threadId = action.payload;
+                state.lastFetch = new Date().toISOString();
             }
         },
         postsDone: (state: PostStateType, action: PayloadAction<PostItemType[]>) => {
@@ -107,10 +111,19 @@ export const postsSlice = createSlice({
 const {postsLoad, postsDone, postText, postRemove} = postsSlice.actions;
 export const {postLike, postDislike} = postsSlice.actions;
 
-export const fetchPosts = (threadId) => async (dispatch: AppDispatch) => {
-    dispatch(postsLoad());
-    const posts = await userApi.fetchPosts(threadId); // id  threadId
-    dispatch(postsDone(posts));
+export const fetchPosts = (threadId) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const postsSlice = getState().posts;
+    const now = new Date();
+    const lastFetch = new Date(postsSlice.lastFetch);
+    //@ts-ignore
+    if (!isValidDate(lastFetch) || postsSlice.list.length === 0 || now - lastFetch > FETCH_PERIOD || threadId !== postsSlice.threadId) {
+        console.log('fetch posts', threadId);
+        dispatch(postsLoad());
+        const posts = await userApi.fetchPosts(threadId); // id  threadId
+        dispatch(postsDone(posts));
+    } else {
+        console.log('fetch posts skipepd', threadId);
+    }
 };
 
 export const setPostText = (postId, text) => async (dispatch: AppDispatch) => {

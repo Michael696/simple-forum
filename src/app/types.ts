@@ -43,6 +43,7 @@ export type ForumItemType = {
 export type ThreadsStateType = {
     list: Array<ThreadItemType>,
     forumId: Id,
+    lastFetch: string,
     isLoading: LoadingType
 }
 
@@ -61,6 +62,7 @@ export type ThreadItemType = {
 export type PostStateType = {
     list: Array<PostItemType>,
     threadId: Id,
+    lastFetch: string,
     isLoading: LoadingType
 }
 

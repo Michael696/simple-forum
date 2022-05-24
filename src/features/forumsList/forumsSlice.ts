@@ -1,24 +1,20 @@
+import {isValid as isValidDate} from 'date-fns'
 import {createSlice} from '@reduxjs/toolkit';
-import {AppDispatch} from "../../app/store";
-import {Id, LastMessage, LoadingType} from "../../app/types";
+import {AppDispatch, RootState} from "../../app/store";
+import {ForumItemType, Id, LoadingType} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {userApi} from "../../app/userApi";
-
-type ForumItemType = {
-    name: string,
-    description: string,
-    themeCount: number,
-    postCount: number,
-    lastMessage: LastMessage
-};
+import {FETCH_PERIOD} from "../../app/settings";
 
 type InitialStateType = {
     list: Array<ForumItemType>,
+    lastFetch: string,
     isLoading: LoadingType
 }
 
 const initialState: InitialStateType = {
     list: [],
+    lastFetch: '',
     isLoading: 'idle'
 };
 
@@ -29,6 +25,7 @@ export const forumSlice = createSlice({
         forumsLoad: (state: InitialStateType) => {
             if (state.isLoading === 'idle') {
                 state.isLoading = 'pending';
+                state.lastFetch = new Date().toISOString();
             }
         },
         forumsDone: (state: InitialStateType, action: PayloadAction<ForumItemType[]>) => {
@@ -46,11 +43,19 @@ export const forumWithId = (state, id: Id) => state.forums.list.find(forum => fo
 
 const {forumsLoad, forumsDone} = forumSlice.actions;
 
-export const fetchForums = () => async (dispatch: AppDispatch) => {
-    console.log('fetch forums');
-    dispatch(forumsLoad());
-    const forums = await userApi.fetchForums();
-    dispatch(forumsDone(forums));
+export const fetchForums = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const forumsSlice = getState().forums;
+    const now = new Date();
+    const lastFetch = new Date(forumsSlice.lastFetch);
+    //@ts-ignore
+    if (!isValidDate(lastFetch) || forumsSlice.list.length === 0 || now - lastFetch > FETCH_PERIOD) {
+        console.log('fetch forums');
+        dispatch(forumsLoad());
+        const forums = await userApi.fetchForums();
+        dispatch(forumsDone(forums));
+    } else {
+        console.log('fetch forums skipped');
+    }
 };
 
 export default forumSlice.reducer;

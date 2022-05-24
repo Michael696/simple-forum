@@ -1,12 +1,15 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {AppDispatch} from "../../app/store";
+import {AppDispatch, RootState} from "../../app/store";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {userApi} from "../../app/userApi";
 import {Id, ThreadItemType, ThreadsStateType} from "../../app/types";
+import {isValid as isValidDate} from "date-fns";
+import {FETCH_PERIOD} from "../../app/settings";
 
 const initialState: ThreadsStateType = {
     list: [],
     forumId: '',
+    lastFetch: '',
     isLoading: 'idle'
 };
 
@@ -21,6 +24,7 @@ export const threadsSlice = createSlice({
                 state.isLoading = 'pending';
                 state.list = [];
                 state.forumId = action.payload;
+                state.lastFetch = new Date().toISOString();
             }
         },
         threadsDone: (state: ThreadsStateType, action: PayloadAction<ThreadItemType[]>) => {
@@ -49,11 +53,19 @@ export const threadWithId = (state, id: Id) => findThreadById(state.threads.list
 const {threadsLoad, threadsDone, threadRemove} = threadsSlice.actions;
 export const {viewed} = threadsSlice.actions;
 
-export const fetchThreads = (id) => async (dispatch: AppDispatch) => {
-    console.log('fetch threads', id);
-    dispatch(threadsLoad(id));
-    const threads = await userApi.fetchThreads(id);
-    dispatch(threadsDone(threads));
+export const fetchThreads = (forumId) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const threadsSlice = getState().threads;
+    const now = new Date();
+    const lastFetch = new Date(threadsSlice.lastFetch);
+    //@ts-ignore
+    if (!isValidDate(lastFetch) || threadsSlice.list.length === 0 || now - lastFetch > FETCH_PERIOD || forumId !== threadsSlice.forumId) {
+        console.log('fetch threads', forumId);
+        dispatch(threadsLoad(forumId));
+        const threads = await userApi.fetchThreads(forumId);
+        dispatch(threadsDone(threads));
+    } else {
+        console.log('fetch threads skipped', forumId);
+    }
 };
 
 export const removeThread = (id) => async (dispatch: AppDispatch) => {

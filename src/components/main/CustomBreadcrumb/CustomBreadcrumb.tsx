@@ -17,7 +17,7 @@ export default function CustomBreadcrumb() {
     const pathItems = location.pathname.split('/').filter(item => item);
     const breadcrumbItems: Array<{ name: string, href: string }> = [];
 
-    console.log('pathItems', pathItems);
+    // console.log('pathItems', pathItems);
 
     // TODO need to reconstruct all breadcrumb subsystem !  but ok for now...
 
