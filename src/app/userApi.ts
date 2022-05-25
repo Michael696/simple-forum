@@ -61,9 +61,9 @@ export const userApi = {
         try {
             const response = await httpApi.post('/forum-list');
             return response.data;
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
-            return false;
+            return {error: e.message}; // TODO pass error messages in other handlers
         }
     },
     fetchThreads: async (id: Id) => {

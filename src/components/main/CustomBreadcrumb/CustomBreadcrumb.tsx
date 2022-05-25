@@ -3,8 +3,8 @@ import {useLocation} from "react-router";
 import {LinkContainer} from 'react-router-bootstrap';
 import {Breadcrumb} from "react-bootstrap/cjs";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
-import {fetchForums, forumWithId} from "../../../features/forumsList/forumsSlice";
-import {fetchThreads, threadWithId} from "../../../features/threads/threadsSlice";
+import {fetchForums, forumsLastError, forumWithId} from "../../../features/forumsList/forumsSlice";
+import {fetchThreads, threadLastError, threadWithId} from "../../../features/threads/threadsSlice";
 import {ForumItemType, ThreadItemType} from "../../../app/types";
 import './CustomBreadcrumb.sass';
 import {url} from '../../../app/urls';
@@ -16,6 +16,8 @@ export default function CustomBreadcrumb() {
     let forumId, threadId;
     const pathItems = location.pathname.split('/').filter(item => item);
     const breadcrumbItems: Array<{ name: string, href: string }> = [];
+    const errorForums = useAppSelector(forumsLastError);
+    const errorThreads = useAppSelector(threadLastError);
 
     // console.log('pathItems', pathItems);
 
@@ -43,6 +45,7 @@ export default function CustomBreadcrumb() {
     useEffect(() => {
         dispatch(fetchForums());
         if (forumId) {
+            console.log('got forumId', forumId);
             dispatch(fetchThreads(forumId));
         }
     }, []);
@@ -59,6 +62,7 @@ export default function CustomBreadcrumb() {
 
     return (
         <div className='main__breadcrumb pad05 bold'>
+            {(errorForums || errorThreads) ? <div className='error-message'>{errorForums},{errorThreads}</div> : ''}
             {
                 breadcrumbItems.map((it, index, all) => {
                     if (index === all.length - 1) {

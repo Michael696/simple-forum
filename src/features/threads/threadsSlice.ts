@@ -10,6 +10,7 @@ const initialState: ThreadsStateType = {
     list: [],
     forumId: '',
     lastFetch: '',
+    lastError: '',
     isLoading: 'idle'
 };
 
@@ -23,6 +24,7 @@ export const threadsSlice = createSlice({
             if (state.isLoading === 'idle') {
                 state.isLoading = 'pending';
                 state.list = [];
+                state.lastError = '';
                 state.forumId = action.payload;
                 state.lastFetch = new Date().toISOString();
             }
@@ -31,6 +33,12 @@ export const threadsSlice = createSlice({
             if (state.isLoading === 'pending') {
                 state.isLoading = 'idle';
                 state.list = action.payload;
+            }
+        },
+        threadsError: (state: ThreadsStateType, action: PayloadAction<{ error: string }>) => {
+            if (state.isLoading === 'pending') {
+                state.isLoading = 'idle';
+                state.lastError = action.payload.error;
             }
         },
         viewed: (state: ThreadsStateType, action: PayloadAction<Id>) => {
@@ -49,8 +57,9 @@ export const threadsSlice = createSlice({
 export const threadsIsLoading = state => state.threads.isLoading;
 export const threadsList = state => state.threads.list;
 export const threadWithId = (state, id: Id) => findThreadById(state.threads.list, id);
+export const threadLastError = state => state.threads.lastError;
 
-const {threadsLoad, threadsDone, threadRemove} = threadsSlice.actions;
+const {threadsLoad, threadsDone, threadRemove, threadsError} = threadsSlice.actions;
 export const {viewed} = threadsSlice.actions;
 
 export const fetchThreads = (forumId) => async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -62,7 +71,11 @@ export const fetchThreads = (forumId) => async (dispatch: AppDispatch, getState:
         console.log('fetch threads', forumId);
         dispatch(threadsLoad(forumId));
         const threads = await userApi.fetchThreads(forumId);
-        dispatch(threadsDone(threads));
+        if (threads) {
+            dispatch(threadsDone(threads));
+        } else { // TODO handle error
+            dispatch(threadsError({error: 'network error'}));
+        }
     } else {
         console.log('fetch threads skipped', forumId);
     }

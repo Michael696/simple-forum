@@ -1,20 +1,15 @@
 import {isValid as isValidDate} from 'date-fns'
 import {createSlice} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from "../../app/store";
-import {ForumItemType, Id, LoadingType} from "../../app/types";
+import {ForumItemType, ForumsStateType, Id} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {userApi} from "../../app/userApi";
 import {FETCH_PERIOD} from "../../app/settings";
 
-type InitialStateType = {
-    list: Array<ForumItemType>,
-    lastFetch: string,
-    isLoading: LoadingType
-}
-
-const initialState: InitialStateType = {
+const initialState: ForumsStateType = {
     list: [],
     lastFetch: '',
+    lastError: '',
     isLoading: 'idle'
 };
 
@@ -22,16 +17,24 @@ export const forumSlice = createSlice({
     name: 'forums',
     initialState,
     reducers: {
-        forumsLoad: (state: InitialStateType) => {
+        forumsLoad: (state: ForumsStateType) => {
             if (state.isLoading === 'idle') {
                 state.isLoading = 'pending';
+                state.lastError = '';
                 state.lastFetch = new Date().toISOString();
             }
         },
-        forumsDone: (state: InitialStateType, action: PayloadAction<ForumItemType[]>) => {
+        forumsDone: (state: ForumsStateType, action: PayloadAction<ForumItemType[]>) => {
             if (state.isLoading === 'pending') {
                 state.isLoading = 'idle';
+                state.lastError = '';
                 state.list = action.payload;
+            }
+        },
+        forumsError: (state: ForumsStateType, action: PayloadAction<{ error: string }>) => {
+            if (state.isLoading === 'pending') {
+                state.isLoading = 'idle';
+                state.lastError = action.payload.error;
             }
         }
     },
@@ -40,8 +43,9 @@ export const forumSlice = createSlice({
 export const forumsIsLoading = state => state.forums.isLoading;
 export const forumsList = state => state.forums.list;
 export const forumWithId = (state, id: Id) => state.forums.list.find(forum => forum.id === id);
+export const forumsLastError = state => state.forums.lastError;
 
-const {forumsLoad, forumsDone} = forumSlice.actions;
+const {forumsLoad, forumsDone, forumsError} = forumSlice.actions;
 
 export const fetchForums = () => async (dispatch: AppDispatch, getState: () => RootState) => {
     const forumsSlice = getState().forums;
@@ -52,7 +56,11 @@ export const fetchForums = () => async (dispatch: AppDispatch, getState: () => R
         console.log('fetch forums');
         dispatch(forumsLoad());
         const forums = await userApi.fetchForums();
-        dispatch(forumsDone(forums));
+        if (forums.error) {
+            dispatch(forumsError({error: forums.error}));
+        } else {
+            dispatch(forumsDone(forums));
+        }
     } else {
         console.log('fetch forums skipped');
     }

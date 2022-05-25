@@ -42,7 +42,11 @@ const {usersLoading, usersDone} = onlineUsersSlice.actions;
 export const fetchUsers = () => async (dispatch: AppDispatch) => {
     dispatch(usersLoading());
     const users: OnlineUsersArray = await userApi.fetchOnline();
-    dispatch(usersDone(users))
+    if (users) {
+        dispatch(usersDone(users))
+    } else {
+        dispatch(usersDone([]));
+    }
 };
 
 export default onlineUsersSlice.reducer;

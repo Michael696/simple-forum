@@ -40,10 +40,21 @@ export type ForumItemType = {
     lastMessage: LastMessage
 }
 
+// TODO introduce errors in other types (storage slices)
+// TODO think about global network-error handling strategy
+
+export type ForumsStateType = {
+    list: Array<ForumItemType>,
+    lastFetch: string,
+    lastError: string,
+    isLoading: LoadingType
+}
+
 export type ThreadsStateType = {
     list: Array<ThreadItemType>,
     forumId: Id,
     lastFetch: string,
+    lastError: string,
     isLoading: LoadingType
 }
 
