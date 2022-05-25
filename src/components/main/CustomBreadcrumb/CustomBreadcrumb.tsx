@@ -32,7 +32,9 @@ export default function CustomBreadcrumb() {
                 threadId = pathItems[idx + 1];
                 idx++;
             } else {
-                breadcrumbItems.push({name: pathItems[idx], href: ''});
+                if (idx === 0) {
+                    breadcrumbItems.push({name: pathItems[idx], href: ''});
+                }
             }
         }
     } else {

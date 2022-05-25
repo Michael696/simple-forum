@@ -58,7 +58,7 @@ function App() {
                 <Route path={url.SIGN_IN} element={<Auth/>}/>
                 <Route path={url.SIGN_OUT} element={<DeAuth/>}/>
                 <Route path={`${url.FORUM}/:forumId`} element={<Threads/>}/>
-                <Route path={`${url.FORUM}/:forumId${url.THREAD}/:threadId`} element={<Posts/>}/>
+                <Route path={`${url.FORUM}/:forumId${url.THREAD}/:threadId/:page`} element={<Posts/>}/>
                 <Route path={`${url.NEW_THREAD}/:forumId`} element={
                     <PrivateRoute>
                         <NewThreadForm/>

@@ -129,6 +129,15 @@ export const userApi = {
             return false;
         }
     },
+    getPostCount: async ({id}: { id: Id }) => {
+        try {
+            const response = await httpApi.post('/get-post-count', {id});
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
     removeThread: async (id: Id) => {
         try {
             const response = await httpApi.post('/remove-thread', {id});

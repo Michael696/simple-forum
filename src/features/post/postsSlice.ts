@@ -11,6 +11,8 @@ const initialState: PostStateType = {
     list: [],
     threadId: '',
     lastFetch: '',
+    totalCount: 0,
+    perPageCount: 3,
     isLoading: 'idle'
 };
 
@@ -104,11 +106,14 @@ export const postsSlice = createSlice({
             if (post) {
                 state.list = state.list.filter(post => post.id !== action.payload.id);
             }
+        },
+        postCount: (state: PostStateType, action: PayloadAction<number>) => {
+            state.totalCount = action.payload;
         }
     },
 });
 
-const {postsLoad, postsDone, postText, postRemove} = postsSlice.actions;
+const {postsLoad, postsDone, postText, postRemove, postCount} = postsSlice.actions;
 export const {postLike, postDislike} = postsSlice.actions;
 
 export const fetchPosts = (threadId) => async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -124,6 +129,11 @@ export const fetchPosts = (threadId) => async (dispatch: AppDispatch, getState: 
     } else {
         console.log('fetch posts skipepd', threadId);
     }
+};
+
+export const fetchPostCount = (threadId) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const count = await userApi.getPostCount({id: threadId});
+    dispatch(postCount(count));
 };
 
 export const setPostText = (postId, text) => async (dispatch: AppDispatch) => {

@@ -74,6 +74,8 @@ export type PostStateType = {
     list: Array<PostItemType>,
     threadId: Id,
     lastFetch: string,
+    totalCount: number,
+    perPageCount: number,
     isLoading: LoadingType
 }
 

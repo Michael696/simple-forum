@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {fetchPosts, postsIsLoading, postsList} from "./postsSlice";
+import {fetchPostCount, fetchPosts, postsIsLoading, postsList} from "./postsSlice";
 import {PostItemType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
@@ -10,6 +10,7 @@ import Button from "react-bootstrap/cjs/Button";
 import {fetchThreads, removeThread, threadWithId} from "../threads/threadsSlice";
 import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHintMessage";
 import {url} from "../../app/urls";
+import Pagination from "../../components/forum/Pagination/Pagination";
 
 export default function Posts() {
     const params = useParams();
@@ -20,10 +21,13 @@ export default function Posts() {
     const [postText, setPostText] = useState('');
     const thread = useAppSelector(state => threadWithId(state, params.threadId));
     const navigate = useNavigate();
+    const postCount = useAppSelector(state => state.posts.totalCount); // inline selector
 
     useEffect(() => {
         dispatch(fetchThreads(params.forumId));
         dispatch(fetchPosts(params.threadId));
+        dispatch(fetchPostCount(params.threadId));
+        console.log('current page is:', params.page);
     }, []);
 
     const handleReply = useCallback((id) => {
@@ -76,16 +80,17 @@ export default function Posts() {
 // TODO add pagination
         return (
             <>
-
-
+                {(user.id === thread.author.id || user.isAdmin) ?
+                    <Button onClick={handleRemoveThread}>remove thread</Button> : ''}
                 <div className='post-list margin05'>
                     {isLoading === 'pending' ?
                         'loading posts...'
                         : (postList.length ? postList : `no posts in thread ${params.threadId}`)
                     }
                 </div>
-                {(user.id === thread.author.id || user.isAdmin) ?
-                    <Button onClick={handleRemoveThread}>remove thread</Button> : ''}
+                <Pagination totalPages={10} perPage={5} currentPage={0} onChange={(a) => {
+                }} formatter={() => {
+                }}/>
                 <StatusHintMessage>
                     <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>
                 </StatusHintMessage>
