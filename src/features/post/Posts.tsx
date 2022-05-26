@@ -77,7 +77,9 @@ export default function Posts() {
             </div>
         );
 
-// TODO add pagination
+        const currentPageDraft = parseInt(params.page || '1');
+        const currentPage = Number.isNaN(currentPageDraft) ? 1 : currentPageDraft;
+        // TODO wire-up pagination
         return (
             <>
                 {(user.id === thread.author.id || user.isAdmin) ?
@@ -88,8 +90,8 @@ export default function Posts() {
                         : (postList.length ? postList : `no posts in thread ${params.threadId}`)
                     }
                 </div>
-                <Pagination totalPages={10} perPage={5} currentPage={0} onChange={(a) => {
-                }} formatter={() => {
+                <Pagination totalPages={10} currentPage={currentPage} onChange={(page) => {
+                    console.log('clicked page:', page);
                 }}/>
                 <StatusHintMessage>
                     <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>

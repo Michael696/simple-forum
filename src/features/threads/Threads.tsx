@@ -39,7 +39,7 @@ export default function Threads() {
     let threadList: Array<any> = [];
     if (threads) {
         threadList = threads.map(thread => {
-            const linkTo = `${url.FORUM}/${params.forumId}${url.THREAD}/${thread.id}/0`;
+            const linkTo = `${url.FORUM}/${params.forumId}${url.THREAD}/${thread.id}/1`;
             const addView = () => { // TODO add views to thread by following a direct link
                 dispatch(addThreadViewCount(thread.id));
             };

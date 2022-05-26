@@ -46,6 +46,8 @@ function App() {
         }
     }, []);
 
+    // TODO make Posts render correctly if page is not specified (take 1 as default and rewrite url)
+
     return (
         <div className="App">
             <Header/>
@@ -58,6 +60,7 @@ function App() {
                 <Route path={url.SIGN_IN} element={<Auth/>}/>
                 <Route path={url.SIGN_OUT} element={<DeAuth/>}/>
                 <Route path={`${url.FORUM}/:forumId`} element={<Threads/>}/>
+                <Route path={`${url.FORUM}/:forumId${url.THREAD}/:threadId`} element={<Posts/>}/>
                 <Route path={`${url.FORUM}/:forumId${url.THREAD}/:threadId/:page`} element={<Posts/>}/>
                 <Route path={`${url.NEW_THREAD}/:forumId`} element={
                     <PrivateRoute>
