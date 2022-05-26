@@ -9,7 +9,7 @@ import {currentUser} from "../currentUser/currentUserSlice";
 import Button from "react-bootstrap/cjs/Button";
 import {fetchThreads, removeThread, threadWithId} from "../threads/threadsSlice";
 import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHintMessage";
-import {url} from "../../app/urls";
+import {url, urlToPage} from "../../app/urls";
 import Pagination from "../../components/forum/Pagination/Pagination";
 
 export default function Posts() {
@@ -22,6 +22,8 @@ export default function Posts() {
     const thread = useAppSelector(state => threadWithId(state, params.threadId));
     const navigate = useNavigate();
     const postCount = useAppSelector(state => state.posts.totalCount); // inline selector
+    const perPageCount = useAppSelector(state => state.posts.perPageCount); // inline selector
+    const totalPages = Math.ceil(postCount / perPageCount);
 
     useEffect(() => {
         dispatch(fetchThreads(params.forumId));
@@ -90,8 +92,8 @@ export default function Posts() {
                         : (postList.length ? postList : `no posts in thread ${params.threadId}`)
                     }
                 </div>
-                <Pagination totalPages={10} currentPage={currentPage} onChange={(page) => {
-                    console.log('clicked page:', page);
+                <Pagination totalPages={totalPages} currentPage={currentPage} onChange={(page) => {
+                    navigate(urlToPage({forumId: params.forumId, threadId: thread.id, page}));
                 }}/>
                 <StatusHintMessage>
                     <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>

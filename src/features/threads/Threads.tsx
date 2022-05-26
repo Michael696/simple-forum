@@ -6,7 +6,7 @@ import {AppDispatch} from "../../app/store";
 import ThreadItem from "./ThreadItem";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
-import {url} from "../../app/urls";
+import {url, urlToPage} from "../../app/urls";
 import Button from "react-bootstrap/cjs/Button";
 import {forumWithId} from "../forumsList/forumsSlice";
 
@@ -39,8 +39,9 @@ export default function Threads() {
     let threadList: Array<any> = [];
     if (threads) {
         threadList = threads.map(thread => {
-            const linkTo = `${url.FORUM}/${params.forumId}${url.THREAD}/${thread.id}/1`;
-            const addView = () => { // TODO add views to thread by following a direct link
+            const linkTo = urlToPage({forumId: params.forumId, threadId: thread.id, page: 1});
+            // TODO add views to thread by following a direct link
+            const addView = () => {
                 dispatch(addThreadViewCount(thread.id));
             };
             return (

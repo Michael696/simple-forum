@@ -8,11 +8,12 @@ function PageLink({page, onClick, isCurrent}: { page: number, className?: string
         <a
             {...(isCurrent ? {className: 'current-page-link margin025'} : {className: 'margin025'})}
             key={page}
-            href='##'
+            href={`${page}`}
             aria-label={isCurrent ? `Current page, Page ${page}` : `Goto Page ${page}`}
             aria-current={isCurrent}
             onClick={
-                () => {
+                (e) => {
+                    e.preventDefault();
                     !isCurrent && onClick(page);
                 }}
         >
