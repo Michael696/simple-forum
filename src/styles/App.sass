@@ -1,8 +1,5 @@
 @import "vars"
 
-body
-  font-size: small
-
 .App
   // FIXME this is workaround for footer
   margin-bottom: 3em
@@ -33,17 +30,9 @@ body
   background-color: #ffa1ab
   //opacity: 0.2
   color: black
-  border-radius: 0.25em
 
 .flex-direction-vertical
   flex-direction: column
-
-.cell-constant
-  border: 1px solid $border-color
-
-.cell-variable
-  border: 1px solid $border-color
-  width: 100%
 
 .link-as-text
   color: black
@@ -52,8 +41,8 @@ body
 .pad05
   padding: 0.5em
 
-a
-  cursor: pointer
+.pad-1
+  padding: 1em
 
 .bold
   font-weight: bold
@@ -61,11 +50,26 @@ a
 .center
   text-align: center
 
-.border-round025
+.border-round-025
   border-radius: 0.25em
 
-.border-top-round025
+.border-round-05
+  border-radius: 0.5em
+
+.border-top-round-025
   border-radius: 0.25em 0.25em 0 0
+
+.border-1
+  border: 1px solid $border-color
+
+.border-1-top
+  border-top: 1px solid $border-color
+
+.border-1-right
+  border-right: 1px solid $border-color
+
+.border-1-left
+  border-left: 1px solid $border-color
 
 .width-100
   width: 100%
@@ -74,9 +78,6 @@ a
   max-width: 50%
   margin-left: auto
   margin-right: auto
-  border: 1px solid $border-color
-  border-radius: 0.5em
-  padding: 1em
 
 // bad for BEM (modifying existing style)
 .btn
@@ -92,11 +93,9 @@ a
 .btn:disabled
   opacity: 0.3
 
-.border-1-gray-top
-  border-top: 1px solid $border-color
+a
+  cursor: pointer
 
-.border-1-gray-right
-  border-right: 1px solid $border-color
+body
+  font-size: small
 
-.border-1-gray-left
-  border-left: 1px solid $border-color

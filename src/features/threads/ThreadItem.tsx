@@ -9,13 +9,13 @@ export default function ThreadItem({id}: { id?: Id }) {
 
     return (
         <div className='thread__item'>
-            <div className='cell-variable flex-direction-vertical pad05'>
+            <div className='border-1 width-100 flex-direction-vertical pad05'>
                 <div className='bold'>{thread.title}</div>
             </div>
-            <div className='cell-constant flex-center-horizontal pad05'>{thread.author.name}</div>
-            <div className='cell-constant flex-center-horizontal pad05'>{thread.postCount}</div>
-            <div className='cell-constant flex-center-horizontal pad05'>{thread.viewCount}</div>
-            <div className='cell-constant flex-direction-vertical flex-center-horizontal pad05'>
+            <div className='border-1 flex-center-horizontal pad05'>{thread.author.name}</div>
+            <div className='border-1 flex-center-horizontal pad05'>{thread.postCount}</div>
+            <div className='border-1 flex-center-horizontal pad05'>{thread.viewCount}</div>
+            <div className='border-1 flex-direction-vertical flex-center-horizontal pad05'>
                 <div>
                     {thread.lastMessage.dateTime}
                 </div>

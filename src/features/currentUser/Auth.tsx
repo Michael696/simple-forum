@@ -27,7 +27,7 @@ export default function Auth() {
     };
 
     const error = user.error.length > 0 ? (
-        <div className='error-message margin1'>
+        <div className='error-message margin1 border-round-025'>
             {user.error}
         </div>
     ) : '';
@@ -45,7 +45,7 @@ export default function Auth() {
 
     // TODO fix 'request failed' message after form reload
     return (
-        <div className='form-width-50'>
+        <div className='form-width-50 border-1 pad-1 border-round-05'>
             <Form>
                 <Form.Group className="mb-3" controlId="formUserName">
                     <Form.Label>Username</Form.Label>

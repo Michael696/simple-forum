@@ -64,9 +64,9 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
                     <div className='post__body'>
                         <div className='post__body_header'>
                             <div
-                                className='center border-1-gray-right border-1-gray-left border-1-gray-top bold'>Author
+                                className='center border-1-right border-1-left border-1-top bold'>Author
                             </div>
-                            <div className='center border-1-gray-top border-1-gray-right bold'>Message</div>
+                            <div className='center border-1-top border-1-right bold'>Message</div>
                         </div>
                         <div className='post__body_data'>
                             <UserInfo user={post.author}/>

@@ -72,7 +72,7 @@ export default function Register() {
 
     // TODO refactor onChange handlers
     const formRegister = (
-        <div className='form-width-50'>
+        <div className='form-width-50 border-1 pad-1 border-round-05'>
             <Form.Group className="mb-3" controlId="formUserName">
                 <Form.Label>Username</Form.Label>
                 <Form.Control
@@ -141,7 +141,7 @@ export default function Register() {
 
             {
                 error ? (
-                    <Form.Group className='error-message margin1'>
+                    <Form.Group className='error-message margin1 border-round-025'>
                         <Form.Label>{error}</Form.Label>
                     </Form.Group>
                 ) : ''

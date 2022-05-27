@@ -33,7 +33,7 @@ export default function NewThreadForm() {
     const buttonOptions = (threadName.length === 0) ? {disabled: true} : {};
 
     return forum ? (
-        <div className='form-width-50'>
+        <div className='form-width-50 border-1 pad-1 border-round-05'>
             <h5 className='center'>Creating new thread in forum {`'${forum.name}'`}</h5>
             <Form.Group className="mb-3" controlId="formThreadName">
                 <Form.Label>thread name</Form.Label>

@@ -52,13 +52,13 @@ export default function Threads() {
         });
         threadList.unshift(
             <div className='threads__header' key='title'>
-                <div className='cell-variable flex-direction-vertical center pad05'>
+                <div className='border-1 width-100 flex-direction-vertical center pad05'>
                     Forums
                 </div>
-                <div className='cell-constant flex-center-horizontal center pad05'>Author</div>
-                <div className='cell-constant flex-center-horizontal center pad05'>Posts</div>
-                <div className='cell-constant flex-center-horizontal center pad05'>Views</div>
-                <div className='cell-constant flex-direction-vertical center flex-center-horizontal pad05'> Last
+                <div className='border-1 flex-center-horizontal center pad05'>Author</div>
+                <div className='border-1 flex-center-horizontal center pad05'>Posts</div>
+                <div className='border-1 flex-center-horizontal center pad05'>Views</div>
+                <div className='border-1 flex-direction-vertical center flex-center-horizontal pad05'> Last
                     message
                 </div>
             </div>
@@ -69,7 +69,7 @@ export default function Threads() {
         <>
             <div className='threads margin05'>
                 {forum && <div
-                    className='forum-title border-1-gray-right border-1-gray-top border-1-gray-left bold border-top-round025'>Forum {forum.name}</div>}
+                    className='forum-title border-1-right border-1-top border-1-left bold border-top-round-025'>Forum {forum.name}</div>}
                 {/*<CreateThreadButton isAuthenticated={isAuthenticated} isBanned={user.isBanned} onClick={handleNewThread}/>*/}
                 {threadList.length ? threadList : <div>no threads in forum {params.forumId}</div>}
                 <CreateThreadButton isAuthenticated={isAuthenticated} isBanned={user.isBanned}
