@@ -16,6 +16,7 @@ import forumsReducer from "../forumsList/forumsSlice";
 import currentUserReducer, {checkAuth} from "../currentUser/currentUserSlice";
 import {url} from "../../app/urls";
 import {User} from "../../app/types";
+import onlineUsersReducer from "../onlineUsers/onlineUsersSlice";
 
 test('Threads: has threads in forum', async () => {
     const user: User = {
@@ -65,10 +66,19 @@ test('Threads: has threads in forum', async () => {
         }),
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
+            return res(
+                context.json([])
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
         reducer: {
+            onlineUsers: onlineUsersReducer,
             forums: forumsReducer,
             threads: threadsReducer,
             currentUser: currentUserReducer,
@@ -158,10 +168,19 @@ test('Threads: should show "create thread" button for authenticated and not bann
         }),
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
+            return res(
+                context.json([])
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
         reducer: {
+            onlineUsers: onlineUsersReducer,
             forums: forumsReducer,
             threads: threadsReducer,
             currentUser: currentUserReducer,

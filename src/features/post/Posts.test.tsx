@@ -11,13 +11,14 @@ import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {setupServer} from "msw/node";
 import {rest} from 'msw';
 import currentUserReducer, {checkAuth} from "../currentUser/currentUserSlice";
+import onlineUsersReducer from '../onlineUsers/onlineUsersSlice';
 import {url} from "../../app/urls";
 import {User} from "../../app/types";
 import postsReducer from '../../features/post/postsSlice';
 import Posts from "./Posts";
 import threadsReducer from "../threads/threadsSlice";
 
-test('Posts: should show no buttons for non-authenticated user ', async () => {
+test('Posts: #1 should show no buttons for non-authenticated user ', async () => {
     const user: User = {
         id: 'u01',
         isAdmin: false,
@@ -31,18 +32,22 @@ test('Posts: should show no buttons for non-authenticated user ', async () => {
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
-                ctx.json([{
-                        id: 'p01',
-                        threadId: 't01',
-                        forumId: 'f01',
-                        author: user,
-                        title: 'post 1 title',
-                        text: 'post 1 long text',
-                        likes: [],
-                        dislikes: [],
-                        postedAt: '2022-04-05T13:19:13',
-                        editedAt: '2022-04-05T13:19:15',
-                    }]
+                ctx.json({
+                        posts: [{
+                            id: 'p01',
+                            threadId: 't01',
+                            forumId: 'f01',
+                            author: user,
+                            title: 'post 1 title',
+                            text: 'post 1 long text',
+                            likes: [],
+                            dislikes: [],
+                            postedAt: '2022-04-05T13:19:13',
+                            editedAt: '2022-04-05T13:19:15',
+                        }],
+                        start: 0,
+                        end: 0
+                    }
                 ),
             )
         }),
@@ -77,10 +82,19 @@ test('Posts: should show no buttons for non-authenticated user ', async () => {
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post-count', ((req, res, context) => {
+            return res(
+                context.json(1)
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
         reducer: {
+            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
@@ -109,7 +123,7 @@ test('Posts: should show no buttons for non-authenticated user ', async () => {
     server.close();
 });
 
-test('Posts: current user regular - should show "reply", "edit", "remove"  for own posts in any thread', async () => {
+test('Posts: #2 current user regular - should show "reply", "edit", "remove"  for own posts in any thread', async () => {
     const user: User = {
         id: 'u01',
         isAdmin: false,
@@ -135,7 +149,8 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  for o
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
-                ctx.json([{
+                ctx.json({
+                    posts: [{
                         id: 'p01',
                         threadId: 't01',
                         forumId: 'f01',
@@ -146,8 +161,10 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  for o
                         dislikes: [],
                         postedAt: '2022-04-05T13:19:13',
                         editedAt: '2022-04-05T13:19:15',
-                    }]
-                ),
+                    }],
+                    start: 0,
+                    end: 0
+                }),
             )
         }),
     );
@@ -181,10 +198,27 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  for o
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post-count', ((req, res, context) => {
+            return res(
+                context.json(1)
+            );
+        }))
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
+            return res(
+                context.json([])
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
         reducer: {
+            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
@@ -213,7 +247,7 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  for o
     server.close();
 });
 
-test('Posts: current user regular - should show "reply", "edit", "remove"  "remove thread" for own thread', async () => {
+test('Posts: #3 current user regular - should show "reply", "edit", "remove"  "remove thread" for own thread', async () => {
     const user: User = {
         id: 'u01',
         isAdmin: false,
@@ -239,18 +273,22 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  "remo
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
-                ctx.json([{
-                        id: 'p01',
-                        threadId: 't01',
-                        forumId: 'f01',
-                        author: user,
-                        title: 'post 1 title',
-                        text: 'post 1 long text',
-                        likes: [],
-                        dislikes: [],
-                        postedAt: '2022-04-05T13:19:13',
-                        editedAt: '2022-04-05T13:19:15',
-                    }]
+                ctx.json({
+                        posts: [{
+                            id: 'p01',
+                            threadId: 't01',
+                            forumId: 'f01',
+                            author: user,
+                            title: 'post 1 title',
+                            text: 'post 1 long text',
+                            likes: [],
+                            dislikes: [],
+                            postedAt: '2022-04-05T13:19:13',
+                            editedAt: '2022-04-05T13:19:15',
+                        }],
+                        start: 0,
+                        end: 0
+                    }
                 ),
             )
         }),
@@ -277,6 +315,7 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  "remo
         }))
     );
 
+
     server.use(
         rest.post('http://127.0.0.1:1337/api/current-user', ((req, res, context) => {
             return res(
@@ -285,10 +324,27 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  "remo
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post-count', ((req, res, context) => {
+            return res(
+                context.json(1)
+            );
+        }))
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
+            return res(
+                context.json([])
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
         reducer: {
+            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
@@ -317,8 +373,7 @@ test('Posts: current user regular - should show "reply", "edit", "remove"  "remo
     server.close();
 });
 
-
-test('Posts: current user regular - should show "reply" for other posts', async () => {
+test('Posts: #4 current user regular - should show "reply" for other posts', async () => {
     const user: User = {
         id: 'u01',
         isAdmin: false,
@@ -332,18 +387,22 @@ test('Posts: current user regular - should show "reply" for other posts', async 
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
-                ctx.json([{
-                        id: 'p01',
-                        threadId: 't01',
-                        forumId: 'f01',
-                        author: user,
-                        title: 'post 1 title',
-                        text: 'post 1 long text',
-                        likes: [],
-                        dislikes: [],
-                        postedAt: '2022-04-05T13:19:13',
-                        editedAt: '2022-04-05T13:19:15',
-                    }]
+                ctx.json({
+                        posts: [{
+                            id: 'p01',
+                            threadId: 't01',
+                            forumId: 'f01',
+                            author: user,
+                            title: 'post 1 title',
+                            text: 'post 1 long text',
+                            likes: [],
+                            dislikes: [],
+                            postedAt: '2022-04-05T13:19:13',
+                            editedAt: '2022-04-05T13:19:15',
+                        }],
+                        start: 0,
+                        end: 0
+                    }
                 ),
             )
         }),
@@ -389,10 +448,27 @@ test('Posts: current user regular - should show "reply" for other posts', async 
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post-count', ((req, res, context) => {
+            return res(
+                context.json(1)
+            );
+        }))
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
+            return res(
+                context.json([])
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
         reducer: {
+            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
@@ -421,7 +497,7 @@ test('Posts: current user regular - should show "reply" for other posts', async 
     server.close();
 });
 
-test('Posts: current user regular (banned) - should show no buttons', async () => {
+test('Posts: #5 current user regular (banned) - should show no buttons', async () => {
     const user: User = {
         id: 'u01',
         isAdmin: false,
@@ -435,18 +511,22 @@ test('Posts: current user regular (banned) - should show no buttons', async () =
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
-                ctx.json([{
-                        id: 'p01',
-                        threadId: 't01',
-                        forumId: 'f01',
-                        author: user,
-                        title: 'post 1 title',
-                        text: 'post 1 long text',
-                        likes: [],
-                        dislikes: [],
-                        postedAt: '2022-04-05T13:19:13',
-                        editedAt: '2022-04-05T13:19:15',
-                    }]
+                ctx.json({
+                        posts: [{
+                            id: 'p01',
+                            threadId: 't01',
+                            forumId: 'f01',
+                            author: user,
+                            title: 'post 1 title',
+                            text: 'post 1 long text',
+                            likes: [],
+                            dislikes: [],
+                            postedAt: '2022-04-05T13:19:13',
+                            editedAt: '2022-04-05T13:19:15',
+                        }],
+                        start: 0,
+                        end: 0
+                    }
                 ),
             )
         }),
@@ -492,10 +572,27 @@ test('Posts: current user regular (banned) - should show no buttons', async () =
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post-count', ((req, res, context) => {
+            return res(
+                context.json(1)
+            );
+        }))
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
+            return res(
+                context.json([])
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
         reducer: {
+            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
@@ -524,7 +621,7 @@ test('Posts: current user regular (banned) - should show no buttons', async () =
     server.close();
 });
 
-test('Posts: current user is admin - should show "reply", "edit", "remove" and admin panel buttons', async () => {
+test('Posts: #6 current user is admin - should show "reply", "edit", "remove" and admin panel buttons', async () => {
     const user1: User = {
         id: 'u01',
         isAdmin: false,
@@ -548,18 +645,22 @@ test('Posts: current user is admin - should show "reply", "edit", "remove" and a
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
-                ctx.json([{
-                        id: 'p01',
-                        threadId: 't01',
-                        forumId: 'f01',
-                        author: user1,
-                        title: 'post 1 title',
-                        text: 'post 1 long text',
-                        likes: [],
-                        dislikes: [],
-                        postedAt: '2022-04-05T13:19:13',
-                        editedAt: '2022-04-05T13:19:15',
-                    }]
+                ctx.json({
+                        posts: [{
+                            id: 'p01',
+                            threadId: 't01',
+                            forumId: 'f01',
+                            author: user1,
+                            title: 'post 1 title',
+                            text: 'post 1 long text',
+                            likes: [],
+                            dislikes: [],
+                            postedAt: '2022-04-05T13:19:13',
+                            editedAt: '2022-04-05T13:19:15',
+                        }],
+                        start: 0,
+                        end: 0
+                    }
                 ),
             )
         }),
@@ -594,10 +695,27 @@ test('Posts: current user is admin - should show "reply", "edit", "remove" and a
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post-count', ((req, res, context) => {
+            return res(
+                context.json(1)
+            );
+        }))
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
+            return res(
+                context.json([])
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
         reducer: {
+            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
