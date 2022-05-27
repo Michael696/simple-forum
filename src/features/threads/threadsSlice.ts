@@ -67,7 +67,11 @@ export const fetchThreads = (forumId) => async (dispatch: AppDispatch, getState:
     const now = new Date();
     const lastFetch = new Date(threadsSlice.lastFetch);
     //@ts-ignore
-    if (!isValidDate(lastFetch) || threadsSlice.list.length === 0 || now - lastFetch > FETCH_PERIOD || forumId !== threadsSlice.forumId) { // TODO subtract dates nicer?
+    if ((!isValidDate(lastFetch) || now - lastFetch > FETCH_PERIOD // TODO subtract dates nicer?
+        || forumId !== threadsSlice.forumId
+        || threadsSlice.list.length === 0)
+        && threadsSlice.isLoading === 'idle') {  // TODO investigate side effects
+
         console.log('fetch threads', forumId);
         dispatch(threadsLoad(forumId));
         const threads = await userApi.fetchThreads(forumId);

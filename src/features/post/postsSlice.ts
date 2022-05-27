@@ -121,7 +121,11 @@ export const fetchPosts = (threadId) => async (dispatch: AppDispatch, getState: 
     const now = new Date();
     const lastFetch = new Date(postsSlice.lastFetch);
     //@ts-ignore
-    if (!isValidDate(lastFetch) || postsSlice.list.length === 0 || now - lastFetch > FETCH_PERIOD || threadId !== postsSlice.threadId) { // TODO subtract dates nicer?
+    if ((!isValidDate(lastFetch) || now - lastFetch > FETCH_PERIOD // TODO subtract dates nicer?
+        || threadId !== postsSlice.threadId
+        || postsSlice.list.length === 0)
+        && postsSlice.isLoading === 'idle') { // TODO investigate side effects
+
         console.log('fetch posts', threadId);
         dispatch(postsLoad(threadId));
         const posts = await userApi.fetchPosts(threadId); // id  threadId
