@@ -9,6 +9,7 @@ import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice"
 import {url, urlToPage} from "../../app/urls";
 import Button from "react-bootstrap/cjs/Button";
 import {forumWithId} from "../forumsList/forumsSlice";
+import OnlineUsers from "../onlineUsers/OnlineUsers";
 
 function CreateThreadButton({isAuthenticated, isBanned, onClick}: { isAuthenticated: boolean, isBanned: boolean, onClick: (e: any) => void }) {
     return <>{(isAuthenticated && !isBanned) ? <Button onClick={onClick}>create thread</Button> : null}</>
@@ -65,12 +66,16 @@ export default function Threads() {
     }
 
     return (
-        <div className='threads margin05'>
-            {forum && <div
-                className='forum-title border-1-gray-right border-1-gray-top border-1-gray-left bold border-top-round025'>Forum {forum.name}</div>}
-            {/*<CreateThreadButton isAuthenticated={isAuthenticated} isBanned={user.isBanned} onClick={handleNewThread}/>*/}
-            {threadList.length ? threadList : <div>no threads in forum {params.forumId}</div>}
-            <CreateThreadButton isAuthenticated={isAuthenticated} isBanned={user.isBanned} onClick={handleNewThread}/>
-        </div>
+        <>
+            <div className='threads margin05'>
+                {forum && <div
+                    className='forum-title border-1-gray-right border-1-gray-top border-1-gray-left bold border-top-round025'>Forum {forum.name}</div>}
+                {/*<CreateThreadButton isAuthenticated={isAuthenticated} isBanned={user.isBanned} onClick={handleNewThread}/>*/}
+                {threadList.length ? threadList : <div>no threads in forum {params.forumId}</div>}
+                <CreateThreadButton isAuthenticated={isAuthenticated} isBanned={user.isBanned}
+                                    onClick={handleNewThread}/>
+            </div>
+            <OnlineUsers/>
+        </>
     );
 }

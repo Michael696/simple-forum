@@ -12,7 +12,7 @@ export default function OnlineUsers() {
     }, []);
 
     return (
-        <div className='online-users margin1-top pad05'>
+        <div className='online-users margin1-top pad05 margin05'>
             <div>Total users online: {usersOnline ? usersOnline.length : '0'}</div>
             <div>Users: {usersOnline ? usersOnline.join(', ') : ''}</div>
         </div>
