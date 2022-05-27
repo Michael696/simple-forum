@@ -1,33 +1,34 @@
-import React, {MouseEventHandler, MutableRefObject, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Button from "react-bootstrap/cjs/Button";
 import Form from "react-bootstrap/Form";
 import '../../../features/post/Post.sass';
+import Textarea from "../Textarea/Textarea";
+import {MAX_POST_LENGTH} from "../../../app/constants";
 
-const NewPostForm = function ({text, onCreate}: { text: string, onCreate: MouseEventHandler<HTMLElement> }) {
+const NewPostForm = function ({text, onCreate}: { text: string, onCreate: (text: string) => void }) {
     const [postText, setPostText] = useState(text);
-    const textRef = useRef<HTMLTextAreaElement>() as MutableRefObject<HTMLTextAreaElement>;
 
     useEffect(() => {
         setPostText(text);
-        textRef.current.focus();
     }, [text]);
 
-    // TODO limit post size
+    const handleCreate = useCallback(() => {
+        onCreate(postText);
+        setPostText('');
+    }, [postText, onCreate]);
+
+    const handleChange = useCallback((newText) => {
+        setPostText(newText);
+    }, []);
+
+// TODO fix issue with clicking 'reply' two or more times
     return (
         <div className='new-post-form margin05 pad05'>
             <Form.Group className="mb-3" controlId="formPostName">
                 <Form.Label className='bold'>New post text</Form.Label>
-                <Form.Control
-                    as="textarea"
-                    placeholder=""
-                    value={postText}
-                    ref={textRef}
-                    onChange={(e) => {
-                        setPostText(e.target.value);
-                    }}
-                />
+                <Textarea text={postText} onChange={handleChange} maxLength={MAX_POST_LENGTH}/>
             </Form.Group>
-            <Button onClick={onCreate} {...(postText.length === 0 ? {disabled: true} : {})}>create post</Button>
+            <Button onClick={handleCreate} {...(postText.length === 0 ? {disabled: true} : {})}>create post</Button>
         </div>
     )
 };

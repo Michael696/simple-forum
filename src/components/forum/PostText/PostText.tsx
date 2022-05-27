@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
-import '../../features/post/Post.sass';
+import '../../../features/post/Post.sass';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/cjs/Button";
+import Textarea from '../Textarea/Textarea';
+import {MAX_POST_LENGTH} from "../../../app/constants";
 
 const PostText = function ({text, editable, onSave, onCancel}:
                                { text: string, editable: boolean, onSave: (text: string) => void, onCancel: () => void }) {
@@ -17,19 +19,16 @@ const PostText = function ({text, editable, onSave, onCancel}:
         setPostText(textReplaced);
     };
 
+    const handleChange = (newText) => {
+        setPostText(newText);
+    };
+
     return (
         <div className='post__text pad05'>
             {!editable ? textReplaced :
-                (<div>
-                    <Form.Group className="mb-3" controlId="formPostName">
-                        <Form.Control
-                            as="textarea"
-                            placeholder=""
-                            value={postText}
-                            onChange={(e) => {
-                                setPostText(e.target.value);
-                            }}
-                        />
+                (<div className='width-100'>
+                    <Form.Group controlId="formPostName">
+                        <Textarea text={postText} onChange={handleChange} maxLength={MAX_POST_LENGTH}/>
                     </Form.Group>
                     <div>
                         <Button onClick={handleSave}>save</Button>

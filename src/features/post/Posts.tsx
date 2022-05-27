@@ -82,21 +82,23 @@ export default function Posts() {
             </div>
         );
 
-        const handleCreatePost = async e => {
-            console.log('create post for thread', thread.id, postText);
-            const postId = await userApi.createPost({
-                forumId: params.forumId,
-                threadId: thread.id,
-                userId: user.id,
-                text: e.target.val
-            });
-            console.log('created post with id:', postId);
-            if (!postId) {
-                navigate(url.SIGN_IN);
-            } else {
-                await dispatch(fetchPosts({threadId: thread.id, page: totalPages}));
-                setPostText('');
-            }
+        const handleCreatePost = newText => {
+            (async () => {
+                console.log('create post for thread', thread.id, newText);
+                const postId = await userApi.createPost({
+                    forumId: params.forumId,
+                    threadId: thread.id,
+                    userId: user.id,
+                    text: newText
+                });
+                console.log('created post with id:', postId);
+                if (!postId) {
+                    navigate(url.SIGN_IN);
+                } else {
+                    await dispatch(fetchPosts({threadId: thread.id, page: totalPages}));
+                    setPostText('');
+                }
+            })();
         };
 
         // TODO nicify 'posts loading' message

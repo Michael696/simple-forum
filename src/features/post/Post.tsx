@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {Id, PostItemType, ThreadItemType, User} from "../../app/types";
 import {postDislike, postLike, postWithId, removePost, setPostText} from "./postsSlice";
 import UserInfo from "../../components/forum/UserInfo/UserInfo";
-import PostText from "../../components/forum/PostText";
+import PostText from "../../components/forum/PostText/PostText";
 import PostInfo from "../../components/forum/PostInfo/PostInfo";
 import {useAppSelector} from "../../app/hooks";
 import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
