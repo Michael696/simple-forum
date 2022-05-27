@@ -12,6 +12,7 @@ const NewPostForm = function ({text, onCreate}: { text: string, onCreate: MouseE
         textRef.current.focus();
     }, [text]);
 
+    // TODO limit post size
     return (
         <div className='new-post-form margin05 pad05'>
             <Form.Group className="mb-3" controlId="formPostName">
@@ -26,7 +27,7 @@ const NewPostForm = function ({text, onCreate}: { text: string, onCreate: MouseE
                     }}
                 />
             </Form.Group>
-            <Button onClick={onCreate}>create post</Button>
+            <Button onClick={onCreate} {...(postText.length === 0 ? {disabled: true} : {})}>create post</Button>
         </div>
     )
 };

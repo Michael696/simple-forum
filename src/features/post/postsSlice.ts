@@ -120,11 +120,18 @@ export const postsSlice = createSlice({
 const {postsLoad, postsDone, postText, postRemove, postCount} = postsSlice.actions;
 export const {postLike, postDislike} = postsSlice.actions;
 
-export const fetchPosts = ({threadId, start, end}: { threadId: Id, start: number, end: number }) =>
+export const postsTotalPages = state => {
+    const posts = state.posts;
+    return Math.ceil(posts.totalCount / posts.perPageCount)
+};
+
+export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }) =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
         const postsSlice = getState().posts;
         const now = new Date();
         const lastFetch = new Date(postsSlice.lastFetch);
+        const start = (page - 1) * postsSlice.perPageCount;
+        const end = page * postsSlice.perPageCount - 1;
         //@ts-ignore
         if ((!isValidDate(lastFetch) || now - lastFetch > FETCH_PERIOD // TODO subtract dates nicer?
             || threadId !== postsSlice.threadId

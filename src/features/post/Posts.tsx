@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {fetchPosts, postsIsLoading, postsList} from "./postsSlice";
+import {fetchPosts, postsIsLoading, postsList, postsTotalPages} from "./postsSlice";
 import {PostItemType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
@@ -22,19 +22,15 @@ export default function Posts() {
     const [postText, setPostText] = useState('');
     const thread = useAppSelector(state => threadWithId(state, params.threadId));
     const navigate = useNavigate();
-    const postCount = useAppSelector(state => state.posts.totalCount); // inline selector
-    const perPageCount = useAppSelector(state => state.posts.perPageCount); // inline selector
-    const totalPages = Math.ceil(postCount / perPageCount);
+    // const postCount = useAppSelector(state => state.posts.totalCount); // inline selector
+    // const perPageCount = useAppSelector(state => state.posts.perPageCount); // inline selector
+    const totalPages = useAppSelector(postsTotalPages);
     const currentPageDraft = parseInt(params.page || '1');
     const currentPage = (Number.isNaN(currentPageDraft) || currentPageDraft < 1) ? 1 : currentPageDraft;
 
     useEffect(() => {
         dispatch(fetchThreads(params.forumId));
-        dispatch(fetchPosts({
-            threadId: params.threadId,
-            start: (currentPage - 1) * perPageCount,
-            end: currentPage * perPageCount - 1
-        }));
+        dispatch(fetchPosts({threadId: params.threadId, page: currentPage}));
         console.log('current page is (from params):', params.page);
         console.log('current page is (sane):', currentPage);
     }, []);
@@ -98,11 +94,7 @@ export default function Posts() {
             if (!postId) {
                 navigate(url.SIGN_IN);
             } else {
-                await dispatch(fetchPosts({
-                    threadId: thread.id,
-                    start: (totalPages - 1) * perPageCount, // TODO hide logic to reducer
-                    end: totalPages * perPageCount - 1
-                }));
+                await dispatch(fetchPosts({threadId: thread.id, page: totalPages}));
                 setPostText('');
             }
         };
@@ -120,11 +112,7 @@ export default function Posts() {
                 </div>
                 <Pagination totalPages={totalPages} currentPage={currentPage} onChange={async (page) => {
                     navigate(urlToPage({forumId: params.forumId, threadId: thread.id, page}));
-                    await dispatch(fetchPosts({
-                        threadId: thread.id,
-                        start: (page - 1) * perPageCount, // TODO hide logic to reducer
-                        end: page * perPageCount - 1
-                    }));
+                    await dispatch(fetchPosts({threadId: thread.id, page}));
                 }}/>
                 <StatusHintMessage>
                     <NewPostForm text={postText} onCreate={handleCreatePost}/>
