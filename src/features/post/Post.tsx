@@ -26,7 +26,7 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
 
         const handleRemove = useCallback(() => {
             console.log('remove post', id);
-            dispatch(removePost(id))
+            dispatch(removePost(id)) // TODO fetch posts after removing
         }, []);
 
         const handleEdit = useCallback(() => {

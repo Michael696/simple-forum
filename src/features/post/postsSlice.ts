@@ -11,6 +11,8 @@ const initialState: PostStateType = {
     list: [],
     threadId: '',
     lastFetch: '',
+    firstPostIdx: 0,
+    lastPostIdx: 0,
     totalCount: 0,
     perPageCount: 3,
     isLoading: 'idle'
@@ -67,10 +69,12 @@ export const postsSlice = createSlice({
                 state.lastFetch = new Date().toISOString();
             }
         },
-        postsDone: (state: PostStateType, action: PayloadAction<PostItemType[]>) => { // TODO feed threadId to this action ?
+        postsDone: (state: PostStateType, action: PayloadAction<{ list: PostItemType[], firstPostIdx: number, lastPostIdx: number }>) => { // TODO feed threadId to this action ?
             if (state.isLoading === 'pending') {
                 state.isLoading = 'idle';
-                state.list = action.payload;
+                state.list = action.payload.list;
+                state.firstPostIdx = action.payload.firstPostIdx;
+                state.lastPostIdx = action.payload.lastPostIdx;
             }
         },
         postLike: (state: PostStateType, action: PayloadAction<{ postId: Id, user: User }>) => {
@@ -116,26 +120,34 @@ export const postsSlice = createSlice({
 const {postsLoad, postsDone, postText, postRemove, postCount} = postsSlice.actions;
 export const {postLike, postDislike} = postsSlice.actions;
 
-export const fetchPosts = (threadId) => async (dispatch: AppDispatch, getState: () => RootState) => {
-    const postsSlice = getState().posts;
-    const now = new Date();
-    const lastFetch = new Date(postsSlice.lastFetch);
-    //@ts-ignore
-    if ((!isValidDate(lastFetch) || now - lastFetch > FETCH_PERIOD // TODO subtract dates nicer?
-        || threadId !== postsSlice.threadId
-        || postsSlice.list.length === 0)
-        && postsSlice.isLoading === 'idle') { // TODO investigate side effects
+export const fetchPosts = ({threadId, start, end}: { threadId: Id, start: number, end: number }) =>
+    async (dispatch: AppDispatch, getState: () => RootState) => {
+        const postsSlice = getState().posts;
+        const now = new Date();
+        const lastFetch = new Date(postsSlice.lastFetch);
+        //@ts-ignore
+        if ((!isValidDate(lastFetch) || now - lastFetch > FETCH_PERIOD // TODO subtract dates nicer?
+            || threadId !== postsSlice.threadId
+            || start !== postsSlice.firstPostIdx // TODO refactor conditions to function ?
+            || end !== postsSlice.lastPostIdx
+            || postsSlice.list.length === 0)
+            && postsSlice.isLoading === 'idle') { // TODO investigate side effects
 
-        console.log('fetch posts', threadId);
-        dispatch(postsLoad(threadId));
-        const posts = await userApi.fetchPosts(threadId); // id  threadId
-        dispatch(postsDone(posts));
-    } else {
-        console.log('fetch posts skipepd', threadId);
-    }
-};
+            console.log('fetch posts', threadId);
+            await fetchPostCount(threadId)(dispatch, getState); // !!! ???
+            dispatch(postsLoad(threadId));
+            const response = await userApi.fetchPosts({id: threadId, start, end});
+            dispatch(postsDone({
+                list: response.posts,
+                firstPostIdx: response.start || 0,
+                lastPostIdx: response.end || response.posts.length - 1
+            }));
+        } else {
+            console.log('fetch posts skipepd', threadId);
+        }
+    };
 
-export const fetchPostCount = (threadId) => async (dispatch: AppDispatch, getState: () => RootState) => {
+const fetchPostCount = (threadId) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const count = await userApi.getPostCount({id: threadId});
     dispatch(postCount(count));
 };

@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {fetchPostCount, fetchPosts, postsIsLoading, postsList} from "./postsSlice";
+import {fetchPosts, postsIsLoading, postsList} from "./postsSlice";
 import {PostItemType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
@@ -11,6 +11,7 @@ import {fetchThreads, removeThread, threadWithId} from "../threads/threadsSlice"
 import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHintMessage";
 import {url, urlToPage} from "../../app/urls";
 import Pagination from "../../components/forum/Pagination/Pagination";
+import {userApi} from "../../app/userApi";
 
 export default function Posts() {
     const params = useParams();
@@ -24,12 +25,18 @@ export default function Posts() {
     const postCount = useAppSelector(state => state.posts.totalCount); // inline selector
     const perPageCount = useAppSelector(state => state.posts.perPageCount); // inline selector
     const totalPages = Math.ceil(postCount / perPageCount);
+    const currentPageDraft = parseInt(params.page || '1');
+    const currentPage = (Number.isNaN(currentPageDraft) || currentPageDraft < 1) ? 1 : currentPageDraft;
 
     useEffect(() => {
         dispatch(fetchThreads(params.forumId));
-        dispatch(fetchPosts(params.threadId));
-        dispatch(fetchPostCount(params.threadId));
-        console.log('current page is:', params.page);
+        dispatch(fetchPosts({
+            threadId: params.threadId,
+            start: (currentPage - 1) * perPageCount,
+            end: currentPage * perPageCount - 1
+        }));
+        console.log('current page is (from params):', params.page);
+        console.log('current page is (sane):', currentPage);
     }, []);
 
     const handleReply = useCallback((id) => {
@@ -37,7 +44,7 @@ export default function Posts() {
         const found = posts.find(p => p.id === id);
         if (found) {
             console.log('reply to', found);
-            const text = `user '${found.author.name}' wrote at ${found.postedAt}:\r\n` +
+            const text = `user '${found.author.name}' wrote at ${found.postedAt}:\r\n` + // TODO refactor to separate entity
                 `===========================\r\n` +
                 `${found.text}\r\n` +
                 `===========================\r\n`;
@@ -79,9 +86,28 @@ export default function Posts() {
             </div>
         );
 
-        const currentPageDraft = parseInt(params.page || '1');
-        const currentPage = Number.isNaN(currentPageDraft) ? 1 : currentPageDraft;
-        // TODO wire-up pagination
+        const handleCreatePost = async e => {
+            console.log('create post for thread', thread.id, postText);
+            const postId = await userApi.createPost({
+                forumId: params.forumId,
+                threadId: thread.id,
+                userId: user.id,
+                text: e.target.val
+            });
+            console.log('created post with id:', postId);
+            if (!postId) {
+                navigate(url.SIGN_IN);
+            } else {
+                await dispatch(fetchPosts({
+                    threadId: thread.id,
+                    start: (totalPages - 1) * perPageCount, // TODO hide logic to reducer
+                    end: totalPages * perPageCount - 1
+                }));
+                setPostText('');
+            }
+        };
+
+        // TODO nicify 'posts loading' message
         return (
             <>
                 {(user.id === thread.author.id || user.isAdmin) ?
@@ -89,14 +115,19 @@ export default function Posts() {
                 <div className='post-list margin05'>
                     {isLoading === 'pending' ?
                         'loading posts...'
-                        : (postList.length ? postList : `no posts in thread ${params.threadId}`)
+                        : (postList.length ? postList : `no posts in thread ${thread.id}`)
                     }
                 </div>
-                <Pagination totalPages={totalPages} currentPage={currentPage} onChange={(page) => {
+                <Pagination totalPages={totalPages} currentPage={currentPage} onChange={async (page) => {
                     navigate(urlToPage({forumId: params.forumId, threadId: thread.id, page}));
+                    await dispatch(fetchPosts({
+                        threadId: thread.id,
+                        start: (page - 1) * perPageCount, // TODO hide logic to reducer
+                        end: page * perPageCount - 1
+                    }));
                 }}/>
                 <StatusHintMessage>
-                    <NewPostForm text={postText} threadId={params.threadId} forumId={params.forumId}/>
+                    <NewPostForm text={postText} onCreate={handleCreatePost}/>
                 </StatusHintMessage>
             </>
         );

@@ -76,6 +76,8 @@ export type PostStateType = {
     lastFetch: string,
     totalCount: number,
     perPageCount: number,
+    firstPostIdx: number,
+    lastPostIdx: number,
     isLoading: LoadingType
 }
 

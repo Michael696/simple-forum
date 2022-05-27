@@ -75,9 +75,9 @@ export const userApi = {
             return false;
         }
     },
-    fetchPosts: async (id: Id) => {
+    fetchPosts: async ({id, start, end}: { id: Id, start: number, end: number }) => {
         try {
-            const response = await httpApi.post('/posts', {id}); // thread id
+            const response = await httpApi.post('/posts', {id, start, end}); // thread id
             return response.data;
         } catch (e) {
             console.error(e);
