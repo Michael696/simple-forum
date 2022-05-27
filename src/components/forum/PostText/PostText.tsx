@@ -3,7 +3,7 @@ import '../../../features/post/Post.sass';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/cjs/Button";
 import Textarea from '../Textarea/Textarea';
-import {MAX_POST_LENGTH} from "../../../app/constants";
+import {MAX_POST_LENGTH} from "../../../app/settings";
 
 const PostText = function ({text, editable, onSave, onCancel}:
                                { text: string, editable: boolean, onSave: (text: string) => void, onCancel: () => void }) {

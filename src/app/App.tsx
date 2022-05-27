@@ -32,7 +32,7 @@ const PrivateRoute = ({children}) => {
             navigate(url.SIGN_IN); // TODO avoid 'request failed' message while redirecting from PrivateRoute to Sign-in
         }
     }, [isAuthenticated, children]);
-    return component;
+    return component; // TODO component is not rendering ! (???)
 };
 
 function App() {

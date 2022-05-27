@@ -3,7 +3,7 @@ import Button from "react-bootstrap/cjs/Button";
 import Form from "react-bootstrap/Form";
 import '../../../features/post/Post.sass';
 import Textarea from "../Textarea/Textarea";
-import {MAX_POST_LENGTH} from "../../../app/constants";
+import {MAX_POST_LENGTH} from "../../../app/settings";
 
 const NewPostForm = function ({text, onCreate}: { text: string, onCreate: (text: string) => void }) {
     const [postText, setPostText] = useState(text);
