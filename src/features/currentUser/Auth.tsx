@@ -36,6 +36,12 @@ export default function Auth() {
         }
     }, [isAuthenticated]);
 
+    const handleKey = (e) => {
+        if (e.key === 'Enter') {
+            submitAuth();
+        }
+    };
+
     return (
         <div className='register form-width-50'>
             <h6 className='sign-in__header center border-1-top border-1-left border-1-right border-1-bottom pad05 border-top-round-025'>Sign-in</h6>
@@ -46,6 +52,7 @@ export default function Auth() {
                         type="text"
                         placeholder="Enter username"
                         ref={usernameRef}
+                        onKeyPress={handleKey}
                     />
                 </Form.Group>
 
@@ -56,6 +63,7 @@ export default function Auth() {
                         placeholder="Password"
                         aria-describedby="passwordHelpBlock"
                         ref={passwordRef}
+                        onKeyPress={handleKey}
                     />
                 </Form.Group>
                 {error}
