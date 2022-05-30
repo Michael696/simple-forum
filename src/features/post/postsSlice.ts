@@ -125,7 +125,7 @@ export const postsTotalPages = state => {
     return Math.ceil(posts.totalCount / posts.perPageCount)
 };
 
-export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }) =>
+export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, force: boolean = false) =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
         const postsSlice = getState().posts;
         const now = new Date();
@@ -138,7 +138,8 @@ export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }) =>
             || start !== postsSlice.firstPostIdx // TODO refactor conditions to function ?
             || end !== postsSlice.lastPostIdx
             || postsSlice.list.length === 0)
-            && postsSlice.isLoading === 'idle') { // TODO investigate side effects
+            && postsSlice.isLoading === 'idle' // TODO investigate side effects
+            || force) {
 
             console.log('fetch posts', threadId);
             await fetchPostCount(threadId)(dispatch, getState); // !!! ???

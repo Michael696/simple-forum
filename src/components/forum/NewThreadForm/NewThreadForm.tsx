@@ -9,9 +9,13 @@ import {AppDispatch} from "../../../app/store";
 import {userApi} from "../../../app/userApi";
 import {currentUser} from "../../../features/currentUser/currentUserSlice";
 import {url} from "../../../app/urls";
+import Textarea from '../Textarea/Textarea';
+import {MAX_POST_LENGTH} from "../../../app/settings";
+import {fetchThreads} from "../../../features/threads/threadsSlice";
 
 export default function NewThreadForm() {
     const [threadName, setThreadName] = useState('');
+    const [postText, setPostText] = useState('');
     const {forumId} = useParams();
     const navigate = useNavigate();
     const dispatch: AppDispatch = useAppDispatch();
@@ -25,18 +29,30 @@ export default function NewThreadForm() {
 
     const handleCreate = async e => {
         console.log('create thread', threadName, forumId, forum.name, user);
-        const threadId = await userApi.createThread({forumId, userId: user.id, name: threadName});
-        console.log('created thread with id:', threadId);
+        const thread = await userApi.createThread({forumId, userId: user.id, name: threadName});
+        console.log('created thread with id:', thread);
+        const postId = await userApi.createPost({
+            text: postText,
+            forumId,
+            threadId: thread.id.toString(), // TODO ensure threadId type is a string on back, not on front !!!
+            userId: user.id
+        });
+        dispatch(fetchThreads(forumId, true));
+        console.log('created post with id:', postId);
         navigate(`${url.FORUM}/${forumId}`);
     };
 
-    const buttonOptions = (threadName.length === 0) ? {disabled: true} : {};
+    const handlePostChange = text => {
+        setPostText(text);
+    };
+
+    const buttonOptions = (threadName.length === 0 || postText.length === 0) ? {disabled: true} : {};
 
     return forum ? (
         <div className='form-width-50 border-1 pad-1 border-round-05'>
-            <h5 className='center'>Creating new thread in forum {`'${forum.name}'`}</h5>
+            <h6 className='center'>Creating new thread in forum {`'${forum.name}'`}</h6>
             <Form.Group className="mb-3" controlId="formThreadName">
-                <Form.Label>thread name</Form.Label>
+                <Form.Label>Thread name</Form.Label>
                 <Form.Control
                     type="text"
                     placeholder=""
@@ -45,6 +61,8 @@ export default function NewThreadForm() {
                         setThreadName(e.target.value);
                     }}
                 />
+                <Form.Label>Post text</Form.Label>
+                <Textarea text={postText} maxLength={MAX_POST_LENGTH} onChange={handlePostChange}/>
             </Form.Group>
             <Button onClick={handleCreate} {...buttonOptions}>Create</Button>
         </div>
