@@ -1,12 +1,14 @@
 import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/cjs/Button';
+import {LinkContainer} from 'react-router-bootstrap';
 import {registerClear, registerErrorMessage, registerStart, registerState} from './registerSlice';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {AppDispatch} from "../../app/store";
 import {isUserAuthenticated} from "../currentUser/currentUserSlice";
 import {useNavigate} from "react-router";
 import {url} from "../../app/urls";
+import './Register.sass';
 
 export default function Register() {
     const nameRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
@@ -33,12 +35,14 @@ export default function Register() {
         return () => {
             dispatch(registerClear());
         }
-    }, []);
+    }, [nameRef]);
 
     useEffect(() => {
         if (authOk) {
             console.log('cannot register authenticated user');
-            navigate(url.FORUM);
+            setTimeout(() => {
+                navigate(url.FORUM);
+            }, 0);
         }
     }, [authOk]);
 
@@ -64,94 +68,100 @@ export default function Register() {
     };
 
     const formDone = (
-        <div>
+        <h5 className='center bold'>
             Congratulations ! You've been successfully registered!<br/>
-            Now you can sign-in.
-        </div>
+            Now you can <LinkContainer to={url.SIGN_IN}><a>sign-in</a></LinkContainer>
+        </h5>
     );
 
+    // TODO implement real user registration (now it's a fake)
     // TODO refactor onChange handlers
     const formRegister = (
-        <div className='form-width-50 border-1 pad-1 border-round-05'>
-            <Form.Group className="mb-3" controlId="formUserName">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Enter username"
-                    ref={nameRef}
-                    value={name}
-                    onChange={(e) => {
-                        setName(e.target.value);
-                        setError('');
-                        regClear();
-                    }}
-                />
-                <Form.Text className="text-muted">
-                    only characters and numbers
-                </Form.Text>
-            </Form.Group>
+        <div className='register form-width-50'>
+            <h6 className='register__header center border-1-top border-1-left border-1-right border-1-bottom pad05 border-top-round-025'>
+                Register new user
+            </h6>
+            <Form className='border-1-right border-1-left border-1-bottom border-bottom-round-025 pad-1'>
+                <Form.Group className="mb-3" controlId="formUserName">
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Enter username"
+                        ref={nameRef}
+                        value={name}
+                        onChange={(e) => {
+                            setName(e.target.value);
+                            setError('');
+                            regClear();
+                        }}
+                    />
+                    <Form.Text className="text-muted">
+                        only characters and numbers
+                    </Form.Text>
+                </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formUserEmail">
-                <Form.Label>E-mail</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Enter your e-mail"
-                    value={eMail}
-                    onChange={(e) => {
-                        setEmail(e.target.value);
-                        setError('');
-                        regClear();
-                    }}
-                />
-            </Form.Group>
+                <Form.Group className="mb-3" controlId="formUserEmail">
+                    <Form.Label>E-mail</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Enter your e-mail"
+                        value={eMail}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            setError('');
+                            regClear();
+                        }}
+                    />
+                </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formUserPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                    type="password"
-                    placeholder="Password"
-                    aria-describedby="passwordHelpBlock"
-                    value={password}
-                    onChange={(e) => {
-                        setPassword(e.target.value);
-                        setError('');
-                        regClear();
-                    }}
-                />
-                <Form.Text id="passwordHelpBlock" muted>
-                    Your password must be 8-20 characters long, contain letters and numbers, and
-                    must not contain spaces, special characters, or emoji.
-                </Form.Text>
-            </Form.Group>
+                <Form.Group className="mb-3" controlId="formUserPassword">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                        type="password"
+                        placeholder="Password"
+                        aria-describedby="passwordHelpBlock"
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            setError('');
+                            regClear();
+                        }}
+                    />
+                    <Form.Text id="passwordHelpBlock" muted>
+                        Your password must be 8-20 characters long, contain letters and numbers, and
+                        must not contain spaces, special characters, or emoji.
+                    </Form.Text>
+                </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formUserPassword2">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                    type="password"
-                    placeholder="Repeat password"
-                    aria-describedby="passwordHelpBlock"
-                    value={password2}
-                    onChange={(e) => {
-                        setPassword2(e.target.value);
-                        setError('');
-                        regClear();
-                    }}
-                />
-            </Form.Group>
+                <Form.Group className="mb-3" controlId="formUserPassword2">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                        type="password"
+                        placeholder="Repeat password"
+                        aria-describedby="passwordHelpBlock"
+                        value={password2}
+                        onChange={(e) => {
+                            setPassword2(e.target.value);
+                            setError('');
+                            regClear();
+                        }}
+                    />
+                </Form.Group>
 
-            {
-                error ? (
-                    <Form.Group className='error-message margin1 border-round-025'>
-                        <Form.Label>{error}</Form.Label>
-                    </Form.Group>
-                ) : ''
-            }
+                {
+                    error ? (
+                        <Form.Group className='error-message margin1 border-round-025'>
+                            <Form.Label>{error}</Form.Label>
+                        </Form.Group>
+                    ) : ''
+                }
 
-            <Button {...((registering === 'pending' || registering === 'error') ? {disabled: true} : {})}
-                    variant="primary"
-                    onClick={handleSubmit}>
-                Submit
-            </Button>
+                <Button {...((registering === 'pending' || registering === 'error') ? {disabled: true} : {})}
+                        variant="primary"
+                        onClick={handleSubmit}>
+                    Submit
+                </Button>
+            </Form>
         </div>
     );
 

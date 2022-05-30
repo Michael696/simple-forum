@@ -37,8 +37,9 @@ export default function Auth() {
     }, [isAuthenticated]);
 
     return (
-        <div className='form-width-50 border-1 pad-1 border-round-05'>
-            <Form>
+        <div className='register form-width-50'>
+            <h6 className='sign-in__header center border-1-top border-1-left border-1-right border-1-bottom pad05 border-top-round-025'>Sign-in</h6>
+            <Form className='border-1-right border-1-left border-1-bottom border-bottom-round-025 pad-1'>
                 <Form.Group className="mb-3" controlId="formUserName">
                     <Form.Label>Username</Form.Label>
                     <Form.Control
