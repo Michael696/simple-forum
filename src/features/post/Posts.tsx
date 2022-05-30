@@ -12,7 +12,6 @@ import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHi
 import {url, urlToPage} from "../../app/urls";
 import Pagination from "../../components/forum/Pagination/Pagination";
 import {userApi} from "../../app/userApi";
-import OnlineUsers from "../onlineUsers/OnlineUsers";
 
 export default function Posts() {
     const params = useParams();
@@ -120,7 +119,6 @@ export default function Posts() {
                 <StatusHintMessage>
                     <NewPostForm text={postText} onCreate={handleCreatePost}/>
                 </StatusHintMessage>
-                <OnlineUsers/>
             </>
         );
     } else {

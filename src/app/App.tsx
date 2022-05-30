@@ -18,6 +18,7 @@ import {checkAuth, currentUser, isUserAuthenticated} from "../features/currentUs
 import NewThreadForm from "../components/forum/NewThreadForm/NewThreadForm";
 import CurrentTime from "../components/main/CurrentTime/CurrentTime";
 import CurrentUser from "../features/currentUser/CurrentUser";
+import OnlineUsers from "../features/onlineUsers/OnlineUsers";
 
 const PrivateRoute = ({children}) => {
     const isAuthenticated = useAppSelector(isUserAuthenticated);
@@ -60,16 +61,18 @@ function App() {
                 <Route path={url.REGISTER} element={<Register/>}/>
                 <Route path={url.SIGN_IN} element={<Auth/>}/>
                 <Route path={url.SIGN_OUT} element={<DeAuth/>}/>
-                <Route path={`${url.FORUM}/:forumId`} element={<Threads/>}/>
-                <Route path={`${url.FORUM}/:forumId${url.THREAD}/:threadId`} element={<Posts/>}/>
-                <Route path={`${url.FORUM}/:forumId${url.THREAD}/:threadId/:page`} element={<Posts/>}/>
+                <Route path={`${url.FORUM}/:forumId`} element={<><Threads/><OnlineUsers/></>}/>
+                <Route path={`${url.FORUM}/:forumId${url.THREAD}/:threadId`} element={<><Posts/><OnlineUsers/></>}/>
+                <Route path={`${url.FORUM}/:forumId${url.THREAD}/:threadId/:page`}
+                       element={<><Posts/><OnlineUsers/></>}/>
                 <Route path={`${url.NEW_THREAD}/:forumId`} element={
                     <PrivateRoute>
                         <NewThreadForm/>
+                        <OnlineUsers/>
                     </PrivateRoute>
                 }/>
 
-                <Route path='/*' element={<Forums/>}/>
+                <Route path='/*' element={<><Forums/><OnlineUsers/></>}/>
             </Routes>
             <Footer/>
         </div>

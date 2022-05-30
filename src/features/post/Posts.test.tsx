@@ -11,7 +11,6 @@ import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {setupServer} from "msw/node";
 import {rest} from 'msw';
 import currentUserReducer, {checkAuth} from "../currentUser/currentUserSlice";
-import onlineUsersReducer from '../onlineUsers/onlineUsersSlice';
 import {url} from "../../app/urls";
 import {User} from "../../app/types";
 import postsReducer from '../../features/post/postsSlice';
@@ -94,7 +93,6 @@ test('Posts: #1 should show no buttons for non-authenticated user ', async () =>
 
     const store = configureStore({
         reducer: {
-            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
@@ -206,19 +204,10 @@ test('Posts: #2 current user regular - should show "reply", "edit", "remove"  fo
         }))
     );
 
-    server.use(
-        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
-            return res(
-                context.json([])
-            );
-        }))
-    );
-
     server.listen();
 
     const store = configureStore({
         reducer: {
-            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
@@ -332,19 +321,10 @@ test('Posts: #3 current user regular - should show "reply", "edit", "remove"  "r
         }))
     );
 
-    server.use(
-        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
-            return res(
-                context.json([])
-            );
-        }))
-    );
-
     server.listen();
 
     const store = configureStore({
         reducer: {
-            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
@@ -456,19 +436,10 @@ test('Posts: #4 current user regular - should show "reply" for other posts', asy
         }))
     );
 
-    server.use(
-        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
-            return res(
-                context.json([])
-            );
-        }))
-    );
-
     server.listen();
 
     const store = configureStore({
         reducer: {
-            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
@@ -580,19 +551,10 @@ test('Posts: #5 current user regular (banned) - should show no buttons', async (
         }))
     );
 
-    server.use(
-        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
-            return res(
-                context.json([])
-            );
-        }))
-    );
-
     server.listen();
 
     const store = configureStore({
         reducer: {
-            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
@@ -703,19 +665,10 @@ test('Posts: #6 current user is admin - should show "reply", "edit", "remove" an
         }))
     );
 
-    server.use(
-        rest.post('http://127.0.0.1:1337/api/online-users', ((req, res, context) => {
-            return res(
-                context.json([])
-            );
-        }))
-    );
-
     server.listen();
 
     const store = configureStore({
         reducer: {
-            onlineUsers: onlineUsersReducer,
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,

@@ -4,7 +4,6 @@ import {fetchForums, forumsList} from './forumsSlice';
 import ForumItem from './ForumItem';
 import {AppDispatch} from "../../app/store";
 import './Forums.sass';
-import OnlineUsers from "../onlineUsers/OnlineUsers";
 
 export default function Forums() {
     const forums = useSelector(forumsList);
@@ -35,11 +34,8 @@ export default function Forums() {
 
 // TODO nicely place OnlineUsers on pages ?
     return (
-        <>
-            <div className='forums margin05'>
-                {forumList}
-            </div>
-            <OnlineUsers/>
-        </>
+        <div className='forums margin05'>
+            {forumList}
+        </div>
     );
 }

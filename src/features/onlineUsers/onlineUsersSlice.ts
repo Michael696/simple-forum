@@ -10,13 +10,13 @@ type OnlineUsersArray = Array<string>;
 
 type OnlineUsersList = {
     users: OnlineUsersArray,
-    loading: LoadingType,
+    isLoading: LoadingType,
     lastFetch: string,
 }
 
 const initialState: OnlineUsersList = {
     users: [],
-    loading: 'idle',
+    isLoading: 'idle',
     lastFetch: ''
 };
 
@@ -25,14 +25,14 @@ export const onlineUsersSlice = createSlice({
     initialState,
     reducers: {
         usersLoading: (state: OnlineUsersList) => {
-            if (state.loading === 'idle') {
-                state.loading = 'pending';
+            if (state.isLoading === 'idle') {
+                state.isLoading = 'pending';
                 state.lastFetch = new Date().toISOString();
             }
         },
         usersDone: (state: OnlineUsersList, action: PayloadAction<OnlineUsersArray>) => {
-            if (state.loading === 'pending') {
-                state.loading = 'idle';
+            if (state.isLoading === 'pending') {
+                state.isLoading = 'idle';
                 state.users = action.payload;
             }
         },
@@ -45,7 +45,7 @@ export const onlineUsers = state => state.onlineUsers.users;
 const {usersLoading, usersDone} = onlineUsersSlice.actions;
 
 export const fetchUsers = () => async (dispatch: AppDispatch, getState: () => RootState) => {
-    const usersSlice = getState().forums;
+    const usersSlice = getState().onlineUsers;
     const now = new Date();
     const lastFetch = new Date(usersSlice.lastFetch);
 
