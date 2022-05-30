@@ -32,7 +32,6 @@ export default function Forums() {
         </div>
     );
 
-// TODO nicely place OnlineUsers on pages ?
     return (
         <div className='forums margin05'>
             {forumList}

@@ -31,7 +31,7 @@ const PrivateRoute = ({children}) => {
     } else {
         console.log('PrivateRoute auth ERROR:', user);
         setTimeout(() => { // to avoid 'bad setState() call error message'
-            navigate(url.SIGN_IN); // TODO avoid 'request failed' message while redirecting from PrivateRoute to Sign-in
+            navigate(url.SIGN_IN);
         }, 0);
     }
     return comp;
@@ -47,8 +47,6 @@ function App() {
             dispatch(checkAuth());
         }
     }, []);
-
-    // TODO make Posts render correctly if page is not specified (take 1 as default and rewrite url)
 
     return (
         <div className="App">

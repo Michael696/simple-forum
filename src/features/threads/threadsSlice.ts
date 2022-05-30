@@ -64,10 +64,8 @@ export const {viewed} = threadsSlice.actions;
 
 export const fetchThreads = (forumId: Id, force: boolean = false) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const threadsSlice = getState().threads;
-    const now = new Date();
     const lastFetch = new Date(threadsSlice.lastFetch);
-    //@ts-ignore
-    if ((!isValidDate(lastFetch) || now - lastFetch > FETCH_PERIOD // TODO subtract dates nicer?
+    if ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
         || forumId !== threadsSlice.forumId
         || threadsSlice.list.length === 0)
         && threadsSlice.isLoading === 'idle' // TODO investigate side effects

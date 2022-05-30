@@ -13,7 +13,7 @@ const initialState: PostStateType = {
     lastFetch: '',
     firstPostIdx: 0,
     lastPostIdx: 0,
-    totalCount: 0,
+    totalCount: -1,
     perPageCount: 3,
     isLoading: 'idle'
 };
@@ -69,7 +69,7 @@ export const postsSlice = createSlice({
                 state.lastFetch = new Date().toISOString();
             }
         },
-        postsDone: (state: PostStateType, action: PayloadAction<{ list: PostItemType[], firstPostIdx: number, lastPostIdx: number }>) => { // TODO feed threadId to this action ?
+        postsDone: (state: PostStateType, action: PayloadAction<{ list: PostItemType[], firstPostIdx: number, lastPostIdx: number }>) => {
             if (state.isLoading === 'pending') {
                 state.isLoading = 'idle';
                 state.list = action.payload.list;
@@ -128,23 +128,23 @@ export const postsTotalPages = state => {
 export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, force: boolean = false) =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
         const postsSlice = getState().posts;
-        const now = new Date();
         const lastFetch = new Date(postsSlice.lastFetch);
         const start = (page - 1) * postsSlice.perPageCount;
         const end = page * postsSlice.perPageCount - 1;
-        //@ts-ignore
-        if ((!isValidDate(lastFetch) || now - lastFetch > FETCH_PERIOD // TODO subtract dates nicer?
+        const startLimited = start >= 0 ? start : 0;
+        const endLimited = end >= 0 ? end : 0;
+        if ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
             || threadId !== postsSlice.threadId
-            || start !== postsSlice.firstPostIdx // TODO refactor conditions to function ?
+            || startLimited !== postsSlice.firstPostIdx // TODO refactor conditions to function ?
             || end !== postsSlice.lastPostIdx
             || postsSlice.list.length === 0)
             && postsSlice.isLoading === 'idle' // TODO investigate side effects
             || force) {
 
-            console.log('fetch posts', threadId);
+            console.log('fetch posts', threadId, startLimited, endLimited);
             await fetchPostCount(threadId)(dispatch, getState); // !!! ???
             dispatch(postsLoad(threadId));
-            const response = await userApi.fetchPosts({id: threadId, start, end});
+            const response = await userApi.fetchPosts({id: threadId, start: startLimited, end: endLimited});
             dispatch(postsDone({
                 list: response.posts,
                 firstPostIdx: response.start || 0,
@@ -162,7 +162,7 @@ const fetchPostCount = (threadId) => async (dispatch: AppDispatch, getState: () 
 
 export const setPostText = (postId, text) => async (dispatch: AppDispatch) => {
     const result = await userApi.setPostText({text, postId});
-    if (!!result && !result.error) { // TODO is that ok ? (false positives possible?)
+    if (!!result && !result.error) {
         dispatch(postText({postId, text}));
     } else {
         console.log(`cannot set post ${postId} text: server error`);

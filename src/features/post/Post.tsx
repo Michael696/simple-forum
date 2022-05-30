@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Id, PostItemType, ThreadItemType, User} from "../../app/types";
-import {postDislike, postLike, postWithId, removePost, setPostText} from "./postsSlice";
+import {fetchPosts, postDislike, postLike, postWithId, removePost, setPostText} from "./postsSlice";
 import UserInfo from "../../components/forum/UserInfo/UserInfo";
 import PostText from "../../components/forum/PostText/PostText";
 import PostInfo from "../../components/forum/PostInfo/PostInfo";
@@ -10,10 +10,12 @@ import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice"
 import AdminPostPanel from '../../components/forum/adminPostPanel/AdminPostPanel';
 import './Post.sass';
 import Button from "react-bootstrap/cjs/Button";
+import {useParams} from "react-router-dom";
 
 export type LikeDislike = 'likes' | 'dislikes';
 
 const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, onReply: (id: Id) => void }) {
+    const params = useParams();
         const post: PostItemType = useSelector(state => postWithId(state, id));
         const isAuthenticated = useAppSelector(isUserAuthenticated);
         const dispatch = useDispatch();
@@ -26,7 +28,10 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
 
         const handleRemove = useCallback(() => {
             console.log('remove post', id);
-            dispatch(removePost(id)) // TODO fetch posts after removing
+            (async () => {
+                await dispatch(removePost(id));
+                await dispatch(fetchPosts({page: parseInt(params.page || '1', 10), threadId: thread.id}, true));
+            })();
         }, []);
 
         const handleEdit = useCallback(() => {

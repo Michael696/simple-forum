@@ -22,18 +22,23 @@ export default function Posts() {
     const [postText, setPostText] = useState('');
     const thread = useAppSelector(state => threadWithId(state, params.threadId));
     const navigate = useNavigate();
-    // const postCount = useAppSelector(state => state.posts.totalCount); // inline selector
-    // const perPageCount = useAppSelector(state => state.posts.perPageCount); // inline selector
     const totalPages = useAppSelector(postsTotalPages);
     const currentPageDraft = parseInt(params.page || '1');
     const currentPage = (Number.isNaN(currentPageDraft) || currentPageDraft < 1) ? 1 : currentPageDraft;
+
+    // TODO correctly handle the case when page specified in url is greater than real totalCount
 
     useEffect(() => {
         dispatch(fetchThreads(params.forumId));
         dispatch(fetchPosts({threadId: params.threadId, page: currentPage}));
         console.log('current page is (from params):', params.page);
         console.log('current page is (sane):', currentPage);
-    }, []);
+        console.log('totalPages', totalPages);
+        if (params.page !== currentPage.toString()) {
+            console.log('pages are different, redirecting to', currentPage);
+            navigate(urlToPage({forumId: params.forumId, threadId: params.threadId, page: currentPage}));
+        }
+    }, [totalPages]);
 
     const handleReply = useCallback((id) => {
         console.log('searching for post ', id, posts);

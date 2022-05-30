@@ -46,11 +46,9 @@ const {usersLoading, usersDone} = onlineUsersSlice.actions;
 
 export const fetchUsers = () => async (dispatch: AppDispatch, getState: () => RootState) => {
     const usersSlice = getState().onlineUsers;
-    const now = new Date();
     const lastFetch = new Date(usersSlice.lastFetch);
 
-    //@ts-ignore
-    if ((!isValidDate(lastFetch) || now - lastFetch > FETCH_PERIOD) // TODO subtract dates nicer?
+    if ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD)
         && usersSlice.isLoading === 'idle') {
 
         dispatch(usersLoading());
