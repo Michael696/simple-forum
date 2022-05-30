@@ -1,15 +1,15 @@
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/cjs/Button';
-import {authClear, authenticate, currentUser, isUserAuthenticated} from './currentUserSlice';
+import {authenticate, isUserAuthenticated, lastAuthError} from './currentUserSlice';
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {url} from "../../app/urls";
 import {fetchUsers} from "../onlineUsers/onlineUsersSlice";
 
 export default function Auth() {
-    const user = useAppSelector(currentUser);
-    const authOk = useAppSelector(isUserAuthenticated);
+    const isAuthenticated = useAppSelector(isUserAuthenticated);
+    const authError = useAppSelector(lastAuthError);
     const dispatch = useAppDispatch();
     const usernameRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
     const passwordRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
@@ -17,33 +17,25 @@ export default function Auth() {
 
 
     const submitAuth = async () => {
-        // console.log('user,pass', usernameRef.current.value, passwordRef.current.value);
-
         dispatch(authenticate({
             name: usernameRef.current.value,
             password: passwordRef.current.value,
         }));
 
     };
-
-    const error = user.error.length > 0 ? (
+    const error = authError ? (
         <div className='error-message margin1 border-round-025'>
-            {user.error}
+            {authError}
         </div>
     ) : '';
 
     useEffect(() => {
-        dispatch(authClear());
-    }, []);
-
-    useEffect(() => {
-        if (authOk) {
+        if (isAuthenticated) {
             dispatch(fetchUsers());
             navigate(url.FORUM, {replace: true});
         }
-    }, [authOk]);
+    }, [isAuthenticated]);
 
-    // TODO fix 'request failed' message after form reload
     return (
         <div className='form-width-50 border-1 pad-1 border-round-05'>
             <Form>

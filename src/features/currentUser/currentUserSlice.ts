@@ -1,20 +1,26 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {CurrentUserType, Id, User} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
-import {AppDispatch} from "../../app/store";
+import {AppDispatch, RootState} from "../../app/store";
 import {userApi} from "../../app/userApi";
 
+const emptyUser = () => {
+    return {
+        id: '',
+        name: '',
+        realName: '',
+        registeredAt: '',
+        posts: 0,
+        location: '',
+        isBanned: false,
+        isAdmin: false,
+    };
+};
+
 const initialState: CurrentUserType = {
-    realName: "",
-    error: "",
+    data: emptyUser(),
     isAuthPending: 'idle',
-    id: '',
-    isAdmin: false,
-    isBanned: false,
-    location: "",
-    name: "",
-    posts: 0,
-    registeredAt: ''
+    error: ''
 };
 
 export const currentUserSlice = createSlice({
@@ -22,33 +28,35 @@ export const currentUserSlice = createSlice({
     initialState,
     reducers: {
         authReq: (state: CurrentUserType) => {
-            if (state.isAuthPending === 'idle' || state.isAuthPending === 'error') {
+            if (state.isAuthPending === 'idle') {
                 state.isAuthPending = 'pending';
+            } else {
+                console.log('authReq - IS PENDING');
             }
         },
         authDone: (state: CurrentUserType, action: PayloadAction<User>) => {
             if (state.isAuthPending === 'pending') {
                 state.isAuthPending = 'idle';
                 state.error = '';
-                const user = action.payload;
-                Object.keys(user).forEach(key => {
-                    state[key] = user[key];
-                })
+                state.data = action.payload;
+            } else {
+                console.log('authDone - IS PENDING');
             }
         },
         authError: (state: CurrentUserType, action: PayloadAction<string>) => {
             if (state.isAuthPending === 'pending') {
-                state.isAuthPending = 'error';
+                state.isAuthPending = 'idle';
+                state.data = emptyUser();
                 state.error = action.payload;
+            } else {
+                console.log('authError - IS PENDING');
             }
         },
         authClear: (state: CurrentUserType) => {
-            if (state.isAuthPending === 'idle' || state.isAuthPending === 'error') {
-                Object.keys(initialState).forEach(key => {
-                    state[key] = initialState[key];
-                });
+            if (state.isAuthPending === 'idle') {
+                state.data = emptyUser();
             } else {
-                console.log('auth IS PENDING');
+                console.log('authClear - IS PENDING');
             }
         },
     },
@@ -58,9 +66,11 @@ export const findUserById = (list: Array<User>, id: Id) => list.filter(user => u
 
 export const {authReq, authDone, authError, authClear} = currentUserSlice.actions;
 
-export const currentUser = state => state.currentUser;
+export const currentUser = (state: RootState) => state.currentUser.data;
 
-export const isUserAuthenticated = state => (state.currentUser.name.length > 0 && state.currentUser.error.length === 0);
+export const lastAuthError = (state: RootState) => state.currentUser.error;
+
+export const isUserAuthenticated = (state: RootState) => state.currentUser.data.name.length > 0 && state.currentUser.error.length === 0;
 
 export const authenticate = ({name, password}) => async (dispatch: AppDispatch) => {
     let authResult;
@@ -80,7 +90,7 @@ export const checkAuth = () => async (dispatch: AppDispatch) => {
         checkResult = await userApi.currentUser();
         dispatch(authDone(checkResult));
     } catch (e: any) {
-        dispatch(authError(e.message || 'unknown error'));
+        dispatch(authError(''));
     }
 };
 

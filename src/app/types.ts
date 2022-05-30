@@ -21,10 +21,11 @@ export type User = {
     isAdmin: boolean,
 }
 
-export type CurrentUserType = User & {
-    isAuthPending: LoadingType;
-    error: string;
-};
+export type CurrentUserType = {
+    data: User,
+    isAuthPending: LoadingType,
+    error: string,
+}
 
 export type LastMessage = {
     dateTime: string,

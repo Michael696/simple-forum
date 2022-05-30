@@ -21,18 +21,19 @@ import CurrentUser from "../features/currentUser/CurrentUser";
 
 const PrivateRoute = ({children}) => {
     const isAuthenticated = useAppSelector(isUserAuthenticated);
+    const user = useAppSelector(currentUser);
     const navigate = useNavigate();
-    let component = null;
-    useEffect(() => {
-        if (isAuthenticated) {
-            console.log('PrivateRoute auth OK');
-            component = children;
-        } else {
-            console.log('PrivateRoute auth ERROR');
+    let comp = null;
+    if (isAuthenticated) {
+        console.log('PrivateRoute auth OK');
+        comp = children;
+    } else {
+        console.log('PrivateRoute auth ERROR:', user);
+        setTimeout(() => { // to avoid 'bad setState() call error message'
             navigate(url.SIGN_IN); // TODO avoid 'request failed' message while redirecting from PrivateRoute to Sign-in
-        }
-    }, [isAuthenticated, children]);
-    return component; // TODO component is not rendering ! (???)
+        }, 0);
+    }
+    return comp;
 };
 
 function App() {
