@@ -129,6 +129,24 @@ export const userApi = {
             return false;
         }
     },
+    addPostLike: async ({postId, userId}: { postId: Id, userId: Id }) => {
+        try {
+            const response = await httpApi.post('/add-post-like', {postId, userId});
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
+    addPostDislike: async ({postId, userId}: { postId: Id, userId: Id }) => {
+        try {
+            const response = await httpApi.post('/add-post-dislike', {postId, userId});
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
     getPostCount: async ({id}: { id: Id }) => {
         try {
             const response = await httpApi.post('/get-post-count', {id});

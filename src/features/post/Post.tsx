@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Id, PostItemType, ThreadItemType, User} from "../../app/types";
-import {fetchPosts, postDislike, postLike, postWithId, removePost, setPostText} from "./postsSlice";
+import {addPostDislike, addPostLike, fetchPosts, postWithId, removePost, setPostText} from "./postsSlice";
 import UserInfo from "../../components/forum/UserInfo/UserInfo";
 import PostText from "../../components/forum/PostText/PostText";
 import PostInfo from "../../components/forum/PostInfo/PostInfo";
@@ -11,12 +11,13 @@ import AdminPostPanel from '../../components/forum/adminPostPanel/AdminPostPanel
 import './Post.sass';
 import Button from "react-bootstrap/cjs/Button";
 import {useParams} from "react-router-dom";
+import {RootState} from "../../app/store";
 
 export type LikeDislike = 'likes' | 'dislikes';
 
 const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, onReply: (id: Id) => void }) {
     const params = useParams();
-        const post: PostItemType = useSelector(state => postWithId(state, id));
+    const post: PostItemType = useSelector((state: RootState) => postWithId(state, id));
         const isAuthenticated = useAppSelector(isUserAuthenticated);
         const dispatch = useDispatch();
         const user: User = useAppSelector(currentUser);
@@ -54,10 +55,10 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
                 (props: { label: LikeDislike }) => {
                     switch (props.label) {
                         case 'likes':
-                            dispatch(postLike({postId: id, user}));
+                            dispatch(addPostLike({postId: id, user}));
                             break;
                         case 'dislikes':
-                            dispatch(postDislike({postId: id, user}));
+                            dispatch(addPostDislike({postId: id, user}));
                             break;
                     }
                 }

@@ -20,9 +20,9 @@ const initialState: PostStateType = {
 
 const findPostById = (list: Array<PostItemType>, id: Id) => list.filter(post => post.id === id)[0];
 
-export const postsIsLoading = state => state.posts.isLoading;
-export const postsList = state => state.posts.list;
-export const postWithId = (state, id: Id) => findPostById(state.posts.list, id);
+export const postsIsLoading = (state: RootState) => state.posts.isLoading;
+export const postsList = (state: RootState) => state.posts.list;
+export const postWithId = (state: RootState, id: Id) => findPostById(state.posts.list, id);
 
 const addOnly = (first: Array<User>, user: User) => {
     const userLiked = findUserById(first, user.id);
@@ -120,7 +120,7 @@ export const postsSlice = createSlice({
 const {postsLoad, postsDone, postText, postRemove, postCount} = postsSlice.actions;
 export const {postLike, postDislike} = postsSlice.actions;
 
-export const postsTotalPages = state => {
+export const postsTotalPages = (state: RootState) => {
     const posts = state.posts;
     return Math.ceil(posts.totalCount / posts.perPageCount)
 };
@@ -133,13 +133,12 @@ export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, for
         const end = page * postsSlice.perPageCount - 1;
         const startLimited = start >= 0 ? start : 0;
         const endLimited = end >= 0 ? end : 0;
-        if ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
+        if (force || ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
             || threadId !== postsSlice.threadId
             || startLimited !== postsSlice.firstPostIdx // TODO refactor conditions to function ?
             || end !== postsSlice.lastPostIdx
             || postsSlice.list.length === 0)
-            && postsSlice.isLoading === 'idle' // TODO investigate side effects
-            || force) {
+            && postsSlice.isLoading === 'idle')) {
 
             console.log('fetch posts', threadId, startLimited, endLimited);
             await fetchPostCount(threadId)(dispatch, getState); // !!! ???
@@ -151,16 +150,16 @@ export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, for
                 lastPostIdx: response.end || response.posts.length - 1
             }));
         } else {
-            console.log('fetch posts skipepd', threadId);
+            console.log('fetch posts skipped', threadId);
         }
     };
 
-const fetchPostCount = (threadId) => async (dispatch: AppDispatch, getState: () => RootState) => {
+const fetchPostCount = (threadId: Id) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const count = await userApi.getPostCount({id: threadId});
     dispatch(postCount(count));
 };
 
-export const setPostText = (postId, text) => async (dispatch: AppDispatch) => {
+export const setPostText = (postId: Id, text: string) => async (dispatch: AppDispatch) => {
     const result = await userApi.setPostText({text, postId});
     if (!!result && !result.error) {
         dispatch(postText({postId, text}));
@@ -169,12 +168,36 @@ export const setPostText = (postId, text) => async (dispatch: AppDispatch) => {
     }
 };
 
-export const removePost = (id) => async (dispatch: AppDispatch) => {
+export const removePost = (id: Id) => async (dispatch: AppDispatch) => {
     const result = await userApi.removePost({id});
     if (!!result && !result.error) {
         dispatch(postRemove({id}));
     } else {
         console.log(`cannot remove post ${id}: server error`);
+    }
+};
+
+export const addPostLike = ({postId, user}: { postId: Id, user: User }) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const post = postWithId(getState(), postId);
+    if (!hasLikeDislike(post.likes, user)) { // has no likes, let's go
+        const result = await userApi.addPostLike(({postId, userId: user.id}));
+        if (!!result && !result.error) {
+            dispatch(postLike({postId, user}));
+        } else {
+            console.log(`cannot like post '${postId}' by user '${user.name}': server error`);
+        }
+    }
+};
+
+export const addPostDislike = ({postId, user}: { postId: Id, user: User }) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const post = postWithId(getState(), postId);
+    if (!hasLikeDislike(post.dislikes, user)) { // has no dislikes, let's go
+        const result = await userApi.addPostDislike(({postId, userId: user.id}));
+        if (!!result && !result.error) {
+            dispatch(postDislike({postId, user}));
+        } else {
+            console.log(`cannot dislike post '${postId}' by user '${user.name}': server error`);
+        }
     }
 };
 
