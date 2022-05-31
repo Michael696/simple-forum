@@ -5,6 +5,7 @@ import {userApi} from "../../app/userApi";
 import {AppDispatch, RootState} from "../../app/store";
 import {LoadingType} from '../../app/types';
 import {FETCH_PERIOD} from "../../app/settings";
+import {debug} from "../../app/debug";
 
 type OnlineUsersArray = Array<string>;
 
@@ -59,7 +60,7 @@ export const fetchUsers = () => async (dispatch: AppDispatch, getState: () => Ro
             dispatch(usersDone([]));
         }
     } else {
-        console.log('fetch onilne-users skipped');
+        debug('fetch onilne-users skipped');
     }
 };
 

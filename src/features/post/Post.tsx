@@ -12,6 +12,7 @@ import './Post.sass';
 import Button from "react-bootstrap/cjs/Button";
 import {useParams} from "react-router-dom";
 import {RootState} from "../../app/store";
+import {debug} from "../../app/debug";
 
 export type LikeDislike = 'likes' | 'dislikes';
 
@@ -28,7 +29,7 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
         }, [onReply, id]);
 
         const handleRemove = useCallback(() => {
-            console.log('remove post', id);
+            debug('remove post', id);
             (async () => {
                 await dispatch(removePost(id));
                 await dispatch(fetchPosts({page: parseInt(params.page || '1', 10), threadId: thread.id}, true));
@@ -37,7 +38,7 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
 
         const handleEdit = useCallback(() => {
             setEditable(true);
-            console.log('edit post', id);
+            debug('edit post', id);
         }, []);
 
     const editCancel = useCallback(() => {
@@ -46,10 +47,11 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
 
     const editSave = useCallback((text) => {
             setEditable(false);
-            console.log(`setting post ${post.id} text:`, text);
+        debug(`setting post ${post.id} text:`, text);
             dispatch(setPostText(post.id, text));
     }, [post]);
 
+    // TODO add ability to revoke like/dislike
         const likesClicked =
             (isAuthenticated && !user.isBanned) ?
                 (props: { label: LikeDislike }) => {

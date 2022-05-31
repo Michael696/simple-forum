@@ -19,6 +19,7 @@ import NewThreadForm from "../components/forum/NewThreadForm/NewThreadForm";
 import CurrentTime from "../components/main/CurrentTime/CurrentTime";
 import CurrentUser from "../features/currentUser/CurrentUser";
 import OnlineUsers from "../features/onlineUsers/OnlineUsers";
+import {debug} from "./debug";
 
 const PrivateRoute = ({children}) => {
     const isAuthenticated = useAppSelector(isUserAuthenticated);
@@ -26,10 +27,10 @@ const PrivateRoute = ({children}) => {
     const navigate = useNavigate();
     let comp = null;
     if (isAuthenticated) {
-        console.log('PrivateRoute auth OK');
+        debug('PrivateRoute auth OK');
         comp = children;
     } else {
-        console.log('PrivateRoute auth ERROR:', user);
+        debug('PrivateRoute auth ERROR:', user);
         setTimeout(() => { // to avoid 'bad setState() call error message'
             navigate(url.SIGN_IN);
         }, 0);

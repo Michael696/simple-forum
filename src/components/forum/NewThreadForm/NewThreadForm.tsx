@@ -12,6 +12,7 @@ import {url} from "../../../app/urls";
 import Textarea from '../Textarea/Textarea';
 import {MAX_POST_LENGTH} from "../../../app/settings";
 import {fetchThreads} from "../../../features/threads/threadsSlice";
+import {debug} from "../../../app/debug";
 
 export default function NewThreadForm() {
     const [threadName, setThreadName] = useState('');
@@ -23,14 +24,14 @@ export default function NewThreadForm() {
     const user = useAppSelector(currentUser);
 
     useEffect(() => {
-        console.log('fetch forums');
+        debug('fetch forums');
         dispatch(fetchForums());
     }, []);
 
     const handleCreate = async e => {
-        console.log('create thread', threadName, forumId, forum.name, user);
+        debug('create thread', threadName, forumId, forum.name, user);
         const thread = await userApi.createThread({forumId, userId: user.id, name: threadName});
-        console.log('created thread with id:', thread);
+        debug('created thread with id:', thread);
         const postId = await userApi.createPost({
             text: postText,
             forumId,
@@ -38,7 +39,7 @@ export default function NewThreadForm() {
             userId: user.id
         });
         dispatch(fetchThreads(forumId, true));
-        console.log('created post with id:', postId);
+        debug('created post with id:', postId);
         navigate(`${url.FORUM}/${forumId}`);
     };
 

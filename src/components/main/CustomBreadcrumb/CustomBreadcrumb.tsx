@@ -8,6 +8,7 @@ import {fetchThreads, threadLastError, threadWithId} from "../../../features/thr
 import {ForumItemType, ThreadItemType} from "../../../app/types";
 import './CustomBreadcrumb.sass';
 import {url} from '../../../app/urls';
+import {debug} from "../../../app/debug";
 
 export default function CustomBreadcrumb() {
     const location = useLocation();
@@ -47,7 +48,7 @@ export default function CustomBreadcrumb() {
     useEffect(() => {
         dispatch(fetchForums());
         if (forumId) {
-            console.log('got forumId', forumId);
+            debug('got forumId', forumId);
             dispatch(fetchThreads(forumId));
         }
     }, []);

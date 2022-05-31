@@ -9,6 +9,7 @@ import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice"
 import {url, urlToPage} from "../../app/urls";
 import Button from "react-bootstrap/cjs/Button";
 import {forumWithId} from "../forumsList/forumsSlice";
+import {debug} from "../../app/debug";
 
 function CreateThreadButton({isAuthenticated, isBanned, onClick}: { isAuthenticated: boolean, isBanned: boolean, onClick: (e: any) => void }) {
     return <>{(isAuthenticated && !isBanned) ? <Button onClick={onClick}>create thread</Button> : null}</>
@@ -28,7 +29,7 @@ export default function Threads() {
     }, []);
 
     const handleNewThread = () => {
-        console.log(`create new thread auth=${isAuthenticated} forumId=${params.forumId}`);
+        debug(`create new thread auth=${isAuthenticated} forumId=${params.forumId}`);
         if (isAuthenticated) {
             navigate(`${url.NEW_THREAD + '/' + params.forumId}`);
         } else {

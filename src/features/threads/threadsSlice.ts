@@ -5,6 +5,7 @@ import {userApi} from "../../app/userApi";
 import {Id, ThreadItemType, ThreadsStateType} from "../../app/types";
 import {isValid as isValidDate} from "date-fns";
 import {FETCH_PERIOD} from "../../app/settings";
+import {debug} from "../../app/debug";
 
 const initialState: ThreadsStateType = {
     list: [],
@@ -44,7 +45,7 @@ export const threadsSlice = createSlice({
         viewed: (state: ThreadsStateType, action: PayloadAction<Id>) => {
             const thread = findThreadById(state.list, action.payload);
             if (thread) {
-                console.log('addViewCount for', action.payload);
+                debug('addViewCount for', action.payload);
                 thread.viewCount++;
             }
         },
@@ -70,7 +71,7 @@ export const fetchThreads = (forumId: Id, force: boolean = false) => async (disp
         || threadsSlice.list.length === 0)
         && threadsSlice.isLoading === 'idle')) {
 
-        console.log('fetch threads', forumId);
+        debug('fetch threads', forumId);
         dispatch(threadsLoad(forumId));
         const threads = await userApi.fetchThreads(forumId);
         if (threads) {
@@ -79,7 +80,7 @@ export const fetchThreads = (forumId: Id, force: boolean = false) => async (disp
             dispatch(threadsError({error: 'network error'}));
         }
     } else {
-        console.log('fetch threads skipped', forumId);
+        debug('fetch threads skipped', forumId);
     }
 };
 
@@ -88,7 +89,7 @@ export const removeThread = (id) => async (dispatch: AppDispatch) => {
     if (!!result && !result.error) {
         dispatch(threadRemove({id}));
     } else {
-        console.log(`cannot remove thread ${id}: server error`);
+        debug(`cannot remove thread ${id}: server error`);
     }
 };
 

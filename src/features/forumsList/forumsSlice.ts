@@ -5,6 +5,7 @@ import {ForumItemType, ForumsStateType, Id} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {userApi} from "../../app/userApi";
 import {FETCH_PERIOD} from "../../app/settings";
+import {debug} from "../../app/debug";
 
 const initialState: ForumsStateType = {
     list: [],
@@ -54,7 +55,7 @@ export const fetchForums = () => async (dispatch: AppDispatch, getState: () => R
         || forumsSlice.list.length === 0)
         && forumsSlice.isLoading === 'idle') {
 
-        console.log('fetch forums');
+        debug('fetch forums');
         dispatch(forumsLoad());
         const forums = await userApi.fetchForums();
         if (forums.error) {
@@ -63,7 +64,7 @@ export const fetchForums = () => async (dispatch: AppDispatch, getState: () => R
             dispatch(forumsDone(forums));
         }
     } else {
-        console.log('fetch forums skipped');
+        debug('fetch forums skipped');
     }
 };
 

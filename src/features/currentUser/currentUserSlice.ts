@@ -3,6 +3,7 @@ import {CurrentUserType, Id, User} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {AppDispatch, RootState} from "../../app/store";
 import {userApi} from "../../app/userApi";
+import {debug} from "../../app/debug";
 
 const emptyUser = () => {
     return {
@@ -31,7 +32,7 @@ export const currentUserSlice = createSlice({
             if (state.isAuthPending === 'idle') {
                 state.isAuthPending = 'pending';
             } else {
-                console.log('authReq - IS PENDING');
+                debug('authReq - IS PENDING');
             }
         },
         authDone: (state: CurrentUserType, action: PayloadAction<User>) => {
@@ -40,7 +41,7 @@ export const currentUserSlice = createSlice({
                 state.error = '';
                 state.data = action.payload;
             } else {
-                console.log('authDone - IS PENDING');
+                debug('authDone - IS PENDING');
             }
         },
         authError: (state: CurrentUserType, action: PayloadAction<string>) => {
@@ -49,14 +50,14 @@ export const currentUserSlice = createSlice({
                 state.data = emptyUser();
                 state.error = action.payload;
             } else {
-                console.log('authError - IS PENDING');
+                debug('authError - IS PENDING');
             }
         },
         authClear: (state: CurrentUserType) => {
             if (state.isAuthPending === 'idle') {
                 state.data = emptyUser();
             } else {
-                console.log('authClear - IS PENDING');
+                debug('authClear - IS PENDING');
             }
         },
     },
@@ -99,7 +100,7 @@ export const deAuthenticate = () => async (dispatch: AppDispatch) => {
         await userApi.deAuth();
         dispatch(authClear());
     } catch (e: any) {
-        console.log('deauth error:', e);
+        debug('deauth error:', e);
     }
 };
 

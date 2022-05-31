@@ -6,6 +6,7 @@ import {Id, PostItemType, PostStateType, User} from "../../app/types";
 import {findUserById} from "../currentUser/currentUserSlice";
 import {isValid as isValidDate} from "date-fns";
 import {FETCH_PERIOD} from "../../app/settings";
+import {debug} from "../../app/debug";
 
 const initialState: PostStateType = {
     list: [],
@@ -140,7 +141,7 @@ export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, for
             || postsSlice.list.length === 0)
             && postsSlice.isLoading === 'idle')) {
 
-            console.log('fetch posts', threadId, startLimited, endLimited);
+            debug('fetch posts', threadId, startLimited, endLimited);
             await fetchPostCount(threadId)(dispatch, getState); // !!! ???
             dispatch(postsLoad(threadId));
             const response = await userApi.fetchPosts({id: threadId, start: startLimited, end: endLimited});
@@ -150,7 +151,7 @@ export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, for
                 lastPostIdx: response.end || response.posts.length - 1
             }));
         } else {
-            console.log('fetch posts skipped', threadId);
+            debug('fetch posts skipped', threadId);
         }
     };
 
@@ -164,7 +165,7 @@ export const setPostText = (postId: Id, text: string) => async (dispatch: AppDis
     if (!!result && !result.error) {
         dispatch(postText({postId, text}));
     } else {
-        console.log(`cannot set post ${postId} text: server error`);
+        debug(`cannot set post ${postId} text: server error`);
     }
 };
 
@@ -173,7 +174,7 @@ export const removePost = (id: Id) => async (dispatch: AppDispatch) => {
     if (!!result && !result.error) {
         dispatch(postRemove({id}));
     } else {
-        console.log(`cannot remove post ${id}: server error`);
+        debug(`cannot remove post ${id}: server error`);
     }
 };
 
@@ -184,7 +185,7 @@ export const addPostLike = ({postId, user}: { postId: Id, user: User }) => async
         if (!!result && !result.error) {
             dispatch(postLike({postId, user}));
         } else {
-            console.log(`cannot like post '${postId}' by user '${user.name}': server error`);
+            debug(`cannot like post '${postId}' by user '${user.name}': server error`);
         }
     }
 };
@@ -196,7 +197,7 @@ export const addPostDislike = ({postId, user}: { postId: Id, user: User }) => as
         if (!!result && !result.error) {
             dispatch(postDislike({postId, user}));
         } else {
-            console.log(`cannot dislike post '${postId}' by user '${user.name}': server error`);
+            debug(`cannot dislike post '${postId}' by user '${user.name}': server error`);
         }
     }
 };
