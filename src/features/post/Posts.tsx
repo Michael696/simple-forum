@@ -7,7 +7,7 @@ import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import NewPostForm from "../../components/forum/NewPostForm/NewPostForm";
 import {currentUser} from "../currentUser/currentUserSlice";
 import Button from "react-bootstrap/cjs/Button";
-import {fetchThreads, removeThread, threadWithId} from "../threads/threadsSlice";
+import {addThreadViewCount, fetchThreads, removeThread, threadWithId} from "../threads/threadsSlice";
 import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHintMessage";
 import {url, urlToPage} from "../../app/urls";
 import Pagination from "../../components/forum/Pagination/Pagination";
@@ -27,6 +27,12 @@ export default function Posts() {
     const currentPage = (Number.isNaN(currentPageDraft) || currentPageDraft < 1) ? 1 : currentPageDraft;
 
     // TODO correctly handle the case when page specified in url is greater than real totalCount
+
+    useEffect(() => {
+        if (thread) {
+            dispatch(addThreadViewCount(thread.id));
+        }
+    }, [thread]);
 
     useEffect(() => {
         dispatch(fetchThreads(params.forumId));

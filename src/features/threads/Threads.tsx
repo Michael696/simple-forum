@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
-import {addThreadViewCount, fetchThreads, threadsList} from "./threadsSlice";
+import {fetchThreads, threadsList} from "./threadsSlice";
 import {ForumItemType, ThreadItemType, User} from "../../app/types";
 import {AppDispatch} from "../../app/store";
 import ThreadItem from "./ThreadItem";
@@ -40,12 +40,8 @@ export default function Threads() {
     if (threads) {
         threadList = threads.map(thread => {
             const linkTo = urlToPage({forumId: params.forumId, threadId: thread.id, page: 1});
-            // TODO add views to thread by following a direct link
-            const addView = () => {
-                dispatch(addThreadViewCount(thread.id));
-            };
             return (
-                <Link to={linkTo} key={thread.id} className='link-as-text' onClick={addView}>
+                <Link to={linkTo} key={thread.id} className='link-as-text'>
                     <ThreadItem key={thread.id} id={thread.id}/>
                 </Link>);
         });

@@ -11,8 +11,8 @@ const initialState: PostStateType = {
     list: [],
     threadId: '',
     lastFetch: '',
-    firstPostIdx: 0,
-    lastPostIdx: 0,
+    firstPostIdx: -1,
+    lastPostIdx: -1,
     totalCount: -1,
     perPageCount: 3,
     isLoading: 'idle'

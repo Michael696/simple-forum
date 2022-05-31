@@ -65,18 +65,17 @@ export const {viewed} = threadsSlice.actions;
 export const fetchThreads = (forumId: Id, force: boolean = false) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const threadsSlice = getState().threads;
     const lastFetch = new Date(threadsSlice.lastFetch);
-    if ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
+    if (force || ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
         || forumId !== threadsSlice.forumId
         || threadsSlice.list.length === 0)
-        && threadsSlice.isLoading === 'idle' // TODO investigate side effects
-        || force) {
+        && threadsSlice.isLoading === 'idle')) {
 
         console.log('fetch threads', forumId);
         dispatch(threadsLoad(forumId));
         const threads = await userApi.fetchThreads(forumId);
         if (threads) {
             dispatch(threadsDone(threads));
-        } else { // TODO handle error
+        } else {
             dispatch(threadsError({error: 'network error'}));
         }
     } else {

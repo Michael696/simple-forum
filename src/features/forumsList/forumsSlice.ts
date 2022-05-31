@@ -49,12 +49,10 @@ const {forumsLoad, forumsDone, forumsError} = forumSlice.actions;
 
 export const fetchForums = () => async (dispatch: AppDispatch, getState: () => RootState) => {
     const forumsSlice = getState().forums;
-    const now = new Date();
     const lastFetch = new Date(forumsSlice.lastFetch);
-    //@ts-ignore
-    if ((!isValidDate(lastFetch) || now - lastFetch > FETCH_PERIOD  // TODO subtract dates nicer?
+    if ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
         || forumsSlice.list.length === 0)
-        && forumsSlice.isLoading === 'idle') {  // TODO investigate side effects
+        && forumsSlice.isLoading === 'idle') {
 
         console.log('fetch forums');
         dispatch(forumsLoad());
