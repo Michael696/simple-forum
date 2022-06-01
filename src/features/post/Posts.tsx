@@ -14,6 +14,7 @@ import Pagination from "../../components/forum/Pagination/Pagination";
 import {userApi} from "../../app/userApi";
 import {debug} from "../../app/debug";
 import {fetchBanned} from "../bannedUsers/bannedUsersSlice";
+import Confirmation from "../../components/main/Confirmation/Confirmation";
 
 export default function Posts() {
     const params = useParams();
@@ -27,6 +28,7 @@ export default function Posts() {
     const totalPages = useAppSelector(postsTotalPages);
     const currentPageDraft = parseInt(params.page || '1');
     const currentPage = (Number.isNaN(currentPageDraft) || currentPageDraft < 1) ? 1 : currentPageDraft;
+    const [confirmationShown, setConfirmationShown] = useState(false);
 
     // TODO correctly handle the case when page specified in url is greater than real totalCount
 
@@ -69,11 +71,20 @@ export default function Posts() {
         window.scrollTo(0, document.body.scrollHeight); // scroll to bottom
     }, [posts]);
 
-    const handleRemoveThread = useCallback(() => {
+    const removeCurrentThread = useCallback(() => {
+        setConfirmationShown(false);
         debug('removing thread ', params.threadId);
         dispatch(removeThread(params.threadId));
         navigate(`${url.FORUM}/${params.forumId}`);
+    }, [params.threadId]);
+
+    const handleRemoveThread = useCallback(() => {
+        setConfirmationShown(true);
     }, [params.threadId, params.forumId]);
+
+    const handleReject = useCallback(() => {
+        setConfirmationShown(false);
+    }, []);
 
     if (thread) {
 
@@ -89,6 +100,9 @@ export default function Posts() {
         const postList = posts && posts.map(post => {
             return <Post key={post.id} id={post.id} thread={thread} onReply={handleReply}/>
         });
+
+        // TODO friendly format the message
+        const confirmationText = `You are about to remove thread '${thread.title}' from forum '${params.forumId}' created by user '${thread.author.name}' ?`;
 
         postList.unshift(
             <div key='title'
@@ -120,7 +134,16 @@ export default function Posts() {
         return (
             <>
                 {(user.id === thread.author.id || user.isAdmin) ?
-                    <Button onClick={handleRemoveThread}>remove thread</Button> : ''}
+                    <>
+                        <Button onClick={handleRemoveThread}>remove thread</Button>
+                        <Confirmation
+                            title='Remove thread'
+                            message={confirmationText}
+                            show={confirmationShown}
+                            onAccept={removeCurrentThread}
+                            onReject={handleReject}
+                        />
+                    </> : ''}
                 <div className='post-list margin05'>
                     {isLoading === 'pending' ?
                         'loading posts...'

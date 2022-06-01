@@ -13,27 +13,32 @@ import Button from "react-bootstrap/cjs/Button";
 import {useParams} from "react-router-dom";
 import {RootState} from "../../app/store";
 import {debug} from "../../app/debug";
+import Confirmation from "../../components/main/Confirmation/Confirmation";
 
 export type LikeDislike = 'likes' | 'dislikes';
 
 const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, onReply: (id: Id) => void }) {
-    const params = useParams();
-    const post: PostItemType = useSelector((state: RootState) => postWithId(state, id));
+        const params = useParams();
+        const post: PostItemType = useSelector((state: RootState) => postWithId(state, id));
         const isAuthenticated = useAppSelector(isUserAuthenticated);
         const dispatch = useDispatch();
         const user: User = useAppSelector(currentUser);
         const [editable, setEditable] = useState(false);
+        const [confirmationShown, setConfirmationShown] = useState(false);
 
         const handleReply = useCallback(() => {
             onReply(id);
         }, [onReply, id]);
 
-        const handleRemove = useCallback(() => {
+        const removeCurrentPost = useCallback(() => {
+            setConfirmationShown(false);
             debug('remove post', id);
-            (async () => {
-                dispatch(removePost(id));
-                dispatch(fetchPosts({page: parseInt(params.page || '1', 10), threadId: thread.id}, true));
-            })();
+            dispatch(removePost(id));
+            dispatch(fetchPosts({page: parseInt(params.page || '1', 10), threadId: thread.id}, true));
+        }, [id]);
+
+        const handleRemove = useCallback(() => {
+            setConfirmationShown(true);
         }, []);
 
         const handleEdit = useCallback(() => {
@@ -41,17 +46,26 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
             debug('edit post', id);
         }, []);
 
-    const editCancel = useCallback(() => {
-            setEditable(false);
-    }, []);
+        const handleReject = useCallback(() => {
+            setConfirmationShown(false);
+        }, []);
 
-    const editSave = useCallback((text) => {
+        const editCancel = useCallback(() => {
             setEditable(false);
-        debug(`setting post ${post.id} text:`, text);
+        }, []);
+
+        const editSave = useCallback((text) => {
+            setEditable(false);
+            debug(`setting post ${post.id} text:`, text);
             dispatch(setPostText(post.id, text));
-    }, [post]);
+        }, [post]);
 
-    // TODO add ability to revoke like/dislike
+        const MAX_SHORT_LENGTH = 80;
+        const postShortText = post.text.length > MAX_SHORT_LENGTH ? post.text.substring(0, MAX_SHORT_LENGTH) + '...' : post.text;
+        // TODO friendly format the message
+        const confirmationText = `You are about to remove post of user '${post.author.name}' posted at '${post.postedAt}' beginning with '${postShortText}' ?`;
+
+        // TODO add ability to revoke like/dislike
         const likesClicked =
             (isAuthenticated && !user.isBanned) ?
                 (props: { label: LikeDislike }) => {
@@ -101,6 +115,13 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
                             }
                         </PostInfo>
                         {user.isAdmin ? <AdminPostPanel post={post}/> : ''}
+                        <Confirmation
+                            title='Remove post'
+                            show={confirmationShown}
+                            message={confirmationText}
+                            onAccept={removeCurrentPost}
+                            onReject={handleReject}
+                        />
                     </div>
                 </div>
             </>
