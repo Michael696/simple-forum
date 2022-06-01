@@ -41,6 +41,14 @@ export const userApi = {
             return false;
         }
     },
+    fetchBanned: async () => {
+        try {
+            const response = await httpApi.post('/get-banned', {});
+            return response.data;
+        } catch (e) {
+            return false;
+        }
+    },
     register: async (params: RegisterParams) => {
         const response = await httpApi.post('/register', params);
         if (response && response.data && response.data.error) {

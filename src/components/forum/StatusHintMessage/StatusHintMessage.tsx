@@ -5,10 +5,12 @@ import {currentUser, isUserAuthenticated} from "../../../features/currentUser/cu
 export default function StatusHintMessage({children}) {
     const user = useAppSelector(currentUser);
     const isAuthenticated = useAppSelector(isUserAuthenticated);
-    const hintMessage = isAuthenticated ? user.isBanned ? 'You are banned, you cannot write anything!' : '' : '\x20';
     return (
         <>
-            {hintMessage.length > 0 ? hintMessage : children}
+            {(isAuthenticated && user.isBanned) ?
+                <div className='error-message center bold margin05'>You are banned, you cannot write anything!</div>
+                : children
+            }
         </>
     );
 }

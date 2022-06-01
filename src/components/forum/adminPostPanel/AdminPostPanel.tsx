@@ -1,31 +1,27 @@
-import React, {useState} from "react";
+import React from "react";
 import {PostItemType} from "../../../app/types";
 import Form from "react-bootstrap/cjs/Form";
-import {useAppSelector} from "../../../app/hooks";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {currentUser} from "../../../features/currentUser/currentUserSlice";
-import {userApi} from "../../../app/userApi";
+import {isUserBanned, setBan} from "../../../features/bannedUsers/bannedUsersSlice";
+import {RootState} from "../../../app/store";
 
 export default function AdminPostPanel({post}: { post: PostItemType }) {
     const user = useAppSelector(currentUser);
-    const [isBanned, setBanned] = useState(post.author.isBanned);
+    const isBanned = useAppSelector((state: RootState) => isUserBanned(state, post.author.id));
+    const dispatch = useAppDispatch();
 
     const handleBanChange = async () => { // TODO update banned user status in all posts
         if (isBanned) {
-            const result = await userApi.unbanUser(post.author.id);
-            if (result) {
-                setBanned(false);
-            }
+            dispatch(setBan({userId: post.author.id, ban: false}));
         } else {
-            const result = await userApi.banUser(post.author.id);
-            if (result) {
-                setBanned(true);
-            }
+            dispatch(setBan({userId: post.author.id, ban: true}));
         }
     };
 
     return (
         <div className='post__admin-panel'>
-            {post.author.id !== user.id ?
+            {post.author.id !== user.id /* admin cannot ban himself */ ?
                 (<Form.Check
                     type="switch"
                     id="custom-switch"

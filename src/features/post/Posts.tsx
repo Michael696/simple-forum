@@ -13,6 +13,7 @@ import {url, urlToPage} from "../../app/urls";
 import Pagination from "../../components/forum/Pagination/Pagination";
 import {userApi} from "../../app/userApi";
 import {debug} from "../../app/debug";
+import {fetchBanned} from "../bannedUsers/bannedUsersSlice";
 
 export default function Posts() {
     const params = useParams();
@@ -28,6 +29,12 @@ export default function Posts() {
     const currentPage = (Number.isNaN(currentPageDraft) || currentPageDraft < 1) ? 1 : currentPageDraft;
 
     // TODO correctly handle the case when page specified in url is greater than real totalCount
+
+    useEffect(() => {
+        if (user && user.isAdmin) {
+            dispatch(fetchBanned());
+        }
+    }, [user]);
 
     useEffect(() => {
         if (thread) {
@@ -74,11 +81,7 @@ export default function Posts() {
         if (thread.author.id === user.id) {
             threadTitle.push('hey, it\'s You !');
         }
-        /*
-                if (thread.author.isAdmin) {
-                    threadTitle.push('admin');
-                }
-        */
+
         if (thread.author.isBanned) {
             threadTitle.push('banned');
         }
