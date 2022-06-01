@@ -137,18 +137,18 @@ export const userApi = {
             return false;
         }
     },
-    addPostLike: async ({postId, userId}: { postId: Id, userId: Id }) => {
+    addPostLike: async ({postId}: { postId: Id }) => {
         try {
-            const response = await httpApi.post('/add-post-like', {postId, userId});
+            const response = await httpApi.post('/add-post-like', {id: postId});
             return response.data;
         } catch (e) {
             console.error(e);
             return false;
         }
     },
-    addPostDislike: async ({postId, userId}: { postId: Id, userId: Id }) => {
+    addPostDislike: async ({postId}: { postId: Id }) => {
         try {
-            const response = await httpApi.post('/add-post-dislike', {postId, userId});
+            const response = await httpApi.post('/add-post-dislike', {id: postId});
             return response.data;
         } catch (e) {
             console.error(e);

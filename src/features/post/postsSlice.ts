@@ -181,7 +181,7 @@ export const removePost = (id: Id) => async (dispatch: AppDispatch) => {
 export const addPostLike = ({postId, user}: { postId: Id, user: User }) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const post = postWithId(getState(), postId);
     if (!hasLikeDislike(post.likes, user)) { // has no likes, let's go
-        const result = await userApi.addPostLike(({postId, userId: user.id}));
+        const result = await userApi.addPostLike({postId}); // use user from session on back
         if (!!result && !result.error) {
             dispatch(postLike({postId, user}));
         } else {
@@ -193,7 +193,7 @@ export const addPostLike = ({postId, user}: { postId: Id, user: User }) => async
 export const addPostDislike = ({postId, user}: { postId: Id, user: User }) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const post = postWithId(getState(), postId);
     if (!hasLikeDislike(post.dislikes, user)) { // has no dislikes, let's go
-        const result = await userApi.addPostDislike(({postId, userId: user.id}));
+        const result = await userApi.addPostDislike({postId}); // use user from session on back
         if (!!result && !result.error) {
             dispatch(postDislike({postId, user}));
         } else {
