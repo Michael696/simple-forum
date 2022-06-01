@@ -98,13 +98,4 @@ export const addThreadViewCount = (threadId) => async () => {
     await userApi.addThreadViewCount(threadId);
 };
 
-/*
-export const fetchThreadsAndView = (forumId, threadId) => async (dispatch: AppDispatch) => {
-    console.log('fetchThreadsAndView', forumId, threadId);
-    await dispatch(fetchThreads(forumId));
-    await dispatch(addThreadViewCount(threadId));
-    await dispatch(viewed(threadId));
-};
-*/
-
 export default threadsSlice.reducer;

@@ -31,8 +31,8 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
         const handleRemove = useCallback(() => {
             debug('remove post', id);
             (async () => {
-                await dispatch(removePost(id));
-                await dispatch(fetchPosts({page: parseInt(params.page || '1', 10), threadId: thread.id}, true));
+                dispatch(removePost(id));
+                dispatch(fetchPosts({page: parseInt(params.page || '1', 10), threadId: thread.id}, true));
             })();
         }, []);
 

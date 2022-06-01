@@ -110,7 +110,7 @@ export default function Posts() {
                 if (!postId) {
                     navigate(url.SIGN_IN);
                 } else {
-                    await dispatch(fetchPosts({threadId: thread.id, page: totalPages}));
+                    dispatch(fetchPosts({threadId: thread.id, page: totalPages}));
                     setPostText('');
                 }
             })();
@@ -128,8 +128,8 @@ export default function Posts() {
                     }
                 </div>
                 <Pagination totalPages={totalPages} currentPage={currentPage} onChange={async (page) => {
+                    dispatch(fetchPosts({threadId: thread.id, page}));
                     navigate(urlToPage({forumId: params.forumId, threadId: thread.id, page}));
-                    await dispatch(fetchPosts({threadId: thread.id, page}));
                 }}/>
                 <StatusHintMessage>
                     <NewPostForm text={postText} onCreate={handleCreatePost}/>

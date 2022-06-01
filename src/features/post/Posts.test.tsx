@@ -11,6 +11,7 @@ import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {setupServer} from "msw/node";
 import {rest} from 'msw';
 import currentUserReducer, {checkAuth} from "../currentUser/currentUserSlice";
+import bannedUsersReducer from '../bannedUsers/bannedUsersSlice';
 import {url} from "../../app/urls";
 import {User} from "../../app/types";
 import postsReducer from '../../features/post/postsSlice';
@@ -104,9 +105,9 @@ test('Posts: #1 should show no buttons for non-authenticated user ', async () =>
     act(() => {
         render(
             <Provider store={store}>
-                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01`]}>
+                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
                     <Routes>
-                        <Route path={`${url.FORUM}/:forumId/thread/:threadId`} element={<Posts/>}/>
+                        <Route path={`${url.FORUM}/:forumId/thread/:threadId/:page`} element={<Posts/>}/>
                     </Routes>
                 </MemoryRouter>
             </Provider>
@@ -204,6 +205,14 @@ test('Posts: #2 current user regular - should show "reply", "edit", "remove"  fo
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/add-thread-view-count', ((req, res, context) => {
+            return res(
+                context.json({})
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
@@ -219,9 +228,9 @@ test('Posts: #2 current user regular - should show "reply", "edit", "remove"  fo
     act(() => {
         render(
             <Provider store={store}>
-                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01`]}>
+                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
                     <Routes>
-                        <Route path={`${url.FORUM}/:forumId/thread/:threadId`} element={<Posts/>}/>
+                        <Route path={`${url.FORUM}/:forumId/thread/:threadId/:page`} element={<Posts/>}/>
                     </Routes>
                 </MemoryRouter>
             </Provider>
@@ -321,6 +330,14 @@ test('Posts: #3 current user regular - should show "reply", "edit", "remove"  "r
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/add-thread-view-count', ((req, res, context) => {
+            return res(
+                context.json({})
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
@@ -336,9 +353,9 @@ test('Posts: #3 current user regular - should show "reply", "edit", "remove"  "r
     act(() => {
         render(
             <Provider store={store}>
-                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01`]}>
+                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
                     <Routes>
-                        <Route path={`${url.FORUM}/:forumId/thread/:threadId`} element={<Posts/>}/>
+                        <Route path={`${url.FORUM}/:forumId/thread/:threadId/:page`} element={<Posts/>}/>
                     </Routes>
                 </MemoryRouter>
             </Provider>
@@ -436,6 +453,14 @@ test('Posts: #4 current user regular - should show "reply" for other posts', asy
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/add-thread-view-count', ((req, res, context) => {
+            return res(
+                context.json({})
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
@@ -451,9 +476,9 @@ test('Posts: #4 current user regular - should show "reply" for other posts', asy
     act(() => {
         render(
             <Provider store={store}>
-                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01`]}>
+                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
                     <Routes>
-                        <Route path={`${url.FORUM}/:forumId/thread/:threadId`} element={<Posts/>}/>
+                        <Route path={`${url.FORUM}/:forumId/thread/:threadId/:page`} element={<Posts/>}/>
                     </Routes>
                 </MemoryRouter>
             </Provider>
@@ -566,9 +591,9 @@ test('Posts: #5 current user regular (banned) - should show no buttons', async (
     act(() => {
         render(
             <Provider store={store}>
-                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01`]}>
+                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
                     <Routes>
-                        <Route path={`${url.FORUM}/:forumId/thread/:threadId`} element={<Posts/>}/>
+                        <Route path={`${url.FORUM}/:forumId/thread/:threadId/:page`} element={<Posts/>}/>
                     </Routes>
                 </MemoryRouter>
             </Provider>
@@ -665,6 +690,22 @@ test('Posts: #6 current user is admin - should show "reply", "edit", "remove" an
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-banned', ((req, res, context) => {
+            return res(
+                context.json([])
+            );
+        }))
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/add-thread-view-count', ((req, res, context) => {
+            return res(
+                context.json({})
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
@@ -672,6 +713,7 @@ test('Posts: #6 current user is admin - should show "reply", "edit", "remove" an
             threads: threadsReducer,
             posts: postsReducer,
             currentUser: currentUserReducer,
+            bannedUsers: bannedUsersReducer
         },
     });
 
@@ -680,9 +722,9 @@ test('Posts: #6 current user is admin - should show "reply", "edit", "remove" an
     act(() => {
         render(
             <Provider store={store}>
-                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01`]}>
+                <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
                     <Routes>
-                        <Route path={`${url.FORUM}/:forumId/thread/:threadId`} element={<Posts/>}/>
+                        <Route path={`${url.FORUM}/:forumId/thread/:threadId/:page`} element={<Posts/>}/>
                     </Routes>
                 </MemoryRouter>
             </Provider>
