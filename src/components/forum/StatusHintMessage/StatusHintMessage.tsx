@@ -8,7 +8,8 @@ export default function StatusHintMessage({children}) {
     return (
         <>
             {(isAuthenticated && user.isBanned) ?
-                <div className='error-message center bold margin05'>You are banned, you cannot write anything!</div>
+                <div className='error-message center bold margin05'>You are banned! You cannot write, edit or remove
+                    anything!</div>
                 : children
             }
         </>
