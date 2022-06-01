@@ -1,0 +1,33 @@
+@import '../../../styles/App'
+
+@keyframes fadein
+  from
+    opacity: 0
+  to
+    opacity: 1
+
+.post-info__popup
+  position: absolute
+  background-color: white
+  width: 35vw
+  right: 0
+  bottom: 3rem
+  word-wrap: break-word
+  box-shadow: 4px 4px 8px 0 rgba(34, 60, 80, 0.4)
+  animation: fadein 0.5s ease
+  @extend .pad05
+  @extend .border-round-025
+  @extend .border-1
+
+.post-info__popup-inner
+  position: absolute
+
+.post__info_block-left
+  display: flex
+  align-items: center
+  justify-content: flex-start
+
+.post__info_block-right
+  display: flex
+  align-items: center
+  justify-content: flex-end
