@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {PostItemType} from "../../../app/types";
 import Form from "react-bootstrap/cjs/Form";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
@@ -11,13 +11,13 @@ export default function AdminPostPanel({post}: { post: PostItemType }) {
     const isBanned = useAppSelector((state: RootState) => selectIsUserBanned(state, post.author.id));
     const dispatch = useAppDispatch();
 
-    const handleBanChange = async () => {
+    const handleBanChange = useCallback(() => {
         if (isBanned) {
             dispatch(setBan({userId: post.author.id, ban: false}));
         } else {
             dispatch(setBan({userId: post.author.id, ban: true}));
         }
-    };
+    }, [isBanned]);
 
     return (
         <div className='post__admin-panel'>

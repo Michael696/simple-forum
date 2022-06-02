@@ -9,6 +9,7 @@ import {selectCurrentUser, selectIsUserAuthenticated} from "../currentUser/curre
 import {url, urlToPage} from "../../app/urls";
 import Button from "react-bootstrap/cjs/Button";
 import {selectForumWithId} from "../forumsList/forumsSlice";
+import {postsClear} from '../post/postsSlice';
 import {debug} from "../../app/debug";
 
 function CreateThreadButton({isAuthenticated, isBanned, onClick}: { isAuthenticated: boolean, isBanned: boolean, onClick: (e: any) => void }) {
@@ -25,8 +26,9 @@ export default function Threads() {
     const forum: ForumItemType = useAppSelector(state => selectForumWithId(state, params.forumId));
 
     useEffect(() => {
+        dispatch(postsClear());
         dispatch(fetchThreads(params.forumId));
-    }, [dispatch, params.forumId]);
+    }, [params.forumId]);
 
     const handleNewThread = () => {
         debug(`create new thread auth=${isAuthenticated} forumId=${params.forumId}`);

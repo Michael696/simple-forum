@@ -69,7 +69,7 @@ export default function Posts() {
             setPostText(text);
         }
         window.scrollTo(0, document.body.scrollHeight); // scroll to bottom
-    }, [posts]);
+    }, [posts]); // TODO avoid rendering all posts on page after click like/dislike ( use normalization for post likes/dislikes !?)
 
     const removeCurrentThread = useCallback(() => {
         setConfirmationShown(false);
@@ -80,7 +80,7 @@ export default function Posts() {
 
     const handleRemoveThread = useCallback(() => {
         setConfirmationShown(true);
-    }, [params.threadId, params.forumId]);
+    }, []);
 
     const handleReject = useCallback(() => {
         setConfirmationShown(false);

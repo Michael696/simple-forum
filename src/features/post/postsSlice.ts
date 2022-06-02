@@ -114,12 +114,17 @@ export const postsSlice = createSlice({
         },
         postCount: (state: PostStateType, action: PayloadAction<number>) => {
             state.totalCount = action.payload;
+        },
+        postsClear: (state: PostStateType) => {
+            for (let key in initialState) {
+                state[key] = initialState[key];
+            }
         }
     },
 });
 
 const {postsLoad, postsDone, postText, postRemove, postCount} = postsSlice.actions;
-export const {postLike, postDislike} = postsSlice.actions;
+export const {postLike, postDislike, postsClear} = postsSlice.actions;
 
 export const selectTotalPages = (state: RootState) => {
     const posts = state.posts;
