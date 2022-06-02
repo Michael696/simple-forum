@@ -18,6 +18,6 @@ export default function CurrentTime() {
     }, []);
     return (
         <div className='current-time margin1-right'>
-            Current time is: {time}
+            Current time is:<span className='bold margin1-left'>{time}</span>
         </div>);
 }

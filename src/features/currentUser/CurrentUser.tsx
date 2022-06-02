@@ -5,15 +5,19 @@ import './CurrentUser.sass';
 export default function CurrentUser({user}: { user: User }) {
     let msg = '';
     if (user.name) {
-        msg = `You are logged in as: ${user.name}`;
+        msg = user.name;
         if (user.isAdmin) {
-            msg += ` (admin)`;
+            msg += ' (admin)';
         }
         if (user.isBanned) {
-            msg += ` (banned)`;
+            msg += ' (banned)';
         }
-    } else {
-        msg = 'You are a guest now';
     }
-    return (<div className='current-user margin1-right'>{msg}</div>);
+    return (
+        msg ? (
+            <div className='current-user margin1-right'>
+                You are logged in as: <span className='bold margin1-left'>{msg}</span>
+            </div>
+        ) : null
+    );
 }

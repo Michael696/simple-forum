@@ -1,4 +1,5 @@
 @import '../../../styles/App'
+@import '../../../styles/vars'
 
 @keyframes fadein
   from
@@ -13,8 +14,8 @@
   right: 0
   bottom: 3rem
   word-wrap: break-word
-  box-shadow: 4px 4px 8px 0 rgba(34, 60, 80, 0.4)
   animation: fadein 0.5s ease
+  @extend %with-shadow
   @extend .pad05
   @extend .border-round-025
   @extend .border-1

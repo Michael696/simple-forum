@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {MutableRefObject, useEffect, useRef, useState} from "react";
 import Button from "react-bootstrap/cjs/Button";
 import Form from "react-bootstrap/Form";
 import {useNavigate, useParams} from "react-router";
@@ -13,6 +13,7 @@ import Textarea from '../Textarea/Textarea';
 import {MAX_POST_LENGTH} from "../../../app/settings";
 import {fetchThreads} from "../../../features/threads/threadsSlice";
 import {debug} from "../../../app/debug";
+import './NewThreadForm.sass';
 
 export default function NewThreadForm() {
     const [threadName, setThreadName] = useState('');
@@ -22,10 +23,12 @@ export default function NewThreadForm() {
     const dispatch: AppDispatch = useAppDispatch();
     const forum: ForumItemType = useAppSelector(state => forumWithId(state, forumId));
     const user = useAppSelector(currentUser);
+    const titleRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
 
     useEffect(() => {
         debug('fetch forums');
         dispatch(fetchForums());
+        titleRef.current.focus();
     }, []);
 
     const handleCreate = async e => {
@@ -50,22 +53,27 @@ export default function NewThreadForm() {
     const buttonOptions = (threadName.length === 0 || postText.length === 0) ? {disabled: true} : {};
 
     return forum ? (
-        <div className='form-width-50 border-1 pad-1 border-round-05'>
-            <h6 className='center'>Creating new thread in forum {`'${forum.name}'`}</h6>
-            <Form.Group className="mb-3" controlId="formThreadName">
-                <Form.Label>Thread name</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder=""
-                    value={threadName}
-                    onChange={(e) => {
-                        setThreadName(e.target.value);
-                    }}
-                />
-                <Form.Label>Post text</Form.Label>
-                <Textarea text={postText} maxLength={MAX_POST_LENGTH} onChange={handlePostChange}/>
-            </Form.Group>
-            <Button onClick={handleCreate} {...buttonOptions}>Create</Button>
+        <div className='new-thread-form form-width-50'>
+            <h6 className='new-thread-form__header center border-1-top border-1-left border-1-right border-1-bottom pad05 border-top-round-025'>
+                Create new thread in forum {`'${forum.name}'`}
+            </h6>
+            <Form className='border-1-right border-1-left border-1-bottom border-bottom-round-025 pad-1'>
+                <Form.Group className='mb-3' controlId="formThreadName">
+                    <Form.Label>Thread name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder=""
+                        value={threadName}
+                        ref={titleRef}
+                        onChange={(e) => {
+                            setThreadName(e.target.value);
+                        }}
+                    />
+                    <Form.Label>Post text</Form.Label>
+                    <Textarea text={postText} maxLength={MAX_POST_LENGTH} onChange={handlePostChange}/>
+                </Form.Group>
+                <Button onClick={handleCreate} {...buttonOptions}>Create</Button>
+            </Form>
         </div>
     ) : <></>;
 }

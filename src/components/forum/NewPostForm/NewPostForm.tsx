@@ -23,7 +23,7 @@ const NewPostForm = function ({text, onCreate}: { text: string, onCreate: (text:
 
 // TODO fix issue with clicking 'reply' two or more times
     return (
-        <div className='new-post-form margin05 pad05'>
+        <div className='new-post-form margin1-bottom margin05 pad05'>
             <Form.Group className="mb-3" controlId="formPostName">
                 <Form.Label className='bold'>New post text</Form.Label>
                 <Textarea text={postText} onChange={handleChange} maxLength={MAX_POST_LENGTH}/>

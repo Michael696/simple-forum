@@ -59,7 +59,7 @@ export default function CustomBreadcrumb() {
     }
 
     return (
-        <div className='main__breadcrumb pad05 bold'>
+        <div className='main__breadcrumb border-1-top border-1-bottom pad05 bold'>
             {(errorForums || errorThreads) ? <div className='error-message'>{errorForums},{errorThreads}</div> : ''}
             {
                 breadcrumbItems.map((it, index, all) => {
