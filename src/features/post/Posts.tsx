@@ -124,7 +124,7 @@ export default function Posts() {
                 if (!postId) {
                     navigate(url.SIGN_IN);
                 } else {
-                    dispatch(fetchPosts({threadId: thread.id, page: totalPages}));
+                    dispatch(fetchPosts({threadId: thread.id, page: totalPages},true));
                     setPostText('');
                 }
             })();
