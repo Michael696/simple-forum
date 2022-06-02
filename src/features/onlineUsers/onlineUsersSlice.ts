@@ -41,7 +41,7 @@ export const onlineUsersSlice = createSlice({
 });
 
 export const onlineUsersLoading = state => state.onlineUsers.loading;
-export const onlineUsers = state => state.onlineUsers.users;
+export const selectOnlineUsers = state => state.onlineUsers.users;
 
 const {usersLoading, usersDone} = onlineUsersSlice.actions;
 

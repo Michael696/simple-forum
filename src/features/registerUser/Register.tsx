@@ -2,10 +2,10 @@ import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/cjs/Button';
 import {LinkContainer} from 'react-router-bootstrap';
-import {registerClear, registerErrorMessage, registerStart, registerState} from './registerSlice';
+import {registerClear, registerStart, selectRegisterErrorMessage, selectRegisterState} from './registerSlice';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {AppDispatch} from "../../app/store";
-import {isUserAuthenticated} from "../currentUser/currentUserSlice";
+import {selectIsUserAuthenticated} from "../currentUser/currentUserSlice";
 import {useNavigate} from "react-router";
 import {url} from "../../app/urls";
 import './Register.sass';
@@ -18,11 +18,11 @@ export default function Register() {
     const [password2, setPassword2] = useState('a');
     const [error, setError] = useState('');
 
-    const registering = useAppSelector(registerState);
-    const errorMessage = useAppSelector(registerErrorMessage);
+    const registering = useAppSelector(selectRegisterState);
+    const errorMessage = useAppSelector(selectRegisterErrorMessage);
     const dispatch: AppDispatch = useAppDispatch();
     const navigate = useNavigate();
-    const authOk = useAppSelector(isUserAuthenticated);
+    const authOk = useAppSelector(selectIsUserAuthenticated);
 
     const regClear = () => {
         if (registering !== 'idle') {

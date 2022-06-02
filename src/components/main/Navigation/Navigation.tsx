@@ -1,7 +1,7 @@
 import React from 'react';
 import {Nav, Navbar} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
-import {currentUser, isUserAuthenticated} from '../../../features/currentUser/currentUserSlice';
+import {selectCurrentUser, selectIsUserAuthenticated} from '../../../features/currentUser/currentUserSlice';
 import {url} from "../../../app/urls";
 import './Navigation.sass';
 import {useAppSelector} from "../../../app/hooks";
@@ -9,8 +9,8 @@ import CustomBreadcrumb from "../CustomBreadcrumb/CustomBreadcrumb";
 
 
 export default function Navigation() {
-    const user = useAppSelector(currentUser);
-    const authOk = useAppSelector(isUserAuthenticated);
+    const user = useAppSelector(selectCurrentUser);
+    const authOk = useAppSelector(selectIsUserAuthenticated);
 
     const signIn = (
         <LinkContainer to={url.SIGN_IN}>

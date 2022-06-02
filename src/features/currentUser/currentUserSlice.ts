@@ -67,11 +67,11 @@ export const findUserById = (list: Array<User>, id: Id) => list.filter(user => u
 
 export const {authReq, authDone, authError, authClear} = currentUserSlice.actions;
 
-export const currentUser = (state: RootState) => state.currentUser.data;
+export const selectCurrentUser = (state: RootState) => state.currentUser.data;
 
-export const lastAuthError = (state: RootState) => state.currentUser.error;
+export const selectLastAuthError = (state: RootState) => state.currentUser.error;
 
-export const isUserAuthenticated = (state: RootState) => state.currentUser.data.name.length > 0 && state.currentUser.error.length === 0;
+export const selectIsUserAuthenticated = (state: RootState) => state.currentUser.data.name.length > 0 && state.currentUser.error.length === 0;
 
 export const authenticate = ({name, password}) => async (dispatch: AppDispatch) => {
     let authResult;

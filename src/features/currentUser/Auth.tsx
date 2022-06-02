@@ -1,15 +1,15 @@
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/cjs/Button';
-import {authenticate, isUserAuthenticated, lastAuthError} from './currentUserSlice';
+import {authenticate, selectIsUserAuthenticated, selectLastAuthError} from './currentUserSlice';
 import {useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {url} from "../../app/urls";
 import {fetchUsers} from "../onlineUsers/onlineUsersSlice";
 
 export default function Auth() {
-    const isAuthenticated = useAppSelector(isUserAuthenticated);
-    const authError = useAppSelector(lastAuthError);
+    const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
+    const authError = useAppSelector(selectLastAuthError);
     const dispatch = useAppDispatch();
     const usernameRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
     const passwordRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;

@@ -1,10 +1,10 @@
 import React, {useEffect} from 'react';
-import {fetchUsers, onlineUsers} from './onlineUsersSlice';
+import {fetchUsers, selectOnlineUsers} from './onlineUsersSlice';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import './OnlineUsers.sass';
 
 export default function OnlineUsers() {
-    const usersOnline = useAppSelector(onlineUsers);
+    const usersOnline = useAppSelector(selectOnlineUsers);
     const dispatch = useAppDispatch();
 
     useEffect(() => {

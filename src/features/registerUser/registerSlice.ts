@@ -60,8 +60,8 @@ export const registerSlice = createSlice({
 
 export const {registerStart, registerDone, registerError, registerClear} = registerSlice.actions;
 
-export const registerState = (state: RootState) => state.register.state;
-export const registerErrorMessage = (state: RootState) => state.register.error;
+export const selectRegisterState = (state: RootState) => state.register.state;
+export const selectRegisterErrorMessage = (state: RootState) => state.register.error;
 
 export const register = (params: RegisterParams) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const register = getState().register;

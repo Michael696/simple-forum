@@ -21,8 +21,8 @@ const initialState: PostStateType = {
 
 const findPostById = (list: Array<PostItemType>, id: Id) => list.filter(post => post.id === id)[0];
 
-export const postsIsLoading = (state: RootState) => state.posts.isLoading;
-export const postsList = (state: RootState) => state.posts.list;
+export const selectPostsIsLoading = (state: RootState) => state.posts.isLoading;
+export const selectPosts = (state: RootState) => state.posts.list;
 export const postWithId = (state: RootState, id: Id) => findPostById(state.posts.list, id);
 
 const addOnly = (first: Array<User>, user: User) => {
@@ -121,7 +121,7 @@ export const postsSlice = createSlice({
 const {postsLoad, postsDone, postText, postRemove, postCount} = postsSlice.actions;
 export const {postLike, postDislike} = postsSlice.actions;
 
-export const postsTotalPages = (state: RootState) => {
+export const selectTotalPages = (state: RootState) => {
     const posts = state.posts;
     return Math.ceil(posts.totalCount / posts.perPageCount)
 };

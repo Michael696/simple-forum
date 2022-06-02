@@ -1,14 +1,14 @@
 import React, {useEffect} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
-import {fetchThreads, threadsList} from "./threadsSlice";
+import {fetchThreads, selectThreads} from "./threadsSlice";
 import {ForumItemType, ThreadItemType, User} from "../../app/types";
 import {AppDispatch} from "../../app/store";
 import ThreadItem from "./ThreadItem";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
+import {selectCurrentUser, selectIsUserAuthenticated} from "../currentUser/currentUserSlice";
 import {url, urlToPage} from "../../app/urls";
 import Button from "react-bootstrap/cjs/Button";
-import {forumWithId} from "../forumsList/forumsSlice";
+import {selectForumWithId} from "../forumsList/forumsSlice";
 import {debug} from "../../app/debug";
 
 function CreateThreadButton({isAuthenticated, isBanned, onClick}: { isAuthenticated: boolean, isBanned: boolean, onClick: (e: any) => void }) {
@@ -18,15 +18,15 @@ function CreateThreadButton({isAuthenticated, isBanned, onClick}: { isAuthentica
 export default function Threads() {
     const params = useParams();
     const navigate = useNavigate();
-    const threads: Array<ThreadItemType> = useAppSelector(threadsList);
+    const threads: Array<ThreadItemType> = useAppSelector(selectThreads);
     const dispatch: AppDispatch = useAppDispatch();
-    const isAuthenticated = useAppSelector(isUserAuthenticated);
-    const user: User = useAppSelector(currentUser);
-    const forum: ForumItemType = useAppSelector(state => forumWithId(state, params.forumId));
+    const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
+    const user: User = useAppSelector(selectCurrentUser);
+    const forum: ForumItemType = useAppSelector(state => selectForumWithId(state, params.forumId));
 
     useEffect(() => {
         dispatch(fetchThreads(params.forumId));
-    }, []);
+    }, [dispatch, params.forumId]);
 
     const handleNewThread = () => {
         debug(`create new thread auth=${isAuthenticated} forumId=${params.forumId}`);

@@ -6,7 +6,7 @@ import UserInfo from "../../components/forum/UserInfo/UserInfo";
 import PostText from "../../components/forum/PostText/PostText";
 import PostInfo from "../../components/forum/PostInfo/PostInfo";
 import {useAppSelector} from "../../app/hooks";
-import {currentUser, isUserAuthenticated} from "../currentUser/currentUserSlice";
+import {selectCurrentUser, selectIsUserAuthenticated} from "../currentUser/currentUserSlice";
 import AdminPostPanel from '../../components/forum/adminPostPanel/AdminPostPanel';
 import './Post.sass';
 import Button from "react-bootstrap/cjs/Button";
@@ -20,9 +20,9 @@ export type LikeDislike = 'likes' | 'dislikes';
 const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, onReply: (id: Id) => void }) {
         const params = useParams();
         const post: PostItemType = useSelector((state: RootState) => postWithId(state, id));
-        const isAuthenticated = useAppSelector(isUserAuthenticated);
+        const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
         const dispatch = useDispatch();
-        const user: User = useAppSelector(currentUser);
+        const user: User = useAppSelector(selectCurrentUser);
         const [editable, setEditable] = useState(false);
         const [confirmationShown, setConfirmationShown] = useState(false);
 

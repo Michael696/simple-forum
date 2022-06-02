@@ -13,14 +13,14 @@ import Auth from '../features/currentUser/Auth';
 import DeAuth from "../features/currentUser/DeAuth";
 import {url} from "./urls";
 import {useAppDispatch, useAppSelector} from "./hooks";
-import {checkAuth, currentUser, isUserAuthenticated} from "../features/currentUser/currentUserSlice";
+import {checkAuth, selectCurrentUser, selectIsUserAuthenticated} from "../features/currentUser/currentUserSlice";
 import NewThreadForm from "../components/forum/NewThreadForm/NewThreadForm";
 import OnlineUsers from "../features/onlineUsers/OnlineUsers";
 import {debug} from "./debug";
 
 const PrivateRoute = ({children}) => {
-    const isAuthenticated = useAppSelector(isUserAuthenticated);
-    const user = useAppSelector(currentUser);
+    const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
+    const user = useAppSelector(selectCurrentUser);
     const navigate = useNavigate();
     let comp = null;
     if (isAuthenticated) {
@@ -38,7 +38,7 @@ const PrivateRoute = ({children}) => {
 function App() {
     const dispatch = useAppDispatch();
     const location = useLocation();
-    const user = useAppSelector(currentUser);
+    const user = useAppSelector(selectCurrentUser);
 
     useEffect(() => {
         if (location.pathname !== url.SIGN_IN) {

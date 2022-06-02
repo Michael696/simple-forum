@@ -3,8 +3,8 @@ import {useLocation} from "react-router";
 import {LinkContainer} from 'react-router-bootstrap';
 import {Breadcrumb} from "react-bootstrap/cjs";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
-import {fetchForums, forumsLastError, forumWithId} from "../../../features/forumsList/forumsSlice";
-import {fetchThreads, threadLastError, threadWithId} from "../../../features/threads/threadsSlice";
+import {fetchForums, selectForumsLastError, selectForumWithId} from "../../../features/forumsList/forumsSlice";
+import {fetchThreads, selectThreadLastError, selectThreadWithId} from "../../../features/threads/threadsSlice";
 import {ForumItemType, ThreadItemType} from "../../../app/types";
 import './CustomBreadcrumb.sass';
 import {url} from '../../../app/urls';
@@ -17,8 +17,8 @@ export default function CustomBreadcrumb() {
     let forumId, threadId;
     const pathItems = location.pathname.split('/').filter(item => item);
     const breadcrumbItems: Array<{ name: string, href: string }> = [];
-    const errorForums = useAppSelector(forumsLastError);
-    const errorThreads = useAppSelector(threadLastError);
+    const errorForums = useAppSelector(selectForumsLastError);
+    const errorThreads = useAppSelector(selectThreadLastError);
 
     // TODO need to reconstruct all breadcrumb subsystem !  but ok for now...
 
@@ -40,8 +40,8 @@ export default function CustomBreadcrumb() {
         breadcrumbItems.push({name: 'Forums', href: ''});
     }
 
-    currForum = useAppSelector(state => forumWithId(state, forumId));
-    currThread = useAppSelector(state => threadWithId(state, threadId));
+    currForum = useAppSelector(state => selectForumWithId(state, forumId));
+    currThread = useAppSelector(state => selectThreadWithId(state, threadId));
 
     useEffect(() => {
         dispatch(fetchForums());

@@ -32,7 +32,7 @@ export const bannedUsersSlice = createSlice({
     }
 });
 
-export const isUserBanned = (state: RootState, id: Id) => !!~state.bannedUsers.list.findIndex(banned => banned === id);
+export const selectIsUserBanned = (state: RootState, id: Id) => !!~state.bannedUsers.list.findIndex(banned => banned === id);
 
 const {setAll, banUser, unbanUser} = bannedUsersSlice.actions;
 

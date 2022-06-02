@@ -55,10 +55,10 @@ export const threadsSlice = createSlice({
     },
 });
 
-export const threadsIsLoading = state => state.threads.isLoading;
-export const threadsList = state => state.threads.list;
-export const threadWithId = (state, id: Id) => findThreadById(state.threads.list, id);
-export const threadLastError = state => state.threads.lastError;
+export const selectThreadsIsLoading = state => state.threads.isLoading;
+export const selectThreads = state => state.threads.list;
+export const selectThreadWithId = (state, id: Id) => findThreadById(state.threads.list, id);
+export const selectThreadLastError = state => state.threads.lastError;
 
 const {threadsLoad, threadsDone, threadRemove, threadsError} = threadsSlice.actions;
 export const {viewed} = threadsSlice.actions;

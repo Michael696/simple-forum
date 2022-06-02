@@ -2,12 +2,12 @@ import React, {MutableRefObject, useEffect, useRef, useState} from "react";
 import Button from "react-bootstrap/cjs/Button";
 import Form from "react-bootstrap/Form";
 import {useNavigate, useParams} from "react-router";
-import {fetchForums, forumWithId} from '../../../features/forumsList/forumsSlice';
+import {fetchForums, selectForumWithId} from '../../../features/forumsList/forumsSlice';
 import {ForumItemType} from "../../../app/types";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {AppDispatch} from "../../../app/store";
 import {userApi} from "../../../app/userApi";
-import {currentUser} from "../../../features/currentUser/currentUserSlice";
+import {selectCurrentUser} from "../../../features/currentUser/currentUserSlice";
 import {url} from "../../../app/urls";
 import Textarea from '../Textarea/Textarea';
 import {MAX_POST_LENGTH} from "../../../app/settings";
@@ -21,8 +21,8 @@ export default function NewThreadForm() {
     const {forumId} = useParams();
     const navigate = useNavigate();
     const dispatch: AppDispatch = useAppDispatch();
-    const forum: ForumItemType = useAppSelector(state => forumWithId(state, forumId));
-    const user = useAppSelector(currentUser);
+    const forum: ForumItemType = useAppSelector(state => selectForumWithId(state, forumId));
+    const user = useAppSelector(selectCurrentUser);
     const titleRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
 
     useEffect(() => {

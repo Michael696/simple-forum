@@ -1,14 +1,13 @@
 import React, {useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchForums, forumsList} from './forumsSlice';
+import {fetchForums, selectForums} from './forumsSlice';
 import ForumItem from './ForumItem';
-import {AppDispatch} from "../../app/store";
 import './Forums.sass';
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
 
 export default function Forums() {
-    const forums = useSelector(forumsList);
+    const forums = useAppSelector(selectForums);
     // const isLoading = useSelector(forumsIsLoading);
-    const dispatch: AppDispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const updateForums = () => {
         dispatch(fetchForums());

@@ -41,10 +41,10 @@ export const forumSlice = createSlice({
     },
 });
 
-export const forumsIsLoading = state => state.forums.isLoading;
-export const forumsList = state => state.forums.list;
-export const forumWithId = (state, id: Id) => state.forums.list.find(forum => forum.id === id);
-export const forumsLastError = state => state.forums.lastError;
+export const selectForumsIsLoading = state => state.forums.isLoading;
+export const selectForums = state => state.forums.list;
+export const selectForumWithId = (state, id: Id) => state.forums.list.find(forum => forum.id === id);
+export const selectForumsLastError = state => state.forums.lastError;
 
 const {forumsLoad, forumsDone, forumsError} = forumSlice.actions;
 

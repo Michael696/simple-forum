@@ -1,13 +1,13 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {fetchPosts, postsIsLoading, postsList, postsTotalPages} from "./postsSlice";
+import {fetchPosts, selectPosts, selectPostsIsLoading, selectTotalPages} from "./postsSlice";
 import {PostItemType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import NewPostForm from "../../components/forum/NewPostForm/NewPostForm";
-import {currentUser} from "../currentUser/currentUserSlice";
+import {selectCurrentUser} from "../currentUser/currentUserSlice";
 import Button from "react-bootstrap/cjs/Button";
-import {addThreadViewCount, fetchThreads, removeThread, threadWithId} from "../threads/threadsSlice";
+import {addThreadViewCount, fetchThreads, removeThread, selectThreadWithId} from "../threads/threadsSlice";
 import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHintMessage";
 import {url, urlToPage} from "../../app/urls";
 import Pagination from "../../components/forum/Pagination/Pagination";
@@ -18,14 +18,14 @@ import Confirmation from "../../components/main/Confirmation/Confirmation";
 
 export default function Posts() {
     const params = useParams();
-    const posts: Array<PostItemType> = useAppSelector(postsList);
-    const isLoading = useAppSelector(postsIsLoading);
-    const user: User = useAppSelector(currentUser);
+    const posts: Array<PostItemType> = useAppSelector(selectPosts);
+    const isLoading = useAppSelector(selectPostsIsLoading);
+    const user: User = useAppSelector(selectCurrentUser);
     const dispatch = useAppDispatch();
     const [postText, setPostText] = useState('');
-    const thread = useAppSelector(state => threadWithId(state, params.threadId));
+    const thread = useAppSelector(state => selectThreadWithId(state, params.threadId));
     const navigate = useNavigate();
-    const totalPages = useAppSelector(postsTotalPages);
+    const totalPages = useAppSelector(selectTotalPages);
     const currentPageDraft = parseInt(params.page || '1');
     const currentPage = (Number.isNaN(currentPageDraft) || currentPageDraft < 1) ? 1 : currentPageDraft;
     const [confirmationShown, setConfirmationShown] = useState(false);

@@ -1,10 +1,10 @@
 import React from "react";
 import {useAppSelector} from "../../../app/hooks";
-import {currentUser, isUserAuthenticated} from "../../../features/currentUser/currentUserSlice";
+import {selectCurrentUser, selectIsUserAuthenticated} from "../../../features/currentUser/currentUserSlice";
 
 export default function StatusHintMessage({children}) {
-    const user = useAppSelector(currentUser);
-    const isAuthenticated = useAppSelector(isUserAuthenticated);
+    const user = useAppSelector(selectCurrentUser);
+    const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
     let hintMessage = <></>;
     if (isAuthenticated) {
         if (user.isBanned) {
