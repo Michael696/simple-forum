@@ -2,6 +2,7 @@ import React from "react";
 import './Pagination.sass';
 
 // Accessible pagination
+// https://www.a11ymatters.com/pattern/pagination/
 
 function PageLink({page, onClick, isCurrent}: { page: number, className?: string, isCurrent: boolean, onClick: (p: number) => void }) {
     return (
