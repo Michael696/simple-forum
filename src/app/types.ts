@@ -85,7 +85,6 @@ export type PostStateType = {
 export type PostItemType = {
     id: Id,
     author: User,
-    title: string,
     text: string,
     likes: Array<User>,
     dislikes: Array<User>,

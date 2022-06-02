@@ -13,14 +13,12 @@ import {debug} from "../../../app/debug";
 export default function CustomBreadcrumb() {
     const location = useLocation();
     const dispatch = useAppDispatch();
-    let currForum: ForumItemType, currThread: ThreadItemType, currPage: string;
+    let currForum: ForumItemType, currThread: ThreadItemType;
     let forumId, threadId;
     const pathItems = location.pathname.split('/').filter(item => item);
     const breadcrumbItems: Array<{ name: string, href: string }> = [];
     const errorForums = useAppSelector(forumsLastError);
     const errorThreads = useAppSelector(threadLastError);
-
-    // console.log('pathItems', pathItems);
 
     // TODO need to reconstruct all breadcrumb subsystem !  but ok for now...
 
@@ -52,9 +50,6 @@ export default function CustomBreadcrumb() {
             dispatch(fetchThreads(forumId));
         }
     }, []);
-
-    // console.log('currForum', JSON.stringify(currForum));
-    // console.log('currThread', JSON.stringify(currThread));
 
     if (currForum && currForum.name) {
         breadcrumbItems.push({name: currForum.name, href: `${url.FORUM}/${forumId}`})

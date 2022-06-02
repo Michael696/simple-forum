@@ -28,7 +28,6 @@ test('Post info', async () => {
         likes: [user, user], // 2
         postedAt: "2022-02-01 12:13:14",
         text: "",
-        title: ""
     };
     let likesClicked = false, dislikesClicked = false;
     const clickHandler = e => {
