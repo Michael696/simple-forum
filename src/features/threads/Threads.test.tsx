@@ -20,7 +20,7 @@ import onlineUsersReducer from "../onlineUsers/onlineUsersSlice";
 
 test('Threads: has threads in forum', async () => {
     const user: User = {
-        id: undefined, isAdmin: false, isBanned: false, location: "", name: "", posts: 0, realName: "", registeredAt: ""
+        id: '', isAdmin: false, isBanned: false, location: "", name: "", posts: 0, realName: "", registeredAt: ""
     };
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/threads', (req, res, ctx) => {
@@ -106,7 +106,7 @@ test('Threads: has threads in forum', async () => {
 
 test('Threads: should show "create thread" button for authenticated and not banned user ', async () => {
     const user: User = {
-        id: undefined, isAdmin: false, isBanned: false, location: "", name: "", posts: 0, realName: "", registeredAt: ""
+        id: '', isAdmin: false, isBanned: false, location: "", name: "", posts: 0, realName: "", registeredAt: ""
     };
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/threads', (req, res, ctx) => {

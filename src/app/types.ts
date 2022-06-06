@@ -1,6 +1,6 @@
 export type LoadingType = 'idle' | 'pending' | 'error' ;
 
-export type Id = string | number | undefined; // TODO get rid of undefined ?
+export type Id = string | number;
 
 export type Password = {
     password: string;
@@ -71,17 +71,6 @@ export type ThreadItemType = {
     lastMessage: LastMessage
 }
 
-export type PostStateType = {
-    list: Array<PostItemType>,
-    threadId: Id,
-    lastFetch: string,
-    totalCount: number,
-    perPageCount: number,
-    firstPostIdx: number,
-    lastPostIdx: number,
-    isLoading: LoadingType
-}
-
 export type PostItemType = {
     id: Id,
     author: User,
@@ -90,4 +79,17 @@ export type PostItemType = {
     dislikes: Array<User>,
     postedAt: string,
     editedAt: string
+}
+
+export type PostItemStateType = Omit<PostItemType, 'likes' | 'dislikes'>;
+
+export type PostStateType = { // TODO type naming!
+    entries: { items: Array<PostItemStateType>, likes: { [k: string]: Array<User> }, dislikes: { [k: string]: Array<User> } },
+    threadId: Id,
+    lastFetch: string,
+    totalCount: number,
+    perPageCount: number,
+    firstPostIdx: number,
+    lastPostIdx: number,
+    isLoading: LoadingType
 }

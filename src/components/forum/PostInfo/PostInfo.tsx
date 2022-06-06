@@ -1,17 +1,25 @@
 import React, {useState} from 'react';
-import {PostItemType, User} from "../../../app/types";
+import {PostItemStateType, User} from "../../../app/types";
 import ShowCount from "../ShowCount/ShowCount";
 import {clickable, hoverable} from "../../../app/hocs";
 import '../../../features/post/Post.sass';
 import './PostInfo.sass'
+import {useAppSelector} from "../../../app/hooks";
+import {selectPostDislikes, selectPostLikes} from "../../../features/post/postsSlice";
+import {selectCurrentUser, selectIsUserAuthenticated} from "../../../features/currentUser/currentUserSlice";
 
 function Popup({message, show}: { message: string, show: boolean }) {
     return show ? <div className='post-info__popup'>{message}</div> : null;
 }
 
-export default function PostInfo({children, post, user, onClick}: { children?, post: PostItemType, user: User, onClick?: (props: any) => void }) {
+export default function PostInfo({children, post, user, onClick}: { children?, post: PostItemStateType, user: User, onClick: (props: any) => void }) {
     const [showLikesPopup, setShowLikesPopup] = useState(false);
     const [showDislikesPopup, setShowDislikesPopup] = useState(false);
+    const likes = useAppSelector(state => selectPostLikes(state, post.id));
+    const dislikes = useAppSelector(state => selectPostDislikes(state, post.id));
+    const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
+    const currentUser: User = useAppSelector(selectCurrentUser);
+    const isUserEnabled = isAuthenticated && !currentUser.isBanned;
     let likeTimeout, dislikeTimeout;
 
     // TODO fix: popup is not always disappears when moving mouse out
@@ -47,20 +55,21 @@ export default function PostInfo({children, post, user, onClick}: { children?, p
     };
 
     const SpecialCount = hoverable(clickable(ShowCount, onClick), onEnter, onLeave);
-    const alreadyLiked = post.likes.some(u => u.id === user.id);
-    const alreadyDisliked = post.dislikes.some(u => u.id === user.id);
-    const likesClassName = (onClick ? (alreadyLiked ? 'counter_clicked ' : 'counter_enabled ') : '') + 'pad05 margin05 border-round-025';
-    const dislikesClassName = (onClick ? (alreadyDisliked ? 'counter_clicked ' : 'counter_enabled ') : '') + 'pad05 margin05 border-round-025';
+    const alreadyLiked = likes.some(u => u.id === user.id);
+    const alreadyDisliked = dislikes.some(u => u.id === user.id);
+
+    const likesClassName = (isUserEnabled ? (alreadyLiked ? 'counter_clicked ' : 'counter_enabled ') : '') + 'pad05 margin05 border-round-025';
+    const dislikesClassName = (isUserEnabled ? (alreadyDisliked ? 'counter_clicked ' : 'counter_enabled ') : '') + 'pad05 margin05 border-round-025';
     return (
         <div className='post__controls border-1-left border-1-right border-1-top'>
             <span className='post__info_block-left margin1-left'>{children}</span>
             <span className='post__info_block-right margin1-right'>
-                <SpecialCount label='likes' count={post.likes.length} className={likesClassName}>
-                    <Popup message={'liked by: ' + (post.likes.map(user => user.name).join(', ') || 'nobody')}
+                <SpecialCount label='likes' count={likes.length} className={likesClassName}>
+                    <Popup message={'liked by: ' + (likes.map(user => user.name).join(', ') || 'nobody')}
                            show={showLikesPopup}/>
                 </SpecialCount>
-                <SpecialCount label='dislikes' count={post.dislikes.length} className={dislikesClassName}>
-                    <Popup message={'disliked by: ' + (post.dislikes.map(user => user.name).join(', ') || 'nobody')}
+                <SpecialCount label='dislikes' count={dislikes.length} className={dislikesClassName}>
+                    <Popup message={'disliked by: ' + (dislikes.map(user => user.name).join(', ') || 'nobody')}
                            show={showDislikesPopup}/>
                 </SpecialCount>
                 <span>{`postedAt:${post.postedAt}`}</span>

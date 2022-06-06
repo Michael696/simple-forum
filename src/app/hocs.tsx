@@ -4,16 +4,14 @@ import React from "react";
 function clickable<TProps>( // TODO learn more about generics
     Component: React.JSXElementConstructor<TProps>,
     // injector: Pick<TProps, TInjectedKeys>
-    onClick?: (props: any) => void
+    onClick: (props: any) => void
 ) {
     // console.log('TProps:', TProps);
     return function (props) {
         // console.log('props',props);
         // return <span onClick={()=>{console.log('clicked inside')}}>
         const handler = () => {
-            if (onClick) {
-                onClick(props)
-            }
+            onClick(props)
         };
         return <span onClick={handler}>
             <Component {...(props as TProps)}/>
@@ -22,9 +20,9 @@ function clickable<TProps>( // TODO learn more about generics
     };
 }
 
-function hoverable<TProps, PProps>( // TODO use it someday ))
+function hoverable<TProps, PProps>(
     Component: React.JSXElementConstructor<TProps>,
-    // Popup: React.JSXElementConstructor<PProps>,
+    // Popup: React.JSXElementConstructor<PProps>, // use it someday
     onEnter: (props: any) => void,
     onLeave: (props: any) => void
 ) {
@@ -39,7 +37,6 @@ function hoverable<TProps, PProps>( // TODO use it someday ))
                 }}
             >
             <Component {...(props as TProps)}/>
-            {/*<Popup {...(props as PProps)}/>*/}
         </span>
         );
     };

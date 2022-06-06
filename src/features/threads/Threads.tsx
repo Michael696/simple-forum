@@ -23,11 +23,11 @@ export default function Threads() {
     const dispatch: AppDispatch = useAppDispatch();
     const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
     const user: User = useAppSelector(selectCurrentUser);
-    const forum: ForumItemType = useAppSelector(state => selectForumWithId(state, params.forumId));
+    const forum: ForumItemType = useAppSelector(state => selectForumWithId(state, params.forumId || ''));
 
     useEffect(() => {
         dispatch(postsClear());
-        dispatch(fetchThreads(params.forumId));
+        dispatch(fetchThreads(params.forumId || ''));
     }, [params.forumId]);
 
     const handleNewThread = () => {
@@ -42,7 +42,7 @@ export default function Threads() {
     let threadList: Array<any> = [];
     if (threads) {
         threadList = threads.map(thread => {
-            const linkTo = urlToPage({forumId: params.forumId, threadId: thread.id, page: 1});
+            const linkTo = urlToPage({forumId: params.forumId || '', threadId: thread.id, page: 1});
             return (
                 <Link to={linkTo} key={thread.id} className='link-as-text'>
                     <ThreadItem key={thread.id} id={thread.id}/>
