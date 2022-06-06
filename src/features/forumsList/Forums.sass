@@ -1,0 +1,17 @@
+@import "../../styles/vars"
+
+.forums
+  display: grid
+  grid-template-rows: auto
+
+.forum__item
+  display: grid
+  grid-template-columns: auto 6em 6em 10em
+  a
+    &:hover
+      background-color: $header-color
+
+.forum__header
+  @extend .forum__item
+  font-weight: bold
+  background-color: $header-color
