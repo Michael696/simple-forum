@@ -4,7 +4,7 @@ import {useSelector} from "react-redux";
 import {Id, ThreadItemType} from "../../app/types";
 import './Threads.sass';
 
-export default function ThreadItem({id}: { id?: Id }) {
+export default function ThreadItem({id}: { id: Id }) {
     const thread: ThreadItemType = useSelector(state => selectThreadWithId(state, id));
 
     return (

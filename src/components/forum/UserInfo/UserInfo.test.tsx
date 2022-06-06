@@ -9,7 +9,7 @@ import UserInfo from "./UserInfo";
 
 test('User info', async () => {
     render(<UserInfo user={{
-        id: undefined,
+        id: '',
         name: 'username1',
         realName: 'real username1',
         registeredAt: '2022-02-01 12:13:14',

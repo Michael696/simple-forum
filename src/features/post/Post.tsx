@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {Id, PostItemType, ThreadItemType, User} from "../../app/types";
-import {addPostDislike, addPostLike, fetchPosts, postWithId, removePost, setPostText} from "./postsSlice";
+import {Id, PostItemStateType, ThreadItemType, User} from "../../app/types";
+import {addPostDislike, addPostLike, fetchPosts, removePost, selectPostWithId, setPostText} from "./postsSlice";
 import UserInfo from "../../components/forum/UserInfo/UserInfo";
 import PostText from "../../components/forum/PostText/PostText";
 import PostInfo from "../../components/forum/PostInfo/PostInfo";
@@ -19,7 +19,7 @@ export type LikeDislike = 'likes' | 'dislikes';
 
 const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, onReply: (id: Id) => void }) {
         const params = useParams();
-        const post: PostItemType = useSelector((state: RootState) => postWithId(state, id));
+        const post: PostItemStateType = useSelector((state: RootState) => selectPostWithId(state, id));
         const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
         const dispatch = useDispatch();
         const user: User = useAppSelector(selectCurrentUser);
@@ -66,19 +66,16 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
         const confirmationText = `You are about to remove post of user '${post.author.name}' posted at '${post.postedAt}' beginning with '${postShortText}' ?`;
 
         // TODO add ability to revoke like/dislike
-        const likesClicked =
-            (isAuthenticated && !user.isBanned) ?
-                (props: { label: LikeDislike }) => {
-                    switch (props.label) {
-                        case 'likes':
-                            dispatch(addPostLike({postId: id, user}));
-                            break;
-                        case 'dislikes':
-                            dispatch(addPostDislike({postId: id, user}));
-                            break;
-                    }
-                }
-                : undefined;
+        const likesClicked = (props: { label: LikeDislike }) => {
+            switch (props.label) {
+                case 'likes':
+                    dispatch(addPostLike({postId: id, user}));
+                    break;
+                case 'dislikes':
+                    dispatch(addPostDislike({postId: id, user}));
+                    break;
+            }
+        };
 
         return (
             <>
@@ -105,7 +102,7 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
                             {(isAuthenticated && !user.isBanned) ?
                                 <Button
                                     onClick={handleReply} {...(editable ? {disabled: true} : '')}>reply</Button> : ''}
-                            {(isAuthenticated && (!user.isBanned && user.id === post.author.id) || user.isAdmin) ?
+                            {((isAuthenticated && !user.isBanned && user.id === post.author.id) || user.isAdmin) ?
                                 (<>
                                     <Button
                                         onClick={handleRemove} {...(editable ? {disabled: true} : '')}>remove</Button>

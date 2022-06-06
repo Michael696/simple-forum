@@ -1,12 +1,12 @@
 import React, {useCallback} from "react";
-import {PostItemType} from "../../../app/types";
+import {PostItemStateType} from "../../../app/types";
 import Form from "react-bootstrap/cjs/Form";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {selectCurrentUser} from "../../../features/currentUser/currentUserSlice";
 import {selectIsUserBanned, setBan} from "../../../features/bannedUsers/bannedUsersSlice";
 import {RootState} from "../../../app/store";
 
-export default function AdminPostPanel({post}: { post: PostItemType }) {
+export default function AdminPostPanel({post}: { post: PostItemStateType }) {
     const user = useAppSelector(selectCurrentUser);
     const isBanned = useAppSelector((state: RootState) => selectIsUserBanned(state, post.author.id));
     const dispatch = useAppDispatch();

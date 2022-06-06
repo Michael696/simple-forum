@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {fetchPosts, selectPosts, selectPostsIsLoading, selectTotalPages} from "./postsSlice";
-import {PostItemType, User} from "../../app/types";
+import {PostItemStateType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import NewPostForm from "../../components/forum/NewPostForm/NewPostForm";
@@ -18,12 +18,12 @@ import Confirmation from "../../components/main/Confirmation/Confirmation";
 
 export default function Posts() {
     const params = useParams();
-    const posts: Array<PostItemType> = useAppSelector(selectPosts);
+    const posts: Array<PostItemStateType> = useAppSelector(selectPosts);
     const isLoading = useAppSelector(selectPostsIsLoading);
     const user: User = useAppSelector(selectCurrentUser);
     const dispatch = useAppDispatch();
     const [postText, setPostText] = useState('');
-    const thread = useAppSelector(state => selectThreadWithId(state, params.threadId));
+    const thread = useAppSelector(state => selectThreadWithId(state, params.threadId || ''));
     const navigate = useNavigate();
     const totalPages = useAppSelector(selectTotalPages);
     const currentPageDraft = parseInt(params.page || '1');
@@ -45,14 +45,14 @@ export default function Posts() {
     }, [thread]);
 
     useEffect(() => {
-        dispatch(fetchThreads(params.forumId));
-        dispatch(fetchPosts({threadId: params.threadId, page: currentPage}));
+        dispatch(fetchThreads(params.forumId || ''));
+        dispatch(fetchPosts({threadId: params.threadId || '', page: currentPage}));
         debug('current page is (from params):', params.page);
         debug('current page is (sane):', currentPage);
         debug('totalPages', totalPages);
         if (params.page !== currentPage.toString()) {
             debug('pages are different, redirecting to', currentPage);
-            navigate(urlToPage({forumId: params.forumId, threadId: params.threadId, page: currentPage}));
+            navigate(urlToPage({forumId: params.forumId || '', threadId: params.threadId  || '', page: currentPage}));
         }
     }, [totalPages]);
 
@@ -115,7 +115,7 @@ export default function Posts() {
             (async () => {
                 debug('create post for thread', thread.id, newText);
                 const postId = await userApi.createPost({
-                    forumId: params.forumId,
+                    forumId: params.forumId || '',
                     threadId: thread.id,
                     userId: user.id,
                     text: newText
@@ -152,7 +152,7 @@ export default function Posts() {
                 </div>
                 <Pagination totalPages={totalPages} currentPage={currentPage} onChange={async (page) => {
                     dispatch(fetchPosts({threadId: thread.id, page}));
-                    navigate(urlToPage({forumId: params.forumId, threadId: thread.id, page}));
+                    navigate(urlToPage({forumId: params.forumId  || '', threadId: thread.id, page}));
                 }}/>
                 <StatusHintMessage>
                     <NewPostForm text={postText} onCreate={handleCreatePost}/>
