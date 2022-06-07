@@ -24,8 +24,8 @@ const findPostById = (list: Array<PostItemStateType>, id: Id) => list.filter(pos
 export const selectPostsIsLoading = (state: RootState) => state.posts.isLoading;
 export const selectPosts = (state: RootState) => state.posts.entries.items;
 export const selectPostWithId = (state: RootState, id: Id) => findPostById(state.posts.entries.items, id);
-export const selectPostLikes = (state:RootState, id: Id) => state.posts.entries.likes[id] || [];
-export const selectPostDislikes = (state:RootState, id: Id) => state.posts.entries.dislikes[id] || [];
+export const selectPostLikes = (state: RootState, id: Id) => state.posts.entries.likes[id] || [];
+export const selectPostDislikes = (state: RootState, id: Id) => state.posts.entries.dislikes[id] || [];
 
 const addOnly = (first: Array<User>, user: User) => {
     const userLiked = findUserById(first, user.id);
@@ -67,9 +67,6 @@ export const postsSlice = createSlice({
         postsLoad: (state: PostStateType, action: PayloadAction<Id>) => {
             if (state.isLoading === 'idle') {
                 state.isLoading = 'pending';
-                state.entries.items = [];
-                state.entries.likes = {};
-                state.entries.dislikes = {};
                 state.threadId = action.payload;
                 state.lastFetch = new Date().toISOString();
             }

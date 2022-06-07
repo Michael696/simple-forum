@@ -52,7 +52,7 @@ export default function Posts() {
         debug('totalPages', totalPages);
         if (params.page !== currentPage.toString()) {
             debug('pages are different, redirecting to', currentPage);
-            navigate(urlToPage({forumId: params.forumId || '', threadId: params.threadId  || '', page: currentPage}));
+            navigate(urlToPage({forumId: params.forumId || '', threadId: params.threadId || '', page: currentPage}));
         }
     }, [totalPages]);
 
@@ -104,7 +104,7 @@ export default function Posts() {
         // TODO friendly format the message
         const confirmationText = `You are about to remove thread '${thread.title}' from forum '${params.forumId}' created by user '${thread.author.name}' ?`;
 
-        postList.unshift(
+        const postsHeader = (
             <div key='title'
                  className='forum-title border-1-right border-1-top border-1-left bold border-top-round-025'>
                 Thread {threadTitle.join(', ')}
@@ -124,7 +124,7 @@ export default function Posts() {
                 if (!postId) {
                     navigate(url.SIGN_IN);
                 } else {
-                    dispatch(fetchPosts({threadId: thread.id, page: totalPages},true));
+                    dispatch(fetchPosts({threadId: thread.id, page: totalPages}, true));
                     setPostText('');
                 }
             })();
@@ -145,14 +145,12 @@ export default function Posts() {
                         />
                     </> : ''}
                 <div className='post-list margin05'>
-                    {isLoading === 'pending' ?
-                        'loading posts...'
-                        : (postList.length ? postList : `no posts in thread ${thread.id}`)
-                    }
+                    {postsHeader}
+                    {postList}
                 </div>
                 <Pagination totalPages={totalPages} currentPage={currentPage} onChange={async (page) => {
                     dispatch(fetchPosts({threadId: thread.id, page}));
-                    navigate(urlToPage({forumId: params.forumId  || '', threadId: thread.id, page}));
+                    navigate(urlToPage({forumId: params.forumId || '', threadId: thread.id, page}));
                 }}/>
                 <StatusHintMessage>
                     <NewPostForm text={postText} onCreate={handleCreatePost}/>
