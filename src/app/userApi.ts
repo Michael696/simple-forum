@@ -2,13 +2,17 @@ import httpApi from './httpApi';
 import {RegisterParams} from "../features/registerUser/registerSlice";
 import {Id, UserCredentials} from "./types";
 
-export const userApi = {
+export const userApi = { // TODO decide whether userApi functions must throw or not
     auth: async (params: UserCredentials) => {
-        const response = await httpApi.post('/auth', params);
-        if (response && response.data && response.data.error) {
-            throw response.data.error;
+        let response;
+        try {
+            response = await httpApi.post('/auth', params);
+            return response.data;
+        } catch (e: any) {
+            return {
+                error: (e.response && e.response.data) ? e.response.data.error : e.message || 'unknown error'
+            };
         }
-        return response.data;
     },
     currentUser: async () => {
         const response = await httpApi.post('/current-user', {});
@@ -50,11 +54,12 @@ export const userApi = {
         }
     },
     register: async (params: RegisterParams) => {
-        const response = await httpApi.post('/register', params);
-        if (response && response.data && response.data.error) {
-            throw response.data.error;
+        try {
+            const response = await httpApi.post('/register', params);
+            return response.data;
+        } catch (e: any) {
+            return {error: e.message}; // TODO pass error messages in other handlers
         }
-        return response.data;
     },
     fetchOnline: async () => {
         try {

@@ -1,71 +1,132 @@
-import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/cjs/Button';
 import {LinkContainer} from 'react-router-bootstrap';
-import {registerClear, registerStart, selectRegisterErrorMessage, selectRegisterState} from './registerSlice';
+import {
+    register as registerUser,
+    registerClear,
+    selectRegisterErrorMessage,
+    selectRegisterState
+} from './registerSlice';
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {AppDispatch} from "../../app/store";
 import {selectIsUserAuthenticated} from "../currentUser/currentUserSlice";
 import {useNavigate} from "react-router";
 import {url} from "../../app/urls";
+import {SubmitHandler, useForm} from 'react-hook-form';
+import * as yup from 'yup';
 import './Register.sass';
+import {AnySchema} from "yup/lib/schema";
+
+const useYupValidationResolver = validationSchema => // TODO dig it
+    useCallback(
+        async data => {
+            try {
+                const values = await validationSchema.validate(data, {
+                    abortEarly: false
+                });
+
+                return {
+                    values,
+                    errors: {}
+                };
+            } catch (errors: any) {
+                return {
+                    values: {},
+                    errors: errors.inner.reduce(
+                        (allErrors, currentError) => ({
+                            ...allErrors,
+                            [currentError.path]: {
+                                type: currentError.type || "validation",
+                                message: currentError.message
+                            }
+                        }),
+                        {}
+                    )
+                };
+            }
+        },
+        [validationSchema]
+    );
+
+type Inputs = {
+    login: string,
+    realName: string,
+    location: string,
+    eMail: string,
+    password: string,
+    password2: string
+};
+
+type Shape<Type> = { // TODO dig it
+    [Property in keyof Type]: AnySchema;
+};
+
+const RegisterSchema = yup.object().shape<Shape<Inputs>>({
+    login: yup.string().max(32).required(),
+    realName: yup.string().max(50).required(),
+    location: yup.string().max(100),
+    eMail: yup.string().email().required(),
+    password: yup.string().min(6).max(20).required(),
+    password2: yup.string().min(6).max(20).required().oneOf([yup.ref("password")], "Passwords do not match"),
+});
 
 export default function Register() {
-    const nameRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
-    const [name, setName] = useState('b');
-    const [eMail, setEmail] = useState('a');
-    const [password, setPassword] = useState('a');
-    const [password2, setPassword2] = useState('a');
-    const [error, setError] = useState('');
-
     const registering = useAppSelector(selectRegisterState);
     const errorMessage = useAppSelector(selectRegisterErrorMessage);
-    const dispatch: AppDispatch = useAppDispatch();
     const navigate = useNavigate();
-    const authOk = useAppSelector(selectIsUserAuthenticated);
+    const dispatch = useAppDispatch();
+    const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
+    const password = useRef({});
+    const password2 = useRef({});
 
-    const regClear = () => {
-        if (registering !== 'idle') {
-            dispatch(registerClear());
+    const {
+        register,
+        handleSubmit,
+        formState: {errors},
+        watch,
+        trigger
+    } = useForm<Inputs>({
+        resolver: useYupValidationResolver(RegisterSchema),
+        mode: 'onChange',
+        shouldUnregister: true,
+        defaultValues: {
+            login: '',
+            realName: '',
+            location: '',
+            eMail: '',
+            password: '',
+            password2: ''
         }
+    });
+
+    const onSubmit: SubmitHandler<Inputs> = ({login: name, realName, location, eMail, password}) => {
+        dispatch(registerUser({name, realName, location, eMail, password}))
     };
 
-    useEffect(() => {
-        nameRef.current.focus();
-        return () => {
-            dispatch(registerClear());
-        }
-    }, [nameRef]);
+    password.current = watch("password", "");
+    password2.current = watch("password2", "");
 
     useEffect(() => {
-        if (authOk) {
-            console.log('cannot register authenticated user');
+        dispatch(registerClear());
+    }, []);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            console.log('cannot register authenticated user, please sign-out first');
             setTimeout(() => {
                 navigate(url.FORUM);
             }, 0);
         }
-    }, [authOk]);
+    }, [isAuthenticated]);
 
-    useEffect(() => {
-        if (registering === 'error') {
-            // @ts-ignore
-            setError(errorMessage);
-        }
-    }, [registering, error]);
+    // TODO focus on the first form field at initial render
+    // TODO passwords match validation
 
-    const handleSubmit = event => {
-        if (name === '') {
-            setError('name is empty');
-        } else if (eMail === '') {
-            setError('e-mail is empty');
-        } else if (password !== password2) {
-            setError('passwords are different');
-        } else if (password === '') {
-            setError('password is empty');
-        } else { // all OK
-            dispatch(registerStart({name, eMail, password}))
-        }
-    };
+    /*
+        useEffect(() => {
+            trigger(['password', 'password2']);
+        }, [password, password2, trigger]);
+    */
 
     const formDone = (
         <h5 className='center bold'>
@@ -74,96 +135,92 @@ export default function Register() {
         </h5>
     );
 
-    // TODO implement real user registration (now it's a fake)
-    // TODO refactor onChange handlers
+    const showError = (field: string, message?: string) => {
+        return (errors[field] && errors[field].message) ? (
+            <div className='error-message margin1 pad025'>{errors[field].message}</div>
+        ) : (
+            message ? <Form.Text className="text-muted">{message}</Form.Text> : ''
+        )
+    };
+
     const formRegister = (
         <div className='register form-width-50'>
             <h6 className='register__header center border-1-top border-1-left border-1-right border-1-bottom pad05 border-top-round-025'>
-                Register new user
+                Sign-up
             </h6>
-            <Form className='border-1-right border-1-left border-1-bottom border-bottom-round-025 pad-1'>
-                <Form.Group className="mb-3" controlId="formUserName">
-                    <Form.Label>Username</Form.Label>
+            <Form className='border-1-right border-1-left border-1-bottom border-bottom-round-025 pad-1'
+                  onSubmit={handleSubmit(onSubmit)}>
+                <Form.Group className="mb-3" controlId="formLogin">
+                    <Form.Label className='bold'>Login</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="Enter username"
-                        ref={nameRef}
-                        value={name}
-                        onChange={(e) => {
-                            setName(e.target.value);
-                            setError('');
-                            regClear();
-                        }}
+                        {...register('login')}
                     />
-                    <Form.Text className="text-muted">
-                        only characters and numbers
-                    </Form.Text>
+                    {showError('login', 'only characters and numbers')}
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formUserEmail">
-                    <Form.Label>E-mail</Form.Label>
+                <Form.Group className="mb-3" controlId="formFirstName">
+                    <Form.Label className='bold'>First name</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="Enter your e-mail"
-                        value={eMail}
-                        onChange={(e) => {
-                            setEmail(e.target.value);
-                            setError('');
-                            regClear();
-                        }}
+                        {...register('realName')}
                     />
+                    {showError('realName')}
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formUserPassword">
-                    <Form.Label>Password</Form.Label>
+                <Form.Group className="mb-3" controlId="formEmail">
+                    <Form.Label className='bold'>E-mail</Form.Label>
                     <Form.Control
-                        type="password"
-                        placeholder="Password"
-                        aria-describedby="passwordHelpBlock"
-                        value={password}
-                        onChange={(e) => {
-                            setPassword(e.target.value);
-                            setError('');
-                            regClear();
-                        }}
+                        type="text"
+                        {...register('eMail')}
                     />
-                    <Form.Text id="passwordHelpBlock" muted>
-                        Your password must be 8-20 characters long, contain letters and numbers, and
-                        must not contain spaces, special characters, or emoji.
-                    </Form.Text>
+                    {showError('eMail')}
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formUserPassword2">
-                    <Form.Label>Password</Form.Label>
+                <Form.Group className="mb-3" controlId="formLocation">
+                    <Form.Label className='bold'>Location</Form.Label>
+                    <Form.Control
+                        type="text"
+                        {...register('location')}
+                    />
+                    {showError('location')}
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="formPassword">
+                    <Form.Label className='bold'>Password</Form.Label>
                     <Form.Control
                         type="password"
-                        placeholder="Repeat password"
                         aria-describedby="passwordHelpBlock"
-                        value={password2}
-                        onChange={(e) => {
-                            setPassword2(e.target.value);
-                            setError('');
-                            regClear();
-                        }}
+                        {...register('password')}
                     />
+                    {showError('password', 'Your password must be 8-20 characters long, contain letters and numbers, and\n' +
+                        '                        must not contain spaces, special characters, or emoji.')}
+                </Form.Group>
+
+                <Form.Group className="mb-3" controlId="formPassword2">
+                    <Form.Label className='bold'>Repeat password</Form.Label>
+                    <Form.Control
+                        type="password"
+                        aria-describedby="passwordHelpBlock"
+                        {...register('password2')}
+                    />
+                    {showError('password2')}
                 </Form.Group>
 
                 {
-                    error ? (
-                        <Form.Group className='error-message margin1 border-round-025'>
-                            <Form.Label>{error}</Form.Label>
-                        </Form.Group>
+                    registering === 'error' ? (
+                        <div className='error-message margin1 border-round-025 pad025 center'>{errorMessage}</div>
                     ) : ''
                 }
 
-                <Button {...((registering === 'pending' || registering === 'error') ? {disabled: true} : {})}
-                        variant="primary"
-                        onClick={handleSubmit}>
+                <Button {...((registering === 'pending' || Object.keys(errors).length > 0) ? {disabled: true} : {})}
+                        variant="primary" type='submit'
+                >
                     Submit
                 </Button>
             </Form>
         </div>
     );
 
-    return registering !== 'done' ? formRegister : formDone;
+    return registering === 'done' ? formDone : formRegister;
 }

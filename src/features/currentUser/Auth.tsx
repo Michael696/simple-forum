@@ -24,7 +24,7 @@ export default function Auth() {
 
     };
     const error = authError ? (
-        <div className='error-message margin1 border-round-025'>
+        <div className='error-message margin1 border-round-025 pad025 center'>
             {authError}
         </div>
     ) : '';
@@ -47,20 +47,18 @@ export default function Auth() {
             <h6 className='sign-in__header center border-1-top border-1-left border-1-right border-1-bottom pad05 border-top-round-025'>Sign-in</h6>
             <Form className='border-1-right border-1-left border-1-bottom border-bottom-round-025 pad-1'>
                 <Form.Group className="mb-3" controlId="formUserName">
-                    <Form.Label>Username</Form.Label>
+                    <Form.Label className='bold'>Username</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="Enter username"
                         ref={usernameRef}
                         onKeyPress={handleKey}
                     />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formUserPassword">
-                    <Form.Label>Password</Form.Label>
+                    <Form.Label className='bold'>Password</Form.Label>
                     <Form.Control
                         type="password"
-                        placeholder="Password"
                         aria-describedby="passwordHelpBlock"
                         ref={passwordRef}
                         onKeyPress={handleKey}

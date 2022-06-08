@@ -78,7 +78,11 @@ export const authenticate = ({name, password}) => async (dispatch: AppDispatch) 
     dispatch(authReq());
     try {
         authResult = await userApi.auth({name, password});
-        dispatch(authDone(authResult));
+        if (authResult && authResult.error) {
+            dispatch(authError(authResult.error));
+        } else {
+            dispatch(authDone(authResult));
+        }
     } catch (e: any) {
         dispatch(authError(e.message || 'unknown error'));
     }
