@@ -54,7 +54,7 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
             setEditable(false);
         }, []);
 
-        const editSave = useCallback((text) => {
+    const editSave = useCallback((text: string) => {
             setEditable(false);
             debug(`setting post ${post.id} text:`, text);
             dispatch(setPostText(post.id, text));

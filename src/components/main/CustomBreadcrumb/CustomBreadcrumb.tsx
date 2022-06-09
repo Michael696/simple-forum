@@ -5,7 +5,7 @@ import {Breadcrumb} from "react-bootstrap/cjs";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {fetchForums, selectForumsLastError, selectForumWithId} from "../../../features/forumsList/forumsSlice";
 import {fetchThreads, selectThreadLastError, selectThreadWithId} from "../../../features/threads/threadsSlice";
-import {ForumItemType, ThreadItemType} from "../../../app/types";
+import {ForumItemType, Id, ThreadItemType} from "../../../app/types";
 import './CustomBreadcrumb.sass';
 import {url} from '../../../app/urls';
 import {debug} from "../../../app/debug";
@@ -13,12 +13,13 @@ import {debug} from "../../../app/debug";
 export default function CustomBreadcrumb() {
     const location = useLocation();
     const dispatch = useAppDispatch();
-    let currForum: ForumItemType, currThread: ThreadItemType;
-    let forumId, threadId;
     const pathItems = location.pathname.split('/').filter(item => item);
     const breadcrumbItems: Array<{ name: string, href: string }> = [];
     const errorForums = useAppSelector(selectForumsLastError);
     const errorThreads = useAppSelector(selectThreadLastError);
+    let currForum: ForumItemType | undefined;
+    let currThread: ThreadItemType | undefined;
+    let forumId: Id = '', threadId: Id = '';
 
     // TODO need to reconstruct all breadcrumb subsystem !  but ok for now...
 

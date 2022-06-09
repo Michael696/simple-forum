@@ -226,7 +226,7 @@ test('Pagination: 11 of 10 pages', async () => {
 
 test('Pagination: click current page', async () => {
     let clicked = 0;
-    const onChange = (page) => {
+    const onChange = (page: number) => {
         clicked = page;
     };
     render(<Pagination totalPages={10} currentPage={1} onChange={onChange}/>);
@@ -236,7 +236,7 @@ test('Pagination: click current page', async () => {
 
 test('Pagination: click another page', async () => {
     let clicked = 0;
-    const onChange = (page) => {
+    const onChange = (page: number) => {
         clicked = page;
     };
     render(<Pagination totalPages={10} currentPage={1} onChange={onChange}/>);

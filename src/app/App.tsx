@@ -18,27 +18,25 @@ import NewThreadForm from "../components/forum/NewThreadForm/NewThreadForm";
 import OnlineUsers from "../features/onlineUsers/OnlineUsers";
 import {debug} from "./debug";
 
-const PrivateRoute = ({children}) => {
+const PrivateRoute = ({children}: { children: any }) => {
     const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
     const user = useAppSelector(selectCurrentUser);
     const navigate = useNavigate();
-    let comp = null;
     if (isAuthenticated) {
         debug('PrivateRoute auth OK');
-        comp = children;
+        return children;
     } else {
         debug('PrivateRoute auth ERROR:', user);
         setTimeout(() => { // to avoid 'bad setState() call error message'
             navigate(url.SIGN_IN);
         }, 0);
+        return null;
     }
-    return comp;
 };
 
 function App() {
     const dispatch = useAppDispatch();
     const location = useLocation();
-    const user = useAppSelector(selectCurrentUser);
 
     useEffect(() => {
         if (location.pathname !== url.SIGN_IN) {

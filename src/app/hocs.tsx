@@ -7,7 +7,7 @@ function clickable<TProps>( // TODO learn more about generics
     onClick: (props: any) => void
 ) {
     // console.log('TProps:', TProps);
-    return function (props) {
+    return function (props: any) {
         // console.log('props',props);
         // return <span onClick={()=>{console.log('clicked inside')}}>
         const handler = () => {
@@ -26,7 +26,7 @@ function hoverable<TProps, PProps>(
     onEnter: (props: any) => void,
     onLeave: (props: any) => void
 ) {
-    return function (props) {
+    return function (props: any) {
         return (
             <span
                 onMouseEnter={() => {

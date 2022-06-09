@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {fetchPosts, selectPosts, selectPostsIsLoading, selectTotalPages} from "./postsSlice";
-import {PostItemStateType, User} from "../../app/types";
+import {Id, PostItemStateType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import NewPostForm from "../../components/forum/NewPostForm/NewPostForm";
@@ -56,7 +56,7 @@ export default function Posts() {
         }
     }, [totalPages]);
 
-    const handleReply = useCallback((id) => {
+    const handleReply = useCallback((id: Id) => {
         debug('searching for post ', id, posts);
         const found = posts.find(p => p.id === id);
         if (found) {
@@ -111,10 +111,10 @@ export default function Posts() {
             </div>
         );
 
-        const handleCreatePost = newText => {
+        const handleCreatePost = (newText: string) => {
             (async () => {
                 debug('create post for thread', thread.id, newText);
-                const postId = await userApi.createPost({
+                const postId = await userApi.createPost({ // TODO refactor to thunk
                     forumId: params.forumId || '',
                     threadId: thread.id,
                     userId: user.id,
@@ -148,7 +148,7 @@ export default function Posts() {
                     {postsHeader}
                     {postList}
                 </div>
-                <Pagination totalPages={totalPages} currentPage={currentPage} onChange={async (page) => {
+                <Pagination totalPages={totalPages} currentPage={currentPage} onChange={(page) => {
                     dispatch(fetchPosts({threadId: thread.id, page}));
                     navigate(urlToPage({forumId: params.forumId || '', threadId: thread.id, page}));
                 }}/>

@@ -71,7 +71,7 @@ test('Post info: #1 like/dislike events', async () => {
     });
 
     let likesClicked = false, dislikesClicked = false;
-    const clickHandler = e => {
+    const clickHandler = (e: any) => {
         switch (e.label) {
             case 'likes' :
                 likesClicked = true;

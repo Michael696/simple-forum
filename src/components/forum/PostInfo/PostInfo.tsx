@@ -12,7 +12,7 @@ function Popup({message, show}: { message: string, show: boolean }) {
     return show ? <div className='post-info__popup'>{message}</div> : null;
 }
 
-export default function PostInfo({children, post, user, onClick}: { children?, post: PostItemStateType, user: User, onClick: (props: any) => void }) {
+export default function PostInfo({children, post, user, onClick}: { children?: React.ReactNode, post: PostItemStateType, user: User, onClick: (props: any) => void }) {
     const [showLikesPopup, setShowLikesPopup] = useState(false);
     const [showDislikesPopup, setShowDislikesPopup] = useState(false);
     const likes = useAppSelector(state => selectPostLikes(state, post.id));
@@ -20,20 +20,20 @@ export default function PostInfo({children, post, user, onClick}: { children?, p
     const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
     const currentUser: User = useAppSelector(selectCurrentUser);
     const isUserEnabled = isAuthenticated && !currentUser.isBanned;
-    let likeTimeout, dislikeTimeout;
+    let likeTimeout: number, dislikeTimeout: number;
 
     // TODO fix: popup is not always disappears when moving mouse out
     // TODO refactor switches and all 'Popup' stuff (don't like such implementation)
-    const onEnter = (e) => {
+    const onEnter = (e: any) => {
         switch (e.label) {
             case 'likes':
-                likeTimeout = setTimeout(() => {
+                likeTimeout = window.setTimeout(() => {
                     setShowLikesPopup(true);
                 }, 300);
                 setShowDislikesPopup(false);
                 break;
             case 'dislikes':
-                dislikeTimeout = setTimeout(() => {
+                dislikeTimeout = window.setTimeout(() => {
                     setShowDislikesPopup(true);
                 }, 300);
                 setShowLikesPopup(false);
@@ -41,7 +41,7 @@ export default function PostInfo({children, post, user, onClick}: { children?, p
         }
     };
 
-    const onLeave = (e) => {
+    const onLeave = (e: any) => {
         switch (e.label) {
             case 'likes':
                 clearTimeout(likeTimeout);

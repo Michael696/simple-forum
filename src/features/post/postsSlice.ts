@@ -77,7 +77,9 @@ export const postsSlice = createSlice({
                 state.entries.items = action.payload.list;
                 const likes = {}, dislikes = {};
                 action.payload.list.forEach(post => {
+                    // @ts-ignore
                     likes[post.id] = post.likes;
+                    // @ts-ignore
                     dislikes[post.id] = post.dislikes;
                 });
                 state.entries.likes = likes;
@@ -129,6 +131,7 @@ export const postsSlice = createSlice({
         },
         postsClear: (state: PostStateType) => {
             for (let key in initialState) {
+                // @ts-ignore
                 state[key] = initialState[key];
             }
         }

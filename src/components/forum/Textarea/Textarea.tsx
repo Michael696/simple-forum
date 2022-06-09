@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useEffect, useRef} from "react";
+import React, {ChangeEvent, MutableRefObject, useEffect, useRef} from "react";
 import Form from "react-bootstrap/Form";
 
 const Textarea = function ({text, onChange, maxLength, focus = true}: { text: string, maxLength: number, onChange: (text: string) => void, focus?: boolean }) {
@@ -10,7 +10,7 @@ const Textarea = function ({text, onChange, maxLength, focus = true}: { text: st
         }
     }, [text]);
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         if (value.length <= maxLength) {
             onChange(value);

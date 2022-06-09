@@ -40,8 +40,8 @@ export const onlineUsersSlice = createSlice({
     },
 });
 
-export const onlineUsersLoading = state => state.onlineUsers.loading;
-export const selectOnlineUsers = state => state.onlineUsers.users;
+export const onlineUsersLoading = (state: RootState) => state.onlineUsers.isLoading;
+export const selectOnlineUsers = (state: RootState) => state.onlineUsers.users;
 
 const {usersLoading, usersDone} = onlineUsersSlice.actions;
 

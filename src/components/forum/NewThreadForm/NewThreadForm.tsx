@@ -3,7 +3,6 @@ import Button from "react-bootstrap/cjs/Button";
 import Form from "react-bootstrap/Form";
 import {useNavigate, useParams} from "react-router";
 import {fetchForums, selectForumWithId} from '../../../features/forumsList/forumsSlice';
-import {ForumItemType} from "../../../app/types";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {AppDispatch} from "../../../app/store";
 import {userApi} from "../../../app/userApi";
@@ -21,7 +20,7 @@ export default function NewThreadForm() {
     const params = useParams();
     const navigate = useNavigate();
     const dispatch: AppDispatch = useAppDispatch();
-    const forum: ForumItemType = useAppSelector(state => selectForumWithId(state, params.forumId || ''));
+    const forum = useAppSelector(state => selectForumWithId(state, params.forumId || ''));
     const user = useAppSelector(selectCurrentUser);
     const titleRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
 
@@ -31,22 +30,23 @@ export default function NewThreadForm() {
         titleRef.current.focus();
     }, []);
 
-    const handleCreate = async e => {
-        debug('create thread', threadName, params.forumId, forum.name, user);
-        const thread = await userApi.createThread({forumId:params.forumId || '', userId: user.id, name: threadName});
-        debug('created thread with id:', thread);
-        const postId = await userApi.createPost({
-            text: postText,
-            forumId:params.forumId || '',
-            threadId: thread.id.toString(), // TODO ensure threadId type is a string on back, not on front !!!
-            userId: user.id
-        });
-        dispatch(fetchThreads(params.forumId  || '', true));
-        debug('created post with id:', postId);
-        navigate(`${url.FORUM}/${params.forumId}`);
+    const handleCreate = async () => {
+        if (params.forumId) {
+            const thread = await userApi.createThread({forumId: params.forumId, userId: user.id, name: threadName}); // TODO refactor to thunk
+            debug('created thread with id:', thread);
+            const postId = await userApi.createPost({ // TODO refactor to thunk
+                text: postText,
+                forumId: params.forumId || '',
+                threadId: thread.id.toString(), // TODO ensure threadId type is a string on back, not on front !!!
+                userId: user.id
+            });
+            dispatch(fetchThreads(params.forumId, true));
+            debug('created post with id:', postId);
+            navigate(`${url.FORUM}/${params.forumId}`);
+        }
     };
 
-    const handlePostChange = text => {
+    const handlePostChange = (text: string) => {
         setPostText(text);
     };
 
