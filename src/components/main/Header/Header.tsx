@@ -7,6 +7,7 @@ import CurrentUser from "../../../features/currentUser/CurrentUser";
 import {User} from "../../../app/types";
 import {useAppSelector} from "../../../app/hooks";
 import {selectCurrentUser} from "../../../features/currentUser/currentUserSlice";
+import CustomBreadcrumb from "../CustomBreadcrumb/CustomBreadcrumb";
 
 export default function Header() {
     const user: User = useAppSelector(selectCurrentUser);
@@ -14,6 +15,7 @@ export default function Header() {
     return (<div className='header margin1-bottom'>
         <Logo/>
         <Navigation/>
+        <CustomBreadcrumb/>
         <CurrentTime/>
         <CurrentUser user={user}/>
 {/*

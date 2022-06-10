@@ -10,7 +10,7 @@ import './CustomBreadcrumb.sass';
 import {url} from '../../../app/urls';
 import {debug} from "../../../app/debug";
 
-export default function CustomBreadcrumb() {
+function CustomBreadcrumb() {
     const location = useLocation();
     const dispatch = useAppDispatch();
     let currForum: ForumItemType, currThread: ThreadItemType;
@@ -49,7 +49,7 @@ export default function CustomBreadcrumb() {
             debug('got forumId', forumId);
             dispatch(fetchThreads(forumId));
         }
-    }, []);
+    }, [dispatch, forumId]);
 
     if (currForum && currForum.name) {
         breadcrumbItems.push({name: currForum.name, href: `${url.FORUM}/${forumId}`})
@@ -77,3 +77,6 @@ export default function CustomBreadcrumb() {
         </div>
     )
 }
+
+const CustomBreadcrumbWithMemo = React.memo(CustomBreadcrumb);
+export default CustomBreadcrumbWithMemo;

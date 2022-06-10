@@ -29,19 +29,19 @@ export default function NewThreadForm() {
         debug('fetch forums');
         dispatch(fetchForums());
         titleRef.current.focus();
-    }, []);
+    }, [dispatch]);
 
     const handleCreate = async e => {
         debug('create thread', threadName, params.forumId, forum.name, user);
-        const thread = await userApi.createThread({forumId:params.forumId || '', userId: user.id, name: threadName});
+        const thread = await userApi.createThread({forumId: params.forumId || '', userId: user.id, name: threadName});
         debug('created thread with id:', thread);
         const postId = await userApi.createPost({
             text: postText,
-            forumId:params.forumId || '',
+            forumId: params.forumId || '',
             threadId: thread.id.toString(), // TODO ensure threadId type is a string on back, not on front !!!
             userId: user.id
         });
-        dispatch(fetchThreads(params.forumId  || '', true));
+        dispatch(fetchThreads(params.forumId || '', true));
         debug('created post with id:', postId);
         navigate(`${url.FORUM}/${params.forumId}`);
     };

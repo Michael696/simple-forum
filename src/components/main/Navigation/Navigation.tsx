@@ -5,8 +5,6 @@ import {selectCurrentUser, selectIsUserAuthenticated} from '../../../features/cu
 import {url} from "../../../app/urls";
 import './Navigation.sass';
 import {useAppSelector} from "../../../app/hooks";
-import CustomBreadcrumb from "../CustomBreadcrumb/CustomBreadcrumb";
-
 
 export default function Navigation() {
     const user = useAppSelector(selectCurrentUser);
@@ -59,7 +57,6 @@ export default function Navigation() {
                 </span>
                 </Nav.Link>
             </Navbar>
-            <CustomBreadcrumb/>
         </>
     );
 }

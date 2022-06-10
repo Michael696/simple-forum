@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {fetchPosts, selectPosts, selectPostsIsLoading, selectTotalPages} from "./postsSlice";
+import {fetchPosts, selectPosts, selectTotalPages} from "./postsSlice";
 import {PostItemStateType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
@@ -19,7 +19,6 @@ import Confirmation from "../../components/main/Confirmation/Confirmation";
 export default function Posts() {
     const params = useParams();
     const posts: Array<PostItemStateType> = useAppSelector(selectPosts);
-    const isLoading = useAppSelector(selectPostsIsLoading);
     const user: User = useAppSelector(selectCurrentUser);
     const dispatch = useAppDispatch();
     const [postText, setPostText] = useState('');
@@ -36,13 +35,13 @@ export default function Posts() {
         if (user && user.isAdmin) {
             dispatch(fetchBanned());
         }
-    }, [user]);
+    }, [user, dispatch]);
 
     useEffect(() => {
         if (thread) {
             dispatch(addThreadViewCount(thread.id));
         }
-    }, [thread]);
+    }, [thread, dispatch]);
 
     useEffect(() => {
         dispatch(fetchThreads(params.forumId || ''));
@@ -54,7 +53,7 @@ export default function Posts() {
             debug('pages are different, redirecting to', currentPage);
             navigate(urlToPage({forumId: params.forumId || '', threadId: params.threadId || '', page: currentPage}));
         }
-    }, [totalPages]);
+    }, [totalPages, currentPage, params.forumId, params.page, params.threadId, dispatch, navigate]); // so many deps !?
 
     const handleReply = useCallback((id) => {
         debug('searching for post ', id, posts);
@@ -76,7 +75,7 @@ export default function Posts() {
         debug('removing thread ', params.threadId);
         dispatch(removeThread(params.threadId));
         navigate(`${url.FORUM}/${params.forumId}`);
-    }, [params.threadId]);
+    }, [params.threadId, params.forumId, dispatch, navigate]);
 
     const handleRemoveThread = useCallback(() => {
         setConfirmationShown(true);

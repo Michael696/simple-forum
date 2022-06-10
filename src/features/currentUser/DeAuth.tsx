@@ -11,7 +11,7 @@ export default function DeAuth() {
     useEffect(() => {
         dispatch(deAuthenticate());
         dispatch(fetchUsers());
-    }, []);
+    }, [dispatch]);
 
     return (
         <h6 className='sign-out-message'>

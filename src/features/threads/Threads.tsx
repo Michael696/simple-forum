@@ -28,7 +28,7 @@ export default function Threads() {
     useEffect(() => {
         dispatch(postsClear());
         dispatch(fetchThreads(params.forumId || ''));
-    }, [params.forumId]);
+    }, [params.forumId, dispatch]);
 
     const handleNewThread = () => {
         debug(`create new thread auth=${isAuthenticated} forumId=${params.forumId}`);

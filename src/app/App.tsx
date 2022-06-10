@@ -38,13 +38,12 @@ const PrivateRoute = ({children}) => {
 function App() {
     const dispatch = useAppDispatch();
     const location = useLocation();
-    const user = useAppSelector(selectCurrentUser);
 
     useEffect(() => {
         if (location.pathname !== url.SIGN_IN) {
             dispatch(checkAuth());
         }
-    }, []);
+    }, [dispatch, location.pathname]);
 
     return (
         <div className="App">

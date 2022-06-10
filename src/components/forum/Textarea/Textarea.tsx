@@ -8,7 +8,7 @@ const Textarea = function ({text, onChange, maxLength, focus = true}: { text: st
         if (focus) {
             textRef.current.focus();
         }
-    }, [text]);
+    }, [text, focus]);
 
     const handleChange = (e) => {
         const value = e.target.value;

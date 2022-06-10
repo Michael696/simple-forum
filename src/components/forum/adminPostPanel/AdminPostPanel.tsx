@@ -17,7 +17,7 @@ export default function AdminPostPanel({post}: { post: PostItemStateType }) {
         } else {
             dispatch(setBan({userId: post.author.id, ban: true}));
         }
-    }, [isBanned]);
+    }, [isBanned, post.author.id, dispatch]);
 
     return (
         <div className='post__admin-panel'>

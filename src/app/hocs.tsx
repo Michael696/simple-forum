@@ -20,7 +20,7 @@ function clickable<TProps>( // TODO learn more about generics
     };
 }
 
-function hoverable<TProps, PProps>(
+function hoverable<TProps>(
     Component: React.JSXElementConstructor<TProps>,
     // Popup: React.JSXElementConstructor<PProps>, // use it someday
     onEnter: (props: any) => void,

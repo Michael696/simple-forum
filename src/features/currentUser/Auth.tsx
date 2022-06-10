@@ -16,7 +16,7 @@ export default function Auth() {
     const navigate = useNavigate();
 
 
-    const submitAuth = async () => {
+    const submitAuth = () => {
         dispatch(authenticate({
             name: usernameRef.current.value,
             password: passwordRef.current.value,
@@ -34,7 +34,7 @@ export default function Auth() {
             dispatch(fetchUsers());
             navigate(url.FORUM, {replace: true});
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, dispatch, navigate]);
 
     const handleKey = (e) => {
         if (e.key === 'Enter') {

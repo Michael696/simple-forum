@@ -84,7 +84,7 @@ export default function Register() {
         handleSubmit,
         formState: {errors},
         watch,
-        trigger
+        // trigger
     } = useForm<Inputs>({
         resolver: useYupValidationResolver(RegisterSchema),
         mode: 'onChange',
@@ -108,7 +108,7 @@ export default function Register() {
 
     useEffect(() => {
         dispatch(registerClear());
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -117,7 +117,7 @@ export default function Register() {
                 navigate(url.FORUM);
             }, 0);
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, navigate]);
 
     // TODO focus on the first form field at initial render
     // TODO passwords match validation
@@ -131,7 +131,7 @@ export default function Register() {
     const formDone = (
         <h5 className='center bold'>
             Congratulations ! You've been successfully registered!<br/>
-            Now you can <LinkContainer to={url.SIGN_IN}><a>sign-in</a></LinkContainer>
+            Now you can <LinkContainer to={url.SIGN_IN}><a href={url.SIGN_IN}>sign-in</a></LinkContainer>
         </h5>
     );
 
