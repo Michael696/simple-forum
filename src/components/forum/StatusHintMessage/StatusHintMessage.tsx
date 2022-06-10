@@ -2,7 +2,7 @@ import React from "react";
 import {useAppSelector} from "../../../app/hooks";
 import {selectCurrentUser, selectIsUserAuthenticated} from "../../../features/currentUser/currentUserSlice";
 
-export default function StatusHintMessage({children}) {
+export default function StatusHintMessage({children}: { children: React.ReactNode }) {
     const user = useAppSelector(selectCurrentUser);
     const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
     let hintMessage = <></>;

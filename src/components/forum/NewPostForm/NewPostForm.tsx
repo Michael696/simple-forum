@@ -17,7 +17,7 @@ const NewPostForm = function ({text, onCreate}: { text: string, onCreate: (text:
         setPostText('');
     }, [postText, onCreate]);
 
-    const handleChange = useCallback((newText) => {
+    const handleChange = useCallback((newText: string) => {
         setPostText(newText);
     }, []);
 

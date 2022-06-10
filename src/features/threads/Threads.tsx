@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import {fetchThreads, selectThreads} from "./threadsSlice";
-import {ForumItemType, ThreadItemType, User} from "../../app/types";
+import {ThreadItemType, User} from "../../app/types";
 import {AppDispatch} from "../../app/store";
 import ThreadItem from "./ThreadItem";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
@@ -23,12 +23,12 @@ export default function Threads() {
     const dispatch: AppDispatch = useAppDispatch();
     const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
     const user: User = useAppSelector(selectCurrentUser);
-    const forum: ForumItemType = useAppSelector(state => selectForumWithId(state, params.forumId || ''));
+    const forum = useAppSelector(state => selectForumWithId(state, params.forumId || ''));
 
     useEffect(() => {
         dispatch(postsClear());
         dispatch(fetchThreads(params.forumId || ''));
-    }, [params.forumId]);
+    }, [params.forumId, dispatch]);
 
     const handleNewThread = () => {
         debug(`create new thread auth=${isAuthenticated} forumId=${params.forumId}`);

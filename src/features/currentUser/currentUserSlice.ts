@@ -73,7 +73,7 @@ export const selectLastAuthError = (state: RootState) => state.currentUser.error
 
 export const selectIsUserAuthenticated = (state: RootState) => state.currentUser.data.name.length > 0 && state.currentUser.error.length === 0;
 
-export const authenticate = ({name, password}) => async (dispatch: AppDispatch) => {
+export const authenticate = ({name, password}: { name: string, password: string }) => async (dispatch: AppDispatch) => {
     let authResult;
     dispatch(authReq());
     try {

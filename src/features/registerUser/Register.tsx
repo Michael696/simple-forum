@@ -17,9 +17,24 @@ import * as yup from 'yup';
 import './Register.sass';
 import {AnySchema} from "yup/lib/schema";
 
-const useYupValidationResolver = validationSchema => // TODO dig it
+type Inputs = {
+    login: string,
+    realName: string,
+    location: string,
+    eMail: string,
+    password: string,
+    password2: string
+};
+
+type Shape<Type> = { // TODO dig it
+    [Property in keyof Type]: AnySchema;
+};
+
+type YupObjectSchema = ReturnType<typeof yup.object>;
+
+const useYupValidationResolver = (validationSchema: YupObjectSchema) => // TODO dig it
     useCallback(
-        async data => {
+        async (data: any) => { // TODO is 'any' ok here ?
             try {
                 const values = await validationSchema.validate(data, {
                     abortEarly: false
@@ -33,7 +48,7 @@ const useYupValidationResolver = validationSchema => // TODO dig it
                 return {
                     values: {},
                     errors: errors.inner.reduce(
-                        (allErrors, currentError) => ({
+                        (allErrors: any, currentError: any) => ({
                             ...allErrors,
                             [currentError.path]: {
                                 type: currentError.type || "validation",
@@ -47,19 +62,6 @@ const useYupValidationResolver = validationSchema => // TODO dig it
         },
         [validationSchema]
     );
-
-type Inputs = {
-    login: string,
-    realName: string,
-    location: string,
-    eMail: string,
-    password: string,
-    password2: string
-};
-
-type Shape<Type> = { // TODO dig it
-    [Property in keyof Type]: AnySchema;
-};
 
 const RegisterSchema = yup.object().shape<Shape<Inputs>>({
     login: yup.string().max(32).required(),
@@ -84,7 +86,7 @@ export default function Register() {
         handleSubmit,
         formState: {errors},
         watch,
-        trigger
+        // trigger
     } = useForm<Inputs>({
         resolver: useYupValidationResolver(RegisterSchema),
         mode: 'onChange',
@@ -108,7 +110,7 @@ export default function Register() {
 
     useEffect(() => {
         dispatch(registerClear());
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -117,7 +119,7 @@ export default function Register() {
                 navigate(url.FORUM);
             }, 0);
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, navigate]);
 
     // TODO focus on the first form field at initial render
     // TODO passwords match validation
@@ -131,16 +133,17 @@ export default function Register() {
     const formDone = (
         <h5 className='center bold'>
             Congratulations ! You've been successfully registered!<br/>
-            Now you can <LinkContainer to={url.SIGN_IN}><a>sign-in</a></LinkContainer>
+            Now you can <LinkContainer to={url.SIGN_IN}><a href={url.SIGN_IN}>sign-in</a></LinkContainer>
         </h5>
     );
 
-    const showError = (field: string, message?: string) => {
-        return (errors[field] && errors[field].message) ? (
-            <div className='error-message margin1 pad025'>{errors[field].message}</div>
-        ) : (
-            message ? <Form.Text className="text-muted">{message}</Form.Text> : ''
-        )
+    const showError = (field: keyof Inputs, message?: string) => {
+        if (!!errors[field]) { // TODO remove @ts-ignore
+            // @ts-ignore
+            return <div className='error-message margin1 pad025'>{errors[field].message}</div>
+        } else {
+            return message ? <Form.Text className="text-muted">{message}</Form.Text> : ''
+        }
     };
 
     const formRegister = (

@@ -15,7 +15,7 @@ const initialState: ThreadsStateType = {
     isLoading: 'idle'
 };
 
-const findThreadById = (threads, id: Id): ThreadItemType => threads.find(thread => thread.id === id);
+const findThreadById = (threads: Array<ThreadItemType>, id: Id): ThreadItemType | undefined => threads && threads.find(thread => thread.id === id);
 
 export const threadsSlice = createSlice({
     name: 'threads',
@@ -55,10 +55,10 @@ export const threadsSlice = createSlice({
     },
 });
 
-export const selectThreadsIsLoading = state => state.threads.isLoading;
-export const selectThreads = state => state.threads.list;
-export const selectThreadWithId = (state, id: Id) => findThreadById(state.threads.list, id);
-export const selectThreadLastError = state => state.threads.lastError;
+export const selectThreadsIsLoading = (state: RootState) => state.threads.isLoading;
+export const selectThreads = (state: RootState) => state.threads.list;
+export const selectThreadWithId = (state: RootState, id: Id) => findThreadById(state.threads.list, id);
+export const selectThreadLastError = (state: RootState) => state.threads.lastError;
 
 const {threadsLoad, threadsDone, threadRemove, threadsError} = threadsSlice.actions;
 export const {viewed} = threadsSlice.actions;
@@ -84,16 +84,18 @@ export const fetchThreads = (forumId: Id, force: boolean = false) => async (disp
     }
 };
 
-export const removeThread = (id) => async (dispatch: AppDispatch) => {
-    const result = await userApi.removeThread(id);
-    if (!!result && !result.error) {
-        dispatch(threadRemove({id}));
-    } else {
-        debug(`cannot remove thread ${id}: server error`);
+export const removeThread = (id: string | undefined) => async (dispatch: AppDispatch) => {
+    if (id) {
+        const result = await userApi.removeThread(id);
+        if (!!result && !result.error) {
+            dispatch(threadRemove({id}));
+        } else {
+            debug(`cannot remove thread ${id}: server error`);
+        }
     }
 };
 
-export const addThreadViewCount = (threadId) => async () => {
+export const addThreadViewCount = (threadId: Id) => async () => {
     // console.log('addThreadViewCount', threadId);
     await userApi.addThreadViewCount(threadId);
 };

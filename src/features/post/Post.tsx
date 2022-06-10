@@ -35,7 +35,7 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
             debug('remove post', id);
             dispatch(removePost(id));
             dispatch(fetchPosts({page: parseInt(params.page || '1', 10), threadId: thread.id}, true));
-        }, [id]);
+        }, [id, params.page, thread.id, dispatch]);
 
         const handleRemove = useCallback(() => {
             setConfirmationShown(true);
@@ -43,7 +43,6 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
 
         const handleEdit = useCallback(() => {
             setEditable(true);
-            debug('edit post', id);
         }, []);
 
         const handleReject = useCallback(() => {
@@ -54,11 +53,11 @@ const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, 
             setEditable(false);
         }, []);
 
-        const editSave = useCallback((text) => {
+    const editSave = useCallback((text: string) => {
             setEditable(false);
             debug(`setting post ${post.id} text:`, text);
             dispatch(setPostText(post.id, text));
-        }, [post]);
+        }, [post, dispatch]);
 
         const MAX_SHORT_LENGTH = 80;
         const postShortText = post.text.length > MAX_SHORT_LENGTH ? post.text.substring(0, MAX_SHORT_LENGTH) + '...' : post.text;

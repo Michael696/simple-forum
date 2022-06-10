@@ -71,7 +71,7 @@ test('Post info: #1 like/dislike events', async () => {
     });
 
     let likesClicked = false, dislikesClicked = false;
-    const clickHandler = e => {
+    const clickHandler = (e: any) => {
         switch (e.label) {
             case 'likes' :
                 likesClicked = true;
@@ -423,4 +423,93 @@ test('Post info: #8 n-th like', async () => {
     expect(result.entries.likes['01'].length).toEqual(2);
     expect(result.entries.dislikes['01'][0]).toEqual(user2);
     expect(result.entries.dislikes['01'].length).toEqual(1);
+});
+
+
+test('Post info: #9 like/dislike events disabled for unauthenticated user', async () => {
+    const user: User = {
+        id: '01',
+        isAdmin: false,
+        isBanned: false,
+        location: "",
+        name: "",
+        posts: 0,
+        realName: "",
+        registeredAt: ""
+    };
+
+    const post = {
+        id: '01',
+        author: user,
+        text: '',
+        postedAt: '2022-02-01 12:13:14',
+        editedAt: ''
+    };
+
+    const store = configureStore({
+        reducer: {
+            posts: postsReducer,
+            currentUser: currentUserReducer
+        },
+        preloadedState: {
+            posts: {
+                entries: {
+                    items: [post],
+                    likes: {'01': [user, user]},
+                    dislikes: {'01': [user, user, user]},
+                },
+                threadId: '1',
+                firstPostIdx: 0,
+                lastPostIdx: 1,
+                totalCount: 1,
+                isLoading: 'idle',
+                lastFetch: '',
+                perPageCount: 1
+            },
+            currentUser: {
+                data: {
+                    id: '',
+                    name: '',
+                    realName: '',
+                    registeredAt: '',
+                    posts: 0,
+                    location: '',
+                    isBanned: false,
+                    isAdmin: false,
+                },
+                isAuthPending: 'idle',
+                error: ''
+            }
+        }
+    });
+
+    let likesClicked = false, dislikesClicked = false;
+    const clickHandler = e => {
+        switch (e.label) {
+            case 'likes' :
+                likesClicked = true;
+                break;
+            case 'dislikes' :
+                dislikesClicked = true;
+                break;
+        }
+    };
+    const {getByText} = render(
+        <Provider store={store}>
+            <PostInfo post={post} user={user} onClick={clickHandler}>
+                <div>children here</div>
+            </PostInfo>
+        </Provider>
+    );
+    expect(getByText(/2022-02-01 12:13:14/)).toBeInTheDocument();
+    const likes = getByText(/likes:2/);
+    expect(likes).toBeInTheDocument();
+    const dislikes = getByText(/dislikes:3/);
+    expect(dislikes).toBeInTheDocument();
+    expect(getByText(/children here/)).toBeInTheDocument();
+
+    userEvent.click(likes);
+    userEvent.click(dislikes);
+    expect(likesClicked).toBe(false);
+    expect(dislikesClicked).toBe(false);
 });
