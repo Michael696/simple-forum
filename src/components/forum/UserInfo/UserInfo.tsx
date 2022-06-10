@@ -6,8 +6,11 @@ const UserInfo = function ({user}: { user: User }) {
     return (
         <div className='user-info pad05'>
             <div className='bold center'>{user.name}</div>
-            <div className='center'>{user.isAdmin ? 'admin' : 'regular'}</div>
-            {user.isBanned && <div className='center error-message'>banned</div>}
+            <div className='center'>
+                {user.isAdmin ? 'admin' : 'regular'}
+                <span className='margin1-left'/>
+                {user.isBanned && <span className='center error-message'>(banned)</span>}
+            </div>
             <div><span className='bold'>messages: </span>{user.posts}</div>
             <div><span className='bold'>registered: </span>{user.registeredAt}</div>
             <div><span className='bold'>location: </span>{user.location}</div>

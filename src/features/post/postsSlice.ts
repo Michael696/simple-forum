@@ -7,6 +7,7 @@ import {findUserById} from "../currentUser/currentUserSlice";
 import {isValid as isValidDate} from "date-fns";
 import {FETCH_PERIOD} from "../../app/settings";
 import {debug} from "../../app/debug";
+import {emptyPost} from "../../app/objects";
 
 const initialState: PostStateType = {
     entries: {items: [], likes: {}, dislikes: {}},
@@ -21,9 +22,9 @@ const initialState: PostStateType = {
 
 const findPostById = (list: Array<PostItemStateType>, id: Id) => list.filter(post => post.id === id)[0];
 
-export const selectPostsIsLoading = (state: RootState) => state.posts.isLoading;
+// export const selectPostsIsLoading = (state: RootState) => state.posts.isLoading;
 export const selectPosts = (state: RootState) => state.posts.entries.items;
-export const selectPostWithId = (state: RootState, id: Id) => findPostById(state.posts.entries.items, id);
+export const selectPostWithId = (state: RootState, id: Id) => findPostById(state.posts.entries.items, id) || emptyPost;
 export const selectPostLikes = (state: RootState, id: Id) => state.posts.entries.likes[id] || [];
 export const selectPostDislikes = (state: RootState, id: Id) => state.posts.entries.dislikes[id] || [];
 
@@ -223,5 +224,16 @@ export const addPostDislike = ({postId, user}: { postId: Id, user: User }) => as
         }
     }
 };
+
+export const addPost = ({text, userId, forumId, threadId}: { text: string, userId: Id, forumId: Id, threadId: Id }) =>
+    async (dispatch: AppDispatch, getState: () => RootState) => {
+        debug('create post for thread', threadId, text);
+        const post = await userApi.createPost({forumId, threadId, userId, text});
+        debug('created post with id:', post);
+        if (post) {
+            const totalPages = selectTotalPages(getState());
+            dispatch(fetchPosts({threadId, page: totalPages}, true));
+        }
+    };
 
 export default postsSlice.reducer;

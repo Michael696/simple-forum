@@ -21,5 +21,7 @@ export const store = configureStore({
     },
 });
 
+// TODO user extraArgument with thunks (inject userApi)
+
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

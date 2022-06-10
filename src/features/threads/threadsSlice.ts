@@ -6,6 +6,8 @@ import {Id, ThreadItemType, ThreadsStateType} from "../../app/types";
 import {isValid as isValidDate} from "date-fns";
 import {FETCH_PERIOD} from "../../app/settings";
 import {debug} from "../../app/debug";
+import {emptyThread} from "../../app/objects";
+import {addPost} from "../post/postsSlice";
 
 const initialState: ThreadsStateType = {
     list: [],
@@ -57,7 +59,7 @@ export const threadsSlice = createSlice({
 
 export const selectThreadsIsLoading = (state: RootState) => state.threads.isLoading;
 export const selectThreads = (state: RootState) => state.threads.list;
-export const selectThreadWithId = (state: RootState, id: Id) => findThreadById(state.threads.list, id);
+export const selectThreadWithId = (state: RootState, id: Id) => findThreadById(state.threads.list, id) || emptyThread;
 export const selectThreadLastError = (state: RootState) => state.threads.lastError;
 
 const {threadsLoad, threadsDone, threadRemove, threadsError} = threadsSlice.actions;
@@ -83,6 +85,15 @@ export const fetchThreads = (forumId: Id, force: boolean = false) => async (disp
         debug('fetch threads skipped', forumId);
     }
 };
+
+export const addThreadWithPost = ({forumId, userId, title, text}: { forumId: Id, userId: Id, title: string, text: string }) =>
+    async (dispatch: AppDispatch) => {
+        const thread = await userApi.createThread({forumId, userId, name: title});
+        if (thread) { // TODO error handling
+            debug('created thread with id:', thread.id);
+            dispatch(addPost({forumId, text, threadId: thread.id.toString(), userId}));
+        }
+    };
 
 export const removeThread = (id: string | undefined) => async (dispatch: AppDispatch) => {
     if (id) {

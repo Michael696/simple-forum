@@ -5,12 +5,11 @@ import {useNavigate, useParams} from "react-router";
 import {fetchForums, selectForumWithId} from '../../../features/forumsList/forumsSlice';
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {AppDispatch} from "../../../app/store";
-import {userApi} from "../../../app/userApi";
 import {selectCurrentUser} from "../../../features/currentUser/currentUserSlice";
 import {url} from "../../../app/urls";
 import Textarea from '../Textarea/Textarea';
 import {MAX_POST_LENGTH} from "../../../app/settings";
-import {fetchThreads} from "../../../features/threads/threadsSlice";
+import {addThreadWithPost, fetchThreads} from "../../../features/threads/threadsSlice";
 import {debug} from "../../../app/debug";
 import './NewThreadForm.sass';
 
@@ -30,18 +29,16 @@ export default function NewThreadForm() {
         titleRef.current.focus();
     }, [dispatch]);
 
+    // TODO show error if params.forumId does not refer to real forum id
     const handleCreate = async () => {
         if (params.forumId) {
-            const thread = await userApi.createThread({forumId: params.forumId, userId: user.id, name: threadName}); // TODO refactor to thunk
-            debug('created thread with id:', thread);
-            const postId = await userApi.createPost({ // TODO refactor to thunk
-                text: postText,
-                forumId: params.forumId || '',
-                threadId: thread.id.toString(), // TODO ensure threadId type is a string on back, not on front !!!
-                userId: user.id
-            });
+            dispatch(addThreadWithPost({
+                forumId: params.forumId,
+                title: threadName,
+                userId: user.id,
+                text: postText
+            }));
             dispatch(fetchThreads(params.forumId, true));
-            debug('created post with id:', postId);
             navigate(`${url.FORUM}/${params.forumId}`);
         }
     };
