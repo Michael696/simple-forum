@@ -11,6 +11,7 @@ import {configureStore} from '@reduxjs/toolkit'
 import currentUserReducer, {checkAuth} from "../../../features/currentUser/currentUserSlice";
 import StatusHintMessage from "./StatusHintMessage";
 import {Provider} from "react-redux";
+import {userApi} from "../../../app/userApi";
 
 test('StatusHintMessage: #1 anonymous user - should show nothing', async () => {
 
@@ -29,7 +30,8 @@ test('StatusHintMessage: #1 anonymous user - should show nothing', async () => {
 
     server.listen();
 
-    await checkAuth()(store.dispatch);
+    //@ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     render(
         <Provider store={store}>
@@ -72,7 +74,8 @@ test('StatusHintMessage: #2 regular non-banned user - should show childrens', as
 
     server.listen();
 
-    await checkAuth()(store.dispatch);
+    //@ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     render(
         <Provider store={store}>
@@ -114,7 +117,8 @@ test('StatusHintMessage: #3 regular banned user - should show warning', async ()
 
     server.listen();
 
-    await checkAuth()(store.dispatch);
+    //@ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     render(
         <Provider store={store}>

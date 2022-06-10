@@ -17,6 +17,7 @@ import currentUserReducer, {checkAuth} from "../currentUser/currentUserSlice";
 import {url} from "../../app/urls";
 import {User} from "../../app/types";
 import onlineUsersReducer from "../onlineUsers/onlineUsersSlice";
+import {userApi} from "../../app/userApi";
 
 test('Threads: has threads in forum', async () => {
     const user: User = {
@@ -187,7 +188,8 @@ test('Threads: should show "create thread" button for authenticated and not bann
         },
     });
 
-    await checkAuth()(store.dispatch);
+    // @ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     act(() => {
         render(

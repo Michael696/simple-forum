@@ -1,9 +1,8 @@
 import {isValid as isValidDate} from 'date-fns'
 import {createSlice} from '@reduxjs/toolkit';
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
-import {userApi} from "../../app/userApi";
 import {AppDispatch, RootState} from "../../app/store";
-import {LoadingType} from '../../app/types';
+import {LoadingType, MiddlewareExtraArgument} from '../../app/types';
 import {FETCH_PERIOD} from "../../app/settings";
 import {debug} from "../../app/debug";
 
@@ -45,7 +44,8 @@ export const selectOnlineUsers = (state: RootState) => state.onlineUsers.users;
 
 const {usersLoading, usersDone} = onlineUsersSlice.actions;
 
-export const fetchUsers = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+export const fetchUsers = () => async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+    const {userApi} = extraArgument;
     const usersSlice = getState().onlineUsers;
     const lastFetch = new Date(usersSlice.lastFetch);
 

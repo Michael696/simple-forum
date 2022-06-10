@@ -1,8 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from "../../app/store";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
-import {userApi} from "../../app/userApi";
-import {Id, ThreadItemType, ThreadsStateType} from "../../app/types";
+import {Id, MiddlewareExtraArgument, ThreadItemType, ThreadsStateType} from "../../app/types";
 import {isValid as isValidDate} from "date-fns";
 import {FETCH_PERIOD} from "../../app/settings";
 import {debug} from "../../app/debug";
@@ -65,29 +64,32 @@ export const selectThreadLastError = (state: RootState) => state.threads.lastErr
 const {threadsLoad, threadsDone, threadRemove, threadsError} = threadsSlice.actions;
 export const {viewed} = threadsSlice.actions;
 
-export const fetchThreads = (forumId: Id, force: boolean = false) => async (dispatch: AppDispatch, getState: () => RootState) => {
-    const threadsSlice = getState().threads;
-    const lastFetch = new Date(threadsSlice.lastFetch);
-    if (force || ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
-        || forumId !== threadsSlice.forumId
-        || threadsSlice.list.length === 0)
-        && threadsSlice.isLoading === 'idle')) {
+export const fetchThreads = (forumId: Id, force: boolean = false) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        const threadsSlice = getState().threads;
+        const lastFetch = new Date(threadsSlice.lastFetch);
+        if (force || ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
+            || forumId !== threadsSlice.forumId
+            || threadsSlice.list.length === 0)
+            && threadsSlice.isLoading === 'idle')) {
 
-        debug('fetch threads', forumId);
-        dispatch(threadsLoad(forumId));
-        const threads = await userApi.fetchThreads(forumId);
-        if (threads) {
-            dispatch(threadsDone(threads));
+            debug('fetch threads', forumId);
+            dispatch(threadsLoad(forumId));
+            const threads = await userApi.fetchThreads(forumId);
+            if (threads) {
+                dispatch(threadsDone(threads));
+            } else {
+                dispatch(threadsError({error: 'network error'}));
+            }
         } else {
-            dispatch(threadsError({error: 'network error'}));
+            debug('fetch threads skipped', forumId);
         }
-    } else {
-        debug('fetch threads skipped', forumId);
-    }
-};
+    };
 
 export const addThreadWithPost = ({forumId, userId, title, text}: { forumId: Id, userId: Id, title: string, text: string }) =>
-    async (dispatch: AppDispatch) => {
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
         const thread = await userApi.createThread({forumId, userId, name: title});
         if (thread) { // TODO error handling
             debug('created thread with id:', thread.id);
@@ -95,20 +97,24 @@ export const addThreadWithPost = ({forumId, userId, title, text}: { forumId: Id,
         }
     };
 
-export const removeThread = (id: string | undefined) => async (dispatch: AppDispatch) => {
-    if (id) {
-        const result = await userApi.removeThread(id);
-        if (!!result && !result.error) {
-            dispatch(threadRemove({id}));
-        } else {
-            debug(`cannot remove thread ${id}: server error`);
+export const removeThread = (id: string | undefined) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        if (id) {
+            const result = await userApi.removeThread(id);
+            if (!!result && !result.error) {
+                dispatch(threadRemove({id}));
+            } else {
+                debug(`cannot remove thread ${id}: server error`);
+            }
         }
-    }
-};
+    };
 
-export const addThreadViewCount = (threadId: Id) => async () => {
-    // console.log('addThreadViewCount', threadId);
-    await userApi.addThreadViewCount(threadId);
-};
+export const addThreadViewCount = (threadId: Id) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        // console.log('addThreadViewCount', threadId);
+        await userApi.addThreadViewCount(threadId);
+    };
 
 export default threadsSlice.reducer;

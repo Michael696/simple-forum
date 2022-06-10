@@ -7,6 +7,10 @@ import onlineUsersReducer from '../features/onlineUsers/onlineUsersSlice';
 import currentUserReducer from '../features/currentUser/currentUserSlice';
 import registerReducer from "../features/registerUser/registerSlice";
 import bannedUsersReducer from "../features/bannedUsers/bannedUsersSlice";
+import {userApi} from "./userApi";
+import {MiddlewareExtraArgument} from "./types";
+
+const extraArgument: MiddlewareExtraArgument = {userApi};
 
 export const store = configureStore({
     reducer: {
@@ -19,9 +23,9 @@ export const store = configureStore({
         register: registerReducer,
         bannedUsers: bannedUsersReducer
     },
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({thunk: {extraArgument}})
 });
-
-// TODO user extraArgument with thunks (inject userApi)
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

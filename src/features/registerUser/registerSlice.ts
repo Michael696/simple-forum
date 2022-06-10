@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {AppDispatch, RootState} from "../../app/store";
-import {userApi} from "../../app/userApi";
+import {MiddlewareExtraArgument} from "../../app/types";
 
 export type RegisterParams = {
     name: string,
@@ -55,21 +55,23 @@ export const {registerStart, registerDone, registerError, registerClear} = regis
 export const selectRegisterState = (state: RootState) => state.register.state;
 export const selectRegisterErrorMessage = (state: RootState) => state.register.error;
 
-export const register = (params: RegisterParams) => async (dispatch: AppDispatch, getState: () => RootState) => {
-    const register = getState().register;
-    if (register.state === 'idle') {
-        dispatch(registerStart());
-        const result = await userApi.register(params);
-        if (result) {
-            if (!result.error) {
-                dispatch(registerDone());
+export const register = (params: RegisterParams) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        const register = getState().register;
+        if (register.state === 'idle') {
+            dispatch(registerStart());
+            const result = await userApi.register(params);
+            if (result) {
+                if (!result.error) {
+                    dispatch(registerDone());
+                } else {
+                    dispatch(registerError(result.error));
+                }
             } else {
-                dispatch(registerError(result.error));
+                dispatch(registerError('unknown error'));
             }
-        } else {
-            dispatch(registerError('unknown error'));
         }
-    }
-};
+    };
 
 export default registerSlice.reducer;

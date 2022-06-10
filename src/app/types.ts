@@ -1,3 +1,5 @@
+import {userApi} from "./userApi";
+
 export type LoadingType = 'idle' | 'pending' | 'error' ;
 
 export type Id = string | number;
@@ -92,4 +94,8 @@ export type PostStateType = { // TODO type naming!
     firstPostIdx: number,
     lastPostIdx: number,
     isLoading: LoadingType
+}
+
+export type MiddlewareExtraArgument = {
+    userApi: typeof userApi
 }
