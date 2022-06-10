@@ -484,7 +484,7 @@ test('Post info: #9 like/dislike events disabled for unauthenticated user', asyn
     });
 
     let likesClicked = false, dislikesClicked = false;
-    const clickHandler = e => {
+    const clickHandler = (e: any) => {
         switch (e.label) {
             case 'likes' :
                 likesClicked = true;
