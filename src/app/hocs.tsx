@@ -4,14 +4,16 @@ import React from "react";
 function clickable<TProps>( // TODO learn more about generics
     Component: React.JSXElementConstructor<TProps>,
     // injector: Pick<TProps, TInjectedKeys>
-    onClick: (props: any) => void
+    onClick?: (props: any) => void
 ) {
     // console.log('TProps:', TProps);
     return function (props) {
         // console.log('props',props);
         // return <span onClick={()=>{console.log('clicked inside')}}>
         const handler = () => {
-            onClick(props)
+            if (onClick) {
+                onClick(props);
+            }
         };
         return <span onClick={handler}>
             <Component {...(props as TProps)}/>

@@ -54,7 +54,7 @@ export default function PostInfo({children, post, user, onClick}: { children?, p
         }
     };
 
-    const SpecialCount = hoverable(clickable(ShowCount, onClick), onEnter, onLeave);
+    const SpecialCount = hoverable(clickable(ShowCount, isUserEnabled ? onClick : null), onEnter, onLeave);
     const alreadyLiked = likes.some(u => u.id === user.id);
     const alreadyDisliked = dislikes.some(u => u.id === user.id);
 
