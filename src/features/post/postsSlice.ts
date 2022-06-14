@@ -7,6 +7,7 @@ import {isValid as isValidDate} from "date-fns";
 import {FETCH_PERIOD} from "../../app/settings";
 import {debug} from "../../app/debug";
 import {emptyPost} from "../../app/objects";
+import {limit} from "../../app/helpers";
 
 const initialState: PostStateType = {
     entries: {items: [], likes: {}, dislikes: {}},
@@ -153,8 +154,8 @@ export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, for
         const lastFetch = new Date(postsSlice.lastFetch);
         const start = (page - 1) * postsSlice.perPageCount;
         const end = page * postsSlice.perPageCount - 1;
-        const startLimited = start >= 0 ? start : 0;
-        const endLimited = end >= 0 ? end : 0;
+        const startLimited = limit(start, 0, Number.MAX_SAFE_INTEGER);
+        const endLimited = limit(end, start, Number.MAX_SAFE_INTEGER);
         if (force || ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
             || threadId !== postsSlice.threadId
             || startLimited !== postsSlice.firstPostIdx // TODO refactor conditions to function ?
@@ -167,7 +168,7 @@ export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, for
             dispatch(postsLoad(threadId));
             const response = await userApi.fetchPosts({id: threadId, start: startLimited, end: endLimited});
             dispatch(postsDone({
-                list: response.posts,
+                list: response.posts || [],
                 firstPostIdx: response.start || 0,
                 lastPostIdx: response.end || response.posts.length - 1
             }));

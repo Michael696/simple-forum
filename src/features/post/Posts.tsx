@@ -5,7 +5,7 @@ import {Id, PostItemStateType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import NewPostForm from "../../components/forum/NewPostForm/NewPostForm";
-import {selectCurrentUser} from "../currentUser/currentUserSlice";
+import {selectCurrentUser, selectIsUserAuthenticated} from "../currentUser/currentUserSlice";
 import Button from "react-bootstrap/cjs/Button";
 import {addThreadViewCount, fetchThreads, removeThread, selectThreadWithId} from "../threads/threadsSlice";
 import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHintMessage";
@@ -19,6 +19,7 @@ export default function Posts() {
     const params = useParams();
     const posts: Array<PostItemStateType> = useAppSelector(selectPosts);
     const user: User = useAppSelector(selectCurrentUser);
+    const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
     const dispatch = useAppDispatch();
     const [postText, setPostText] = useState('');
     const thread = useAppSelector(state => selectThreadWithId(state, params.threadId || ''));
@@ -29,7 +30,6 @@ export default function Posts() {
     const [confirmationShown, setConfirmationShown] = useState(false);
 
     // TODO correctly handle the case when page specified in url is greater than real totalCount
-
     useEffect(() => {
         if (user.isAdmin) {
             dispatch(fetchBanned());
@@ -37,7 +37,7 @@ export default function Posts() {
     }, [user.isAdmin, dispatch]);
 
     useEffect(() => {
-        if (thread) {
+        if (thread && thread.id) {
             dispatch(addThreadViewCount(thread.id));
         }
     }, [thread, dispatch]);
@@ -129,7 +129,7 @@ export default function Posts() {
     // TODO nicify 'posts loading' message
     return (
         <>
-            {(user.id === thread.author.id || user.isAdmin) ?
+            {(isAuthenticated && (user.id === thread.author.id || user.isAdmin)) ?
                 <>
                     <Button onClick={handleRemoveThread}>remove thread</Button>
                     <Confirmation

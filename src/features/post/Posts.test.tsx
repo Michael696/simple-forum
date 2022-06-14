@@ -128,8 +128,6 @@ test('Posts: #1 should show no buttons for non-authenticated user ', async () =>
         );
     });
 
-    screen.debug();
-
     expect(await screen.queryByText(/^reply$/)).not.toBeInTheDocument();
     expect(await screen.queryByText(/^remove$/)).not.toBeInTheDocument();
     expect(await screen.queryByText(/^edit$/)).not.toBeInTheDocument();
@@ -597,6 +595,14 @@ test('Posts: #5 current user regular (banned) - should show no buttons', async (
         rest.post('http://127.0.0.1:1337/api/get-post-count', ((req, res, context) => {
             return res(
                 context.json(1)
+            );
+        }))
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/add-thread-view-count', ((req, res, context) => {
+            return res(
+                context.json({})
             );
         }))
     );

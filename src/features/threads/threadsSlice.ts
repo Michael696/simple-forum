@@ -113,7 +113,6 @@ export const removeThread = (id: string | undefined) =>
 export const addThreadViewCount = (threadId: Id) =>
     async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
         const {userApi} = extraArgument;
-        // console.log('addThreadViewCount', threadId);
         await userApi.addThreadViewCount(threadId);
     };
 
