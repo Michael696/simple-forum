@@ -6,7 +6,7 @@ import {selectCurrentUser} from "../../../features/currentUser/currentUserSlice"
 import {selectIsUserBanned, setBan} from "../../../features/bannedUsers/bannedUsersSlice";
 import {RootState} from "../../../app/store";
 
-export default function AdminPostPanel({post}: { post: PostItemStateType }) {
+function AdminPostPanel({post}: { post: PostItemStateType }) {
     const user = useAppSelector(selectCurrentUser);
     const isBanned = useAppSelector((state: RootState) => selectIsUserBanned(state, post.author.id));
     const dispatch = useAppDispatch();
@@ -17,7 +17,7 @@ export default function AdminPostPanel({post}: { post: PostItemStateType }) {
         } else {
             dispatch(setBan({userId: post.author.id, ban: true}));
         }
-    }, [isBanned]);
+    }, [isBanned, post.author.id, dispatch]);
 
     return (
         <div className='post__admin-panel'>
@@ -33,3 +33,6 @@ export default function AdminPostPanel({post}: { post: PostItemStateType }) {
         </div>
     )
 }
+
+const AdminPostPanelWithMemo = React.memo(AdminPostPanel);
+export default AdminPostPanelWithMemo;

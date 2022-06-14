@@ -1,9 +1,8 @@
 import {isValid as isValidDate} from 'date-fns'
 import {createSlice} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from "../../app/store";
-import {ForumItemType, ForumsStateType, Id} from "../../app/types";
+import {ForumItemType, ForumsStateType, Id, MiddlewareExtraArgument} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
-import {userApi} from "../../app/userApi";
 import {FETCH_PERIOD} from "../../app/settings";
 import {debug} from "../../app/debug";
 
@@ -41,14 +40,15 @@ export const forumSlice = createSlice({
     },
 });
 
-export const selectForumsIsLoading = state => state.forums.isLoading;
-export const selectForums = state => state.forums.list;
-export const selectForumWithId = (state, id: Id) => state.forums.list.find(forum => forum.id === id);
-export const selectForumsLastError = state => state.forums.lastError;
+export const selectForumsIsLoading = (state: RootState) => state.forums.isLoading;
+export const selectForums = (state: RootState) => state.forums.list;
+export const selectForumWithId = (state: RootState, id: Id) => state.forums.list.find(forum => forum.id === id);
+export const selectForumsLastError = (state: RootState) => state.forums.lastError;
 
 const {forumsLoad, forumsDone, forumsError} = forumSlice.actions;
 
-export const fetchForums = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+export const fetchForums = () => async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+    const {userApi} = extraArgument;
     const forumsSlice = getState().forums;
     const lastFetch = new Date(forumsSlice.lastFetch);
     if ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD

@@ -1,12 +1,13 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from "../../app/store";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
-import {userApi} from "../../app/userApi";
-import {Id, PostItemStateType, PostItemType, PostStateType, User} from "../../app/types";
+import {Id, MiddlewareExtraArgument, PostItemStateType, PostItemType, PostStateType, User} from "../../app/types";
 import {findUserById} from "../currentUser/currentUserSlice";
 import {isValid as isValidDate} from "date-fns";
 import {FETCH_PERIOD} from "../../app/settings";
 import {debug} from "../../app/debug";
+import {emptyPost} from "../../app/objects";
+import {limit} from "../../app/helpers";
 
 const initialState: PostStateType = {
     entries: {items: [], likes: {}, dislikes: {}},
@@ -21,9 +22,9 @@ const initialState: PostStateType = {
 
 const findPostById = (list: Array<PostItemStateType>, id: Id) => list.filter(post => post.id === id)[0];
 
-export const selectPostsIsLoading = (state: RootState) => state.posts.isLoading;
+// export const selectPostsIsLoading = (state: RootState) => state.posts.isLoading;
 export const selectPosts = (state: RootState) => state.posts.entries.items;
-export const selectPostWithId = (state: RootState, id: Id) => findPostById(state.posts.entries.items, id);
+export const selectPostWithId = (state: RootState, id: Id) => findPostById(state.posts.entries.items, id) || emptyPost;
 export const selectPostLikes = (state: RootState, id: Id) => state.posts.entries.likes[id] || [];
 export const selectPostDislikes = (state: RootState, id: Id) => state.posts.entries.dislikes[id] || [];
 
@@ -77,7 +78,9 @@ export const postsSlice = createSlice({
                 state.entries.items = action.payload.list;
                 const likes = {}, dislikes = {};
                 action.payload.list.forEach(post => {
+                    // @ts-ignore
                     likes[post.id] = post.likes;
+                    // @ts-ignore
                     dislikes[post.id] = post.dislikes;
                 });
                 state.entries.likes = likes;
@@ -129,6 +132,7 @@ export const postsSlice = createSlice({
         },
         postsClear: (state: PostStateType) => {
             for (let key in initialState) {
+                // @ts-ignore
                 state[key] = initialState[key];
             }
         }
@@ -144,13 +148,14 @@ export const selectTotalPages = (state: RootState) => {
 };
 
 export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, force: boolean = false) =>
-    async (dispatch: AppDispatch, getState: () => RootState) => {
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
         const postsSlice = getState().posts;
         const lastFetch = new Date(postsSlice.lastFetch);
         const start = (page - 1) * postsSlice.perPageCount;
         const end = page * postsSlice.perPageCount - 1;
-        const startLimited = start >= 0 ? start : 0;
-        const endLimited = end >= 0 ? end : 0;
+        const startLimited = limit(start, 0, Number.MAX_SAFE_INTEGER);
+        const endLimited = limit(end, start, Number.MAX_SAFE_INTEGER);
         if (force || ((!isValidDate(lastFetch) || Date.now().valueOf() - lastFetch.valueOf() > FETCH_PERIOD
             || threadId !== postsSlice.threadId
             || startLimited !== postsSlice.firstPostIdx // TODO refactor conditions to function ?
@@ -159,11 +164,11 @@ export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, for
             && postsSlice.isLoading === 'idle')) {
 
             debug('fetch posts', threadId, startLimited, endLimited);
-            await fetchPostCount(threadId)(dispatch, getState); // !!! ???
+            await fetchPostCount(threadId)(dispatch, getState, {userApi}); // TODO is this ok ???
             dispatch(postsLoad(threadId));
             const response = await userApi.fetchPosts({id: threadId, start: startLimited, end: endLimited});
             dispatch(postsDone({
-                list: response.posts,
+                list: response.posts || [],
                 firstPostIdx: response.start || 0,
                 lastPostIdx: response.end || response.posts.length - 1
             }));
@@ -172,53 +177,75 @@ export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, for
         }
     };
 
-const fetchPostCount = (threadId: Id) => async (dispatch: AppDispatch, getState: () => RootState) => {
-    const count = await userApi.getPostCount({id: threadId});
-    dispatch(postCount(count));
-};
+const fetchPostCount = (threadId: Id) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        const count = await userApi.getPostCount({id: threadId});
+        dispatch(postCount(count));
+    };
 
-export const setPostText = (postId: Id, text: string) => async (dispatch: AppDispatch) => {
-    const result = await userApi.setPostText({text, postId});
-    if (!!result && !result.error) {
-        dispatch(postText({postId, text}));
-    } else {
-        debug(`cannot set post ${postId} text: server error`);
-    }
-};
-
-export const removePost = (id: Id) => async (dispatch: AppDispatch) => {
-    const result = await userApi.removePost({id});
-    if (!!result && !result.error) {
-        dispatch(postRemove({id}));
-    } else {
-        debug(`cannot remove post ${id}: server error`);
-    }
-};
-
-export const addPostLike = ({postId, user}: { postId: Id, user: User }) => async (dispatch: AppDispatch, getState: () => RootState) => {
-    const state = getState();
-    const post = selectPostWithId(state, postId);
-    if (!hasLikeDislike(state.posts.entries.likes[post.id], user)) { // has no likes, let's go
-        const result = await userApi.addPostLike({postId}); // use user from session on back
+export const setPostText = (postId: Id, text: string) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        const result = await userApi.setPostText({text, postId});
         if (!!result && !result.error) {
-            dispatch(postLike({postId, user}));
+            dispatch(postText({postId, text}));
         } else {
-            debug(`cannot like post '${postId}' by user '${user.name}': server error`);
+            debug(`cannot set post ${postId} text: server error`);
         }
-    }
-};
+    };
 
-export const addPostDislike = ({postId, user}: { postId: Id, user: User }) => async (dispatch: AppDispatch, getState: () => RootState) => {
-    const state = getState();
-    const post = selectPostWithId(state, postId);
-    if (!hasLikeDislike(state.posts.entries.dislikes[post.id], user)) { // has no dislikes, let's go
-        const result = await userApi.addPostDislike({postId}); // use user from session on back
+export const removePost = (id: Id) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        const result = await userApi.removePost({id});
         if (!!result && !result.error) {
-            dispatch(postDislike({postId, user}));
+            dispatch(postRemove({id}));
         } else {
-            debug(`cannot dislike post '${postId}' by user '${user.name}': server error`);
+            debug(`cannot remove post ${id}: server error`);
         }
-    }
-};
+    };
+
+export const addPostLike = ({postId, user}: { postId: Id, user: User }) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        const state = getState();
+        const post = selectPostWithId(state, postId);
+        if (!hasLikeDislike(state.posts.entries.likes[post.id], user)) { // has no likes, let's go
+            const result = await userApi.addPostLike({postId}); // use user from session on back
+            if (!!result && !result.error) {
+                dispatch(postLike({postId, user}));
+            } else {
+                debug(`cannot like post '${postId}' by user '${user.name}': server error`);
+            }
+        }
+    };
+
+export const addPostDislike = ({postId, user}: { postId: Id, user: User }) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        const state = getState();
+        const post = selectPostWithId(state, postId);
+        if (!hasLikeDislike(state.posts.entries.dislikes[post.id], user)) { // has no dislikes, let's go
+            const result = await userApi.addPostDislike({postId}); // use user from session on back
+            if (!!result && !result.error) {
+                dispatch(postDislike({postId, user}));
+            } else {
+                debug(`cannot dislike post '${postId}' by user '${user.name}': server error`);
+            }
+        }
+    };
+
+export const addPost = ({text, userId, forumId, threadId}: { text: string, userId: Id, forumId: Id, threadId: Id }) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        debug('create post for thread', threadId, text);
+        const post = await userApi.createPost({forumId, threadId, userId, text});
+        debug('created post with id:', post);
+        if (post) {
+            const totalPages = selectTotalPages(getState());
+            dispatch(fetchPosts({threadId, page: totalPages}, true));
+        }
+    };
 
 export default postsSlice.reducer;

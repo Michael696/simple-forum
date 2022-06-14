@@ -10,16 +10,16 @@ const PostText = function ({text, editable, onSave, onCancel}:
     const textReplaced = text;//.replaceAll('\n','<br/>'); // TODO save line breaks
     const [postText, setPostText] = useState(textReplaced);
 
-    const handleSave = (e) => {
+    const handleSave = () => {
         onSave(postText);
     };
 
-    const handleCancel = (e) => {
+    const handleCancel = () => {
         onCancel();
         setPostText(textReplaced);
     };
 
-    const handleChange = (newText) => {
+    const handleChange = (newText: string) => {
         setPostText(newText);
     };
 

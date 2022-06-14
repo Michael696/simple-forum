@@ -1,9 +1,8 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from "../../app/store";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
-import {Id} from "../../app/types";
+import {Id, MiddlewareExtraArgument} from "../../app/types";
 import {debug} from "../../app/debug";
-import {userApi} from "../../app/userApi";
 
 type BannedUsersStateType = {
     list: Array<Id>
@@ -36,7 +35,8 @@ export const selectIsUserBanned = (state: RootState, id: Id) => !!~state.bannedU
 
 const {setAll, banUser, unbanUser} = bannedUsersSlice.actions;
 
-export const fetchBanned = () => async (dispatch: AppDispatch) => {
+export const fetchBanned = () => async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+    const {userApi} = extraArgument;
     debug('fetch banned');
     const banned: Array<Id> = await userApi.fetchBanned();
     if (banned) {
@@ -44,12 +44,14 @@ export const fetchBanned = () => async (dispatch: AppDispatch) => {
     }
 };
 
-export const setBan = ({userId, ban}: { userId: Id, ban: boolean }) => async (dispatch: AppDispatch) => {
-    if (ban) {
-        await userApi.banUser(userId) && dispatch(banUser(userId));
-    } else {
-        await userApi.unbanUser(userId) && dispatch(unbanUser(userId));
-    }
-};
+export const setBan = ({userId, ban}: { userId: Id, ban: boolean }) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        if (ban) {
+            await userApi.banUser(userId) && dispatch(banUser(userId));
+        } else {
+            await userApi.unbanUser(userId) && dispatch(unbanUser(userId));
+        }
+    };
 
 export default bannedUsersSlice.reducer;

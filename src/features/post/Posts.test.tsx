@@ -13,12 +13,15 @@ import {rest} from 'msw';
 import currentUserReducer, {checkAuth} from "../currentUser/currentUserSlice";
 import bannedUsersReducer from '../bannedUsers/bannedUsersSlice';
 import {url} from "../../app/urls";
-import {User} from "../../app/types";
+import {MiddlewareExtraArgument, User} from "../../app/types";
 import postsReducer from '../../features/post/postsSlice';
 import Posts from "./Posts";
 import threadsReducer from "../threads/threadsSlice";
+import {userApi} from "../../app/userApi";
 
-test('Posts: #1 should show no buttons for non-authenticated user ', async () => {
+const extraArgument: MiddlewareExtraArgument = {userApi};
+
+test('Posts: #1 should show no buttons for non-authenticated user ', async () => { // TODO fix this test
     const user: User = {
         id: 'u01',
         isAdmin: false,
@@ -90,6 +93,14 @@ test('Posts: #1 should show no buttons for non-authenticated user ', async () =>
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/add-thread-view-count', ((req, res, context) => {
+            return res(
+                context.json({})
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
@@ -98,9 +109,12 @@ test('Posts: #1 should show no buttons for non-authenticated user ', async () =>
             posts: postsReducer,
             currentUser: currentUserReducer,
         },
+        middleware: getDefaultMiddleware =>
+            getDefaultMiddleware({thunk: {extraArgument}})
     });
 
-    await checkAuth()(store.dispatch);
+    //@ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     act(() => {
         render(
@@ -221,9 +235,12 @@ test('Posts: #2 current user regular - should show "reply", "edit", "remove"  fo
             posts: postsReducer,
             currentUser: currentUserReducer,
         },
+        middleware: getDefaultMiddleware =>
+            getDefaultMiddleware({thunk: {extraArgument}})
     });
 
-    await checkAuth()(store.dispatch);
+    //@ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     act(() => {
         render(
@@ -346,9 +363,12 @@ test('Posts: #3 current user regular - should show "reply", "edit", "remove"  "r
             posts: postsReducer,
             currentUser: currentUserReducer,
         },
+        middleware: getDefaultMiddleware =>
+            getDefaultMiddleware({thunk: {extraArgument}})
     });
 
-    await checkAuth()(store.dispatch);
+    //@ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     act(() => {
         render(
@@ -469,9 +489,12 @@ test('Posts: #4 current user regular - should show "reply" for other posts', asy
             posts: postsReducer,
             currentUser: currentUserReducer,
         },
+        middleware: getDefaultMiddleware =>
+            getDefaultMiddleware({thunk: {extraArgument}})
     });
 
-    await checkAuth()(store.dispatch);
+    //@ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     act(() => {
         render(
@@ -576,6 +599,14 @@ test('Posts: #5 current user regular (banned) - should show no buttons', async (
         }))
     );
 
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/add-thread-view-count', ((req, res, context) => {
+            return res(
+                context.json({})
+            );
+        }))
+    );
+
     server.listen();
 
     const store = configureStore({
@@ -584,9 +615,12 @@ test('Posts: #5 current user regular (banned) - should show no buttons', async (
             posts: postsReducer,
             currentUser: currentUserReducer,
         },
+        middleware: getDefaultMiddleware =>
+            getDefaultMiddleware({thunk: {extraArgument}})
     });
 
-    await checkAuth()(store.dispatch);
+    //@ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     act(() => {
         render(
@@ -715,9 +749,12 @@ test('Posts: #6 current user is admin - should show "reply", "edit", "remove" an
             currentUser: currentUserReducer,
             bannedUsers: bannedUsersReducer
         },
+        middleware: getDefaultMiddleware =>
+            getDefaultMiddleware({thunk: {extraArgument}})
     });
 
-    await checkAuth()(store.dispatch);
+    // @ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     act(() => {
         render(

@@ -6,16 +6,11 @@ import {useAppDispatch, useAppSelector} from "../../app/hooks";
 
 export default function Forums() {
     const forums = useAppSelector(selectForums);
-    // const isLoading = useSelector(forumsIsLoading);
     const dispatch = useAppDispatch();
 
-    const updateForums = () => {
-        dispatch(fetchForums());
-    };
-
     useEffect(() => {
-        updateForums();
-    }, []);
+        dispatch(fetchForums());
+    }, [dispatch]); // assume that forum list changes very infrequently
 
     const forumList = forums.map(forum => <ForumItem key={forum.id} id={forum.id}/>);
 

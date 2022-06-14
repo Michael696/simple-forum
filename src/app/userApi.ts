@@ -29,7 +29,7 @@ export const userApi = { // TODO decide whether userApi functions must throw or 
             return false;
         }
     },
-    banUser: async (id) => {
+    banUser: async (id: Id) => {
         try {
             await httpApi.post('/ban-user', {id});
             return true;
@@ -37,7 +37,7 @@ export const userApi = { // TODO decide whether userApi functions must throw or 
             return false;
         }
     },
-    unbanUser: async (id) => {
+    unbanUser: async (id: Id) => {
         try {
             await httpApi.post('/unban-user', {id});
             return true;
@@ -106,7 +106,7 @@ export const userApi = { // TODO decide whether userApi functions must throw or 
             return false;
         }
     },
-    createThread: async ({name, forumId, userId}: { name: string, forumId: Id, userId: Id }) => {
+    createThread: async ({name, forumId, userId}: { name: string, forumId: Id, userId: Id }): Promise<{ id: Id } | false> => { // TODO add return types everywhere in userApi
         try {
             const response = await httpApi.post('/create-thread', {title: name, forumId, author: userId});
             return response.data;

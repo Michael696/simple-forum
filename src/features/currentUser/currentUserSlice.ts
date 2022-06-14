@@ -1,8 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {CurrentUserType, Id, User} from "../../app/types";
+import {CurrentUserType, Id, MiddlewareExtraArgument, User} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {AppDispatch, RootState} from "../../app/store";
-import {userApi} from "../../app/userApi";
 import {debug} from "../../app/debug";
 
 const emptyUser = () => {
@@ -64,31 +63,31 @@ export const currentUserSlice = createSlice({
 });
 
 export const findUserById = (list: Array<User>, id: Id) => list.filter(user => user.id === id)[0];
-
 export const {authReq, authDone, authError, authClear} = currentUserSlice.actions;
 
 export const selectCurrentUser = (state: RootState) => state.currentUser.data;
-
 export const selectLastAuthError = (state: RootState) => state.currentUser.error;
-
 export const selectIsUserAuthenticated = (state: RootState) => state.currentUser.data.name.length > 0 && state.currentUser.error.length === 0;
 
-export const authenticate = ({name, password}) => async (dispatch: AppDispatch) => {
-    let authResult;
-    dispatch(authReq());
-    try {
-        authResult = await userApi.auth({name, password});
-        if (authResult && authResult.error) {
-            dispatch(authError(authResult.error));
-        } else {
-            dispatch(authDone(authResult));
+export const authenticate = ({name, password}: { name: string, password: string }) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+        const {userApi} = extraArgument;
+        let authResult;
+        dispatch(authReq());
+        try {
+            authResult = await userApi.auth({name, password});
+            if (authResult && authResult.error) {
+                dispatch(authError(authResult.error));
+            } else {
+                dispatch(authDone(authResult));
+            }
+        } catch (e: any) {
+            dispatch(authError(e.message || 'unknown error'));
         }
-    } catch (e: any) {
-        dispatch(authError(e.message || 'unknown error'));
-    }
-};
+    };
 
-export const checkAuth = () => async (dispatch: AppDispatch) => {
+export const checkAuth = () => async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+    const {userApi} = extraArgument;
     let checkResult;
     dispatch(authReq());
     try {
@@ -99,7 +98,8 @@ export const checkAuth = () => async (dispatch: AppDispatch) => {
     }
 };
 
-export const deAuthenticate = () => async (dispatch: AppDispatch) => {
+export const deAuthenticate = () => async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
+    const {userApi} = extraArgument;
     try {
         await userApi.deAuth();
         dispatch(authClear());

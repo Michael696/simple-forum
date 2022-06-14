@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useEffect, useRef} from 'react';
+import React, {KeyboardEvent, MutableRefObject, useEffect, useRef} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/cjs/Button';
 import {authenticate, selectIsUserAuthenticated, selectLastAuthError} from './currentUserSlice';
@@ -15,8 +15,7 @@ export default function Auth() {
     const passwordRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
     const navigate = useNavigate();
 
-
-    const submitAuth = async () => {
+    const submitAuth = () => {
         dispatch(authenticate({
             name: usernameRef.current.value,
             password: passwordRef.current.value,
@@ -34,9 +33,9 @@ export default function Auth() {
             dispatch(fetchUsers());
             navigate(url.FORUM, {replace: true});
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, dispatch, navigate]);
 
-    const handleKey = (e) => {
+    const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             submitAuth();
         }

@@ -3,15 +3,13 @@ import Button from "react-bootstrap/cjs/Button";
 import Form from "react-bootstrap/Form";
 import {useNavigate, useParams} from "react-router";
 import {fetchForums, selectForumWithId} from '../../../features/forumsList/forumsSlice';
-import {ForumItemType} from "../../../app/types";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {AppDispatch} from "../../../app/store";
-import {userApi} from "../../../app/userApi";
 import {selectCurrentUser} from "../../../features/currentUser/currentUserSlice";
 import {url} from "../../../app/urls";
 import Textarea from '../Textarea/Textarea';
 import {MAX_POST_LENGTH} from "../../../app/settings";
-import {fetchThreads} from "../../../features/threads/threadsSlice";
+import {addThreadWithPost, fetchThreads} from "../../../features/threads/threadsSlice";
 import {debug} from "../../../app/debug";
 import './NewThreadForm.sass';
 
@@ -21,7 +19,7 @@ export default function NewThreadForm() {
     const params = useParams();
     const navigate = useNavigate();
     const dispatch: AppDispatch = useAppDispatch();
-    const forum: ForumItemType = useAppSelector(state => selectForumWithId(state, params.forumId || ''));
+    const forum = useAppSelector(state => selectForumWithId(state, params.forumId || ''));
     const user = useAppSelector(selectCurrentUser);
     const titleRef = useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
 
@@ -29,24 +27,23 @@ export default function NewThreadForm() {
         debug('fetch forums');
         dispatch(fetchForums());
         titleRef.current.focus();
-    }, []);
+    }, [dispatch]);
 
-    const handleCreate = async e => {
-        debug('create thread', threadName, params.forumId, forum.name, user);
-        const thread = await userApi.createThread({forumId:params.forumId || '', userId: user.id, name: threadName});
-        debug('created thread with id:', thread);
-        const postId = await userApi.createPost({
-            text: postText,
-            forumId:params.forumId || '',
-            threadId: thread.id.toString(), // TODO ensure threadId type is a string on back, not on front !!!
-            userId: user.id
-        });
-        dispatch(fetchThreads(params.forumId  || '', true));
-        debug('created post with id:', postId);
-        navigate(`${url.FORUM}/${params.forumId}`);
+    // TODO show error if params.forumId does not refer to real forum id
+    const handleCreate = async () => {
+        if (params.forumId) {
+            dispatch(addThreadWithPost({
+                forumId: params.forumId,
+                title: threadName,
+                userId: user.id,
+                text: postText
+            }));
+            dispatch(fetchThreads(params.forumId, true));
+            navigate(`${url.FORUM}/${params.forumId}`);
+        }
     };
 
-    const handlePostChange = text => {
+    const handlePostChange = (text: string) => {
         setPostText(text);
     };
 

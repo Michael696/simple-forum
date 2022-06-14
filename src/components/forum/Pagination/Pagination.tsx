@@ -1,5 +1,6 @@
 import React from "react";
 import './Pagination.sass';
+import {limit} from "../../../app/helpers";
 
 // Accessible pagination
 // https://www.a11ymatters.com/pattern/pagination/
@@ -28,7 +29,8 @@ export default function Pagination({totalPages, currentPage, onChange}:
     const MAX_LINKS_VISIBLE = 5; // must be odd ?
     const pageLinks: Array<JSX.Element> = [];
 
-    currentPage = currentPage > totalPages ? totalPages : (currentPage < 1 ? 1 : currentPage); // range limiting
+    // currentPage = currentPage > totalPages ? totalPages : (currentPage < 1 ? 1 : currentPage); // range limiting
+    currentPage = limit(currentPage, 1, totalPages);
 
     if (totalPages > MAX_LINKS_VISIBLE + 2) {
         pageLinks.push(
@@ -43,7 +45,8 @@ export default function Pagination({totalPages, currentPage, onChange}:
         );
 
         let start = currentPage - (MAX_LINKS_VISIBLE - 1) / 2;
-        start = start < 2 ? 2 : (start > totalPages - MAX_LINKS_VISIBLE ? totalPages - MAX_LINKS_VISIBLE : start);
+        // start = start < 2 ? 2 : (start > totalPages - MAX_LINKS_VISIBLE ? totalPages - MAX_LINKS_VISIBLE : start);
+        start = limit(start, 2, totalPages - MAX_LINKS_VISIBLE);
 
         if (start > 2) {
             pageLinks.push(<span key='first'>...</span>);

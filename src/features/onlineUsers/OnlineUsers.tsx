@@ -9,7 +9,7 @@ export default function OnlineUsers() {
 
     useEffect(() => {
         dispatch(fetchUsers());
-    }, []);
+    });
 
     return (
         <div className='online-users margin1-top pad05 margin05'>

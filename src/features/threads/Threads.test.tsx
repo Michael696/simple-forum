@@ -15,12 +15,22 @@ import threadsReducer from "./threadsSlice";
 import forumsReducer from "../forumsList/forumsSlice";
 import currentUserReducer, {checkAuth} from "../currentUser/currentUserSlice";
 import {url} from "../../app/urls";
-import {User} from "../../app/types";
+import {MiddlewareExtraArgument, User} from "../../app/types";
 import onlineUsersReducer from "../onlineUsers/onlineUsersSlice";
+import {userApi} from "../../app/userApi";
 
-test('Threads: has threads in forum', async () => {
+const extraArgument: MiddlewareExtraArgument = {userApi};
+
+test('Threads: #1 has threads in forum', async () => {
     const user: User = {
-        id: '', isAdmin: false, isBanned: false, location: "", name: "", posts: 0, realName: "", registeredAt: ""
+        id: '',
+        isAdmin: false,
+        isBanned: false,
+        location: "",
+        name: "",
+        posts: 0,
+        realName: "",
+        registeredAt: ""
     };
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/threads', (req, res, ctx) => {
@@ -83,6 +93,8 @@ test('Threads: has threads in forum', async () => {
             threads: threadsReducer,
             currentUser: currentUserReducer,
         },
+        middleware: getDefaultMiddleware =>
+            getDefaultMiddleware({thunk: {extraArgument}})
     });
 
     act(() => {
@@ -104,7 +116,7 @@ test('Threads: has threads in forum', async () => {
     server.close();
 });
 
-test('Threads: should show "create thread" button for authenticated and not banned user ', async () => {
+test('Threads: #2 should show "create thread" button for authenticated and not banned user ', async () => {
     const user: User = {
         id: '', isAdmin: false, isBanned: false, location: "", name: "", posts: 0, realName: "", registeredAt: ""
     };
@@ -185,9 +197,12 @@ test('Threads: should show "create thread" button for authenticated and not bann
             threads: threadsReducer,
             currentUser: currentUserReducer,
         },
+        middleware: getDefaultMiddleware =>
+            getDefaultMiddleware({thunk: {extraArgument}})
     });
 
-    await checkAuth()(store.dispatch);
+    // @ts-ignore
+    await checkAuth()(store.dispatch, store.getState, {userApi});
 
     act(() => {
         render(
