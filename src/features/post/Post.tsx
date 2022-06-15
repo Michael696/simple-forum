@@ -27,16 +27,16 @@ export type LikeDislike = 'likes' | 'dislikes';
 
 const Post = function ({id, threadId, onReply}: { id: Id, threadId: Id, onReply: (post: PostItemType) => void }) {
         const params = useParams();
-    const post: PostItemType = useSelector((state: RootState) => selectPostWithId(state, id));
+        const post: PostItemType = useSelector((state: RootState) => selectPostWithId(state, id));
         const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
         const dispatch = useDispatch();
         const user: User = useAppSelector(selectCurrentUser);
         const [editable, setEditable] = useState(false);
         const [confirmationShown, setConfirmationShown] = useState(false);
 
-    useEffect(() => {
-        dispatch(fetchPostWithId({id}));
-    }, [dispatch]);
+        useEffect(() => {
+            dispatch(fetchPostWithId({id}));
+        }, [dispatch, id]);
 
         const handleReply = useCallback(() => {
             onReply(post);
@@ -65,7 +65,7 @@ const Post = function ({id, threadId, onReply}: { id: Id, threadId: Id, onReply:
             setEditable(false);
         }, []);
 
-    const editSave = useCallback((text: string) => {
+        const editSave = useCallback((text: string) => {
             setEditable(false);
             debug(`setting post ${post.id} text:`, text);
             dispatch(setPostText(post.id, text));
@@ -87,7 +87,7 @@ const Post = function ({id, threadId, onReply}: { id: Id, threadId: Id, onReply:
                     break;
             }
         };
-
+        // TODO add spinners for "loading data..."
         return (
             <>
                 <div className='post'>

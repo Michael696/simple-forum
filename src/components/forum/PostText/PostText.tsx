@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../../../features/post/Post.sass';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/cjs/Button";
@@ -8,7 +8,11 @@ import {MAX_POST_LENGTH} from "../../../app/settings";
 const PostText = function ({text, editable, onSave, onCancel}:
                                { text: string, editable: boolean, onSave: (text: string) => void, onCancel: () => void }) {
     const textReplaced = text;//.replaceAll('\n','<br/>'); // TODO save line breaks
-    const [postText, setPostText] = useState(textReplaced);
+    const [postText, setPostText] = useState('');
+
+    useEffect(() => {
+        setPostText(textReplaced);
+    }, [textReplaced]);
 
     const handleSave = () => {
         onSave(postText);
