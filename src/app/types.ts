@@ -86,7 +86,8 @@ export type PostItemType = {
 export type PostItemStateType = Omit<PostItemType, 'likes' | 'dislikes'>;
 
 export type PostStateType = { // TODO type naming!
-    entries: { items: Array<PostItemStateType>, likes: { [k: string]: Array<User> }, dislikes: { [k: string]: Array<User> } },
+    postIds: Array<Id>,
+    postData: Array<PostItemType>,
     threadId: Id,
     lastFetch: string,
     totalCount: number,

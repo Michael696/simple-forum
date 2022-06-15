@@ -97,7 +97,7 @@ test('Threads: #1 has threads in forum', async () => {
             getDefaultMiddleware({thunk: {extraArgument}})
     });
 
-    act(() => {
+    await act(() => {
         render(
             <Provider store={store}>
                 <MemoryRouter initialEntries={[`${url.FORUM}/f01`]}>
@@ -204,7 +204,7 @@ test('Threads: #2 should show "create thread" button for authenticated and not b
     // @ts-ignore
     await checkAuth()(store.dispatch, store.getState, {userApi});
 
-    act(() => {
+    await act(() => {
         render(
             <Provider store={store}>
                 <MemoryRouter initialEntries={[`${url.FORUM}/f01`]}>

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {addPost, fetchPosts, selectPosts, selectTotalPages} from "./postsSlice";
-import {Id, PostItemStateType, User} from "../../app/types";
+import {Id, PostItemType, User} from "../../app/types";
 import Post from "./Post";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import NewPostForm from "../../components/forum/NewPostForm/NewPostForm";
@@ -11,13 +11,13 @@ import {addThreadViewCount, fetchThreads, removeThread, selectThreadWithId} from
 import StatusHintMessage from "../../components/forum/StatusHintMessage/StatusHintMessage";
 import {url, urlToPage} from "../../app/urls";
 import Pagination from "../../components/forum/Pagination/Pagination";
-import {debug} from "../../app/debug";
+import {debug} from "../../app/helpers";
 import {fetchBanned} from "../bannedUsers/bannedUsersSlice";
 import Confirmation from "../../components/main/Confirmation/Confirmation";
 
 export default function Posts() {
     const params = useParams();
-    const posts: Array<PostItemStateType> = useAppSelector(selectPosts);
+    const posts: Array<Id> = useAppSelector(selectPosts);
     const user: User = useAppSelector(selectCurrentUser);
     const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
     const dispatch = useAppDispatch();
@@ -57,20 +57,6 @@ export default function Posts() {
         }
     }, [totalPages, currentPage, params.forumId, params.page, params.threadId, dispatch, navigate]); // so many deps !?
 
-    const handleReply = useCallback((id: Id) => {
-        debug('searching for post ', id, posts);
-        const found = posts.find(p => p.id === id);
-        if (found) {
-            debug('reply to', found);
-            const text = `user '${found.author.name}' wrote at ${found.postedAt}:\r\n` + // TODO refactor to separate entity
-                `===========================\r\n` +
-                `${found.text}\r\n` +
-                `===========================\r\n`;
-            debug('reply text', text);
-            setPostText(text);
-        }
-        window.scrollTo(0, document.body.scrollHeight); // scroll to bottom
-    }, [posts]); // TODO avoid rendering all posts on page after click like/dislike ( use normalization for post likes/dislikes !?)
 
     const removeCurrentThread = useCallback(() => {
         setConfirmationShown(false);
@@ -104,16 +90,27 @@ export default function Posts() {
 
 
     const threadTitle = [`'${thread.title}', author '${thread.author.name}'`];
-    if (thread.author.id === user.id) {
+    if (isAuthenticated && thread.author.id === user.id) {
         threadTitle.push('hey, it\'s You !');
     }
 
-    if (thread.author.isBanned) {
+    if (isAuthenticated && thread.author.isBanned) {
         threadTitle.push('banned');
     }
 
     const postList = posts && posts.map(post => {
-        return <Post key={post.id} id={post.id} thread={thread} onReply={handleReply}/>
+        const handleReply = (post: PostItemType) => {
+            debug('reply to', post);
+            const text = `user '${post.author.name}' wrote at ${post.postedAt}:\r\n` + // TODO refactor to separate entity
+                `===========================\r\n` +
+                `${post.text}\r\n` +
+                `===========================\r\n`;
+            debug('reply text', text);
+            setPostText(text);
+            window.scrollTo(0, document.body.scrollHeight); // scroll to bottom
+        };
+
+        return <Post key={post} id={post} threadId={thread.id} onReply={handleReply}/>
     });
 
     // TODO friendly format the message

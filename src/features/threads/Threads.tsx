@@ -10,7 +10,7 @@ import {url, urlToPage} from "../../app/urls";
 import Button from "react-bootstrap/cjs/Button";
 import {selectForumWithId} from "../forumsList/forumsSlice";
 import {postsClear} from '../post/postsSlice';
-import {debug} from "../../app/debug";
+import {debug} from "../../app/helpers";
 
 function CreateThreadButton({isAuthenticated, isBanned, onClick}: { isAuthenticated: boolean, isBanned: boolean, onClick: (e: any) => void }) {
     return <>{(isAuthenticated && !isBanned) ? <Button onClick={onClick}>create thread</Button> : null}</>

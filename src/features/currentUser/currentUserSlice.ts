@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {CurrentUserType, Id, MiddlewareExtraArgument, User} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {AppDispatch, RootState} from "../../app/store";
-import {debug} from "../../app/debug";
+import {debug} from "../../app/helpers";
 
 const emptyUser = () => {
     return {

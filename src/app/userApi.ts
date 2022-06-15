@@ -97,6 +97,15 @@ export const userApi = { // TODO decide whether userApi functions must throw or 
             return false;
         }
     },
+    fetchPostWithId: async ({id}: { id: Id }) => {
+        try {
+            const response = await httpApi.post('/get-post', {id}); // thread id
+            return response.data;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
     addThreadViewCount: async (id: Id) => {
         try {
             const response = await httpApi.post('/add-thread-view-count', {id}); // thread id

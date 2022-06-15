@@ -1,7 +1,15 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {Id, PostItemStateType, ThreadItemType, User} from "../../app/types";
-import {addPostDislike, addPostLike, fetchPosts, removePost, selectPostWithId, setPostText} from "./postsSlice";
+import {Id, PostItemType, User} from "../../app/types";
+import {
+    addPostDislike,
+    addPostLike,
+    fetchPosts,
+    fetchPostWithId,
+    removePost,
+    selectPostWithId,
+    setPostText
+} from "./postsSlice";
 import UserInfo from "../../components/forum/UserInfo/UserInfo";
 import PostText from "../../components/forum/PostText/PostText";
 import PostInfo from "../../components/forum/PostInfo/PostInfo";
@@ -12,30 +20,34 @@ import './Post.sass';
 import Button from "react-bootstrap/cjs/Button";
 import {useParams} from "react-router-dom";
 import {RootState} from "../../app/store";
-import {debug} from "../../app/debug";
+import {debug} from "../../app/helpers";
 import Confirmation from "../../components/main/Confirmation/Confirmation";
 
 export type LikeDislike = 'likes' | 'dislikes';
 
-const Post = function ({id, thread, onReply}: { id: Id, thread: ThreadItemType, onReply: (id: Id) => void }) {
+const Post = function ({id, threadId, onReply}: { id: Id, threadId: Id, onReply: (post: PostItemType) => void }) {
         const params = useParams();
-        const post: PostItemStateType = useSelector((state: RootState) => selectPostWithId(state, id));
+    const post: PostItemType = useSelector((state: RootState) => selectPostWithId(state, id));
         const isAuthenticated = useAppSelector(selectIsUserAuthenticated);
         const dispatch = useDispatch();
         const user: User = useAppSelector(selectCurrentUser);
         const [editable, setEditable] = useState(false);
         const [confirmationShown, setConfirmationShown] = useState(false);
 
+    useEffect(() => {
+        dispatch(fetchPostWithId({id}));
+    }, [dispatch]);
+
         const handleReply = useCallback(() => {
-            onReply(id);
-        }, [onReply, id]);
+            onReply(post);
+        }, [onReply, post]);
 
         const removeCurrentPost = useCallback(() => {
             setConfirmationShown(false);
             debug('remove post', id);
             dispatch(removePost(id));
-            dispatch(fetchPosts({page: parseInt(params.page || '1', 10), threadId: thread.id}, true));
-        }, [id, params.page, thread.id, dispatch]);
+            dispatch(fetchPosts({page: parseInt(params.page || '1', 10), threadId}, true));
+        }, [id, params.page, threadId, dispatch]);
 
         const handleRemove = useCallback(() => {
             setConfirmationShown(true);
