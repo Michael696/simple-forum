@@ -8,7 +8,7 @@ import {configureStore} from '@reduxjs/toolkit'
 import {Provider} from 'react-redux'
 import {render} from '@testing-library/react'
 import PostInfo from "./PostInfo";
-import {PostStateType, User} from "../../../app/types";
+import {PostItemType, PostStateType, User} from "../../../app/types";
 import userEvent from '@testing-library/user-event'
 import postsReducer, {postDislike, postLike} from "../../../features/post/postsSlice";
 import currentUserReducer from "../../../features/currentUser/currentUserSlice";
@@ -25,12 +25,14 @@ test('Post info: #1 like/dislike events', async () => {
         registeredAt: ""
     };
 
-    const post = {
+    const post: PostItemType = {
         id: '01',
         author: user,
         text: '',
         postedAt: '2022-02-01 12:13:14',
-        editedAt: ''
+        editedAt: '',
+        dislikes: [user, user, user],
+        likes: [user, user]
     };
 
     const store = configureStore({
@@ -40,11 +42,8 @@ test('Post info: #1 like/dislike events', async () => {
         },
         preloadedState: {
             posts: {
-                entries: {
-                    items: [post],
-                    likes: {'01': [user, user]},
-                    dislikes: {'01': [user, user, user]},
-                },
+                postIds: [post.id],
+                postData: [post],
                 threadId: '1',
                 firstPostIdx: 0,
                 lastPostIdx: 1,
@@ -119,14 +118,13 @@ test('Post info: #2 first like', async () => {
         author: user,
         text: '',
         postedAt: '2022-02-01 12:13:14',
-        editedAt: ''
+        editedAt: '',
+        dislikes: [],
+        likes: []
     };
     const prevState: PostStateType = {
-        entries: {
-            items: [post],
-            likes: {'01': []},
-            dislikes: {'01': []},
-        },
+        postIds: [post.id],
+        postData: [post],
         threadId: '1',
         firstPostIdx: 0,
         lastPostIdx: 1,
@@ -137,8 +135,8 @@ test('Post info: #2 first like', async () => {
     };
 
     const result = postsReducer(prevState, postLike({postId: '01', user}));
-    expect(result.entries.likes['01'][0]).toEqual(user);
-    expect(result.entries.dislikes['01'].length).toEqual(0);
+    expect(result.postData[0].likes[0]).toEqual(user);
+    expect(result.postData[0].dislikes.length).toEqual(0);
 });
 
 test('Post info: #3 first dislike', async () => {
@@ -153,19 +151,18 @@ test('Post info: #3 first dislike', async () => {
         registeredAt: ""
     };
 
-    const post = {
+    const post: PostItemType = {
         id: '01',
         author: user,
         text: '',
         postedAt: '2022-02-01 12:13:14',
-        editedAt: ''
+        editedAt: '',
+        dislikes: [],
+        likes: []
     };
     const prevState: PostStateType = {
-        entries: {
-            items: [post],
-            likes: {'01': []},
-            dislikes: {'01': []},
-        },
+        postIds: [post.id],
+        postData: [post],
         threadId: '1',
         firstPostIdx: 0,
         lastPostIdx: 1,
@@ -176,8 +173,8 @@ test('Post info: #3 first dislike', async () => {
     };
 
     const result = postsReducer(prevState, postDislike({postId: '01', user}));
-    expect(result.entries.dislikes['01'][0]).toEqual(user);
-    expect(result.entries.likes['01'].length).toEqual(0);
+    expect(result.postData[0].dislikes[0]).toEqual(user);
+    expect(result.postData[0].likes.length).toEqual(0);
 });
 
 test('Post info: #4 dislike liked', async () => {
@@ -192,19 +189,18 @@ test('Post info: #4 dislike liked', async () => {
         registeredAt: ""
     };
 
-    const post = {
+    const post: PostItemType = {
         id: '01',
         author: user,
         text: '',
         postedAt: '2022-02-01 12:13:14',
-        editedAt: ''
+        editedAt: '',
+        dislikes: [],
+        likes: [user]
     };
     const prevState: PostStateType = {
-        entries: {
-            items: [post],
-            likes: {'01': [user]},
-            dislikes: {'01': []},
-        },
+        postIds: [post.id],
+        postData: [post],
         threadId: '1',
         firstPostIdx: 0,
         lastPostIdx: 1,
@@ -215,8 +211,8 @@ test('Post info: #4 dislike liked', async () => {
     };
 
     const result = postsReducer(prevState, postDislike({postId: '01', user}));
-    expect(result.entries.dislikes['01'][0]).toEqual(user);
-    expect(result.entries.likes['01'].length).toEqual(0);
+    expect(result.postData[0].dislikes[0]).toEqual(user);
+    expect(result.postData[0].likes.length).toEqual(0);
 });
 
 test('Post info: #5 like disliked', async () => {
@@ -231,19 +227,18 @@ test('Post info: #5 like disliked', async () => {
         registeredAt: ""
     };
 
-    const post = {
+    const post: PostItemType = {
         id: '01',
         author: user,
         text: '',
         postedAt: '2022-02-01 12:13:14',
-        editedAt: ''
+        editedAt: '',
+        dislikes: [user],
+        likes: []
     };
     const prevState: PostStateType = {
-        entries: {
-            items: [post],
-            likes: {'01': []},
-            dislikes: {'01': [user]},
-        },
+        postIds: [post.id],
+        postData: [post],
         threadId: '1',
         firstPostIdx: 0,
         lastPostIdx: 1,
@@ -254,8 +249,8 @@ test('Post info: #5 like disliked', async () => {
     };
 
     const result = postsReducer(prevState, postLike({postId: '01', user}));
-    expect(result.entries.likes['01'][0]).toEqual(user);
-    expect(result.entries.dislikes['01'].length).toEqual(0);
+    expect(result.postData[0].likes[0]).toEqual(user);
+    expect(result.postData[0].dislikes.length).toEqual(0);
 });
 
 test('Post info: #6 second like', async () => {
@@ -281,19 +276,18 @@ test('Post info: #6 second like', async () => {
         registeredAt: ""
     };
 
-    const post = {
+    const post: PostItemType = {
         id: '01',
         author: user1,
         text: '',
         postedAt: '2022-02-01 12:13:14',
-        editedAt: ''
+        editedAt: '',
+        dislikes: [],
+        likes: [user1]
     };
     const prevState: PostStateType = {
-        entries: {
-            items: [post],
-            likes: {'01': [user1]},
-            dislikes: {'01': []},
-        },
+        postIds: [post.id],
+        postData: [post],
         threadId: '1',
         firstPostIdx: 0,
         lastPostIdx: 1,
@@ -304,9 +298,9 @@ test('Post info: #6 second like', async () => {
     };
 
     const result = postsReducer(prevState, postLike({postId: '01', user: user2}));
-    expect(result.entries.likes['01'][0]).toEqual(user1);
-    expect(result.entries.likes['01'][1]).toEqual(user2);
-    expect(result.entries.dislikes['01'].length).toEqual(0);
+    expect(result.postData[0].likes[0]).toEqual(user1);
+    expect(result.postData[0].likes[1]).toEqual(user2);
+    expect(result.postData[0].dislikes.length).toEqual(0);
 });
 
 test('Post info: #7 second dislike', async () => {
@@ -332,19 +326,18 @@ test('Post info: #7 second dislike', async () => {
         registeredAt: ""
     };
 
-    const post = {
+    const post: PostItemType = {
         id: '01',
         author: user1,
         text: '',
         postedAt: '2022-02-01 12:13:14',
-        editedAt: ''
+        editedAt: '',
+        dislikes: [user1],
+        likes: []
     };
     const prevState: PostStateType = {
-        entries: {
-            items: [post],
-            likes: {'01': []},
-            dislikes: {'01': [user1]},
-        },
+        postIds: [post.id],
+        postData: [post],
         threadId: '1',
         firstPostIdx: 0,
         lastPostIdx: 1,
@@ -355,9 +348,9 @@ test('Post info: #7 second dislike', async () => {
     };
 
     const result = postsReducer(prevState, postDislike({postId: '01', user: user2}));
-    expect(result.entries.dislikes['01'][0]).toEqual(user1);
-    expect(result.entries.dislikes['01'][1]).toEqual(user2);
-    expect(result.entries.likes['01'].length).toEqual(0);
+    expect(result.postData[0].dislikes[0]).toEqual(user1);
+    expect(result.postData[0].dislikes[1]).toEqual(user2);
+    expect(result.postData[0].likes.length).toEqual(0);
 });
 
 
@@ -395,19 +388,18 @@ test('Post info: #8 n-th like', async () => {
         registeredAt: ""
     };
 
-    const post = {
+    const post: PostItemType = {
         id: '01',
         author: user1,
         text: '',
         postedAt: '2022-02-01 12:13:14',
-        editedAt: ''
+        editedAt: '',
+        dislikes: [user2],
+        likes: [user1]
     };
     const prevState: PostStateType = {
-        entries: {
-            items: [post],
-            likes: {'01': [user1]},
-            dislikes: {'01': [user2]},
-        },
+        postIds: [post.id],
+        postData: [post],
         threadId: '1',
         firstPostIdx: 0,
         lastPostIdx: 1,
@@ -418,11 +410,11 @@ test('Post info: #8 n-th like', async () => {
     };
 
     const result = postsReducer(prevState, postLike({postId: '01', user: user3}));
-    expect(result.entries.likes['01'][0]).toEqual(user1);
-    expect(result.entries.likes['01'][1]).toEqual(user3);
-    expect(result.entries.likes['01'].length).toEqual(2);
-    expect(result.entries.dislikes['01'][0]).toEqual(user2);
-    expect(result.entries.dislikes['01'].length).toEqual(1);
+    expect(result.postData[0].likes[0]).toEqual(user1);
+    expect(result.postData[0].likes[1]).toEqual(user3);
+    expect(result.postData[0].likes.length).toEqual(2);
+    expect(result.postData[0].dislikes[0]).toEqual(user2);
+    expect(result.postData[0].dislikes.length).toEqual(1);
 });
 
 
@@ -438,12 +430,14 @@ test('Post info: #9 like/dislike events disabled for unauthenticated user', asyn
         registeredAt: ""
     };
 
-    const post = {
+    const post: PostItemType = {
         id: '01',
         author: user,
         text: '',
         postedAt: '2022-02-01 12:13:14',
-        editedAt: ''
+        editedAt: '',
+        dislikes: [user, user, user],
+        likes: [user, user],
     };
 
     const store = configureStore({
@@ -453,11 +447,8 @@ test('Post info: #9 like/dislike events disabled for unauthenticated user', asyn
         },
         preloadedState: {
             posts: {
-                entries: {
-                    items: [post],
-                    likes: {'01': [user, user]},
-                    dislikes: {'01': [user, user, user]},
-                },
+                postIds: [post.id],
+                postData: [post],
                 threadId: '1',
                 firstPostIdx: 0,
                 lastPostIdx: 1,

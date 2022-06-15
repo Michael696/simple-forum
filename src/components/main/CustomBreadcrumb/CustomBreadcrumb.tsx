@@ -8,7 +8,7 @@ import {fetchThreads, selectThreadLastError, selectThreadWithId} from "../../../
 import {ForumItemType, Id, ThreadItemType} from "../../../app/types";
 import './CustomBreadcrumb.sass';
 import {url} from '../../../app/urls';
-import {debug} from "../../../app/debug";
+import {debug} from "../../../app/helpers";
 
 function CustomBreadcrumb() {
     const location = useLocation();

@@ -4,7 +4,7 @@ import {AppDispatch, RootState} from "../../app/store";
 import {ForumItemType, ForumsStateType, Id, MiddlewareExtraArgument} from "../../app/types";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {FETCH_PERIOD} from "../../app/settings";
-import {debug} from "../../app/debug";
+import {debug} from "../../app/helpers";
 
 const initialState: ForumsStateType = {
     list: [],

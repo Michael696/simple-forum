@@ -16,7 +16,7 @@ import {useAppDispatch, useAppSelector} from "./hooks";
 import {checkAuth, selectCurrentUser, selectIsUserAuthenticated} from "../features/currentUser/currentUserSlice";
 import NewThreadForm from "../components/forum/NewThreadForm/NewThreadForm";
 import OnlineUsers from "../features/onlineUsers/OnlineUsers";
-import {debug} from "./debug";
+import {debug} from "./helpers";
 
 const PrivateRoute = ({children}: { children: any }) => {
     const isAuthenticated = useAppSelector(selectIsUserAuthenticated);

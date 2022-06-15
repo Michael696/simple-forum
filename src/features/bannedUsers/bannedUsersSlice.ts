@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from "../../app/store";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {Id, MiddlewareExtraArgument} from "../../app/types";
-import {debug} from "../../app/debug";
+import {debug} from "../../app/helpers";
 
 type BannedUsersStateType = {
     list: Array<Id>

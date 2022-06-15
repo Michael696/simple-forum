@@ -10,7 +10,7 @@ import {url} from "../../../app/urls";
 import Textarea from '../Textarea/Textarea';
 import {MAX_POST_LENGTH} from "../../../app/settings";
 import {addThreadWithPost, fetchThreads} from "../../../features/threads/threadsSlice";
-import {debug} from "../../../app/debug";
+import {debug} from "../../../app/helpers";
 import './NewThreadForm.sass';
 
 export default function NewThreadForm() {

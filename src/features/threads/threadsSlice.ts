@@ -4,7 +4,7 @@ import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {Id, MiddlewareExtraArgument, ThreadItemType, ThreadsStateType} from "../../app/types";
 import {isValid as isValidDate} from "date-fns";
 import {FETCH_PERIOD} from "../../app/settings";
-import {debug} from "../../app/debug";
+import {debug} from "../../app/helpers";
 import {emptyThread} from "../../app/objects";
 import {addPost} from "../post/postsSlice";
 

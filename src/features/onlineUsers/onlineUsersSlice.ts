@@ -4,7 +4,7 @@ import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
 import {AppDispatch, RootState} from "../../app/store";
 import {LoadingType, MiddlewareExtraArgument} from '../../app/types';
 import {FETCH_PERIOD} from "../../app/settings";
-import {debug} from "../../app/debug";
+import {debug} from "../../app/helpers";
 
 type OnlineUsersArray = Array<string>;
 

@@ -1,16 +1,17 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from "../../app/store";
 import {PayloadAction} from "@reduxjs/toolkit/dist/createAction";
-import {Id, MiddlewareExtraArgument, PostItemStateType, PostItemType, PostStateType, User} from "../../app/types";
+import {Id, MiddlewareExtraArgument, PostItemType, PostStateType, User} from "../../app/types";
 import {findUserById} from "../currentUser/currentUserSlice";
 import {isValid as isValidDate} from "date-fns";
 import {FETCH_PERIOD} from "../../app/settings";
-import {debug} from "../../app/debug";
+import {debug, limit} from "../../app/helpers";
 import {emptyPost} from "../../app/objects";
-import {limit} from "../../app/helpers";
+import {userApi} from "../../app/userApi";
 
 const initialState: PostStateType = {
-    entries: {items: [], likes: {}, dislikes: {}},
+    postIds: [],
+    postData: [],
     threadId: '',
     lastFetch: '',
     firstPostIdx: -1,
@@ -20,13 +21,19 @@ const initialState: PostStateType = {
     isLoading: 'idle'
 };
 
-const findPostById = (list: Array<PostItemStateType>, id: Id) => list.filter(post => post.id === id)[0];
+const findPostById = (list: Array<PostItemType>, id: Id) => list.find(post => post.id === id);
 
 // export const selectPostsIsLoading = (state: RootState) => state.posts.isLoading;
-export const selectPosts = (state: RootState) => state.posts.entries.items;
-export const selectPostWithId = (state: RootState, id: Id) => findPostById(state.posts.entries.items, id) || emptyPost;
-export const selectPostLikes = (state: RootState, id: Id) => state.posts.entries.likes[id] || [];
-export const selectPostDislikes = (state: RootState, id: Id) => state.posts.entries.dislikes[id] || [];
+export const selectPosts = (state: RootState) => state.posts.postIds;
+export const selectPostWithId = (state: RootState, id: Id) => findPostById(state.posts.postData, id) || emptyPost;
+export const selectPostLikes = (state: RootState, id: Id) => {
+    const post = findPostById(state.posts.postData, id);
+    return post ? post.likes : [];
+};
+export const selectPostDislikes = (state: RootState, id: Id) => {
+    const post = findPostById(state.posts.postData, id);
+    return post ? post.dislikes : [];
+};
 
 const addOnly = (first: Array<User>, user: User) => {
     const userLiked = findUserById(first, user.id);
@@ -65,69 +72,73 @@ export const postsSlice = createSlice({
     name: 'posts',
     initialState,
     reducers: {
-        postsLoad: (state: PostStateType, action: PayloadAction<Id>) => {
+        postIdsLoad: (state: PostStateType, action: PayloadAction<Id>) => {
             if (state.isLoading === 'idle') {
                 state.isLoading = 'pending';
                 state.threadId = action.payload;
                 state.lastFetch = new Date().toISOString();
             }
         },
-        postsDone: (state: PostStateType, action: PayloadAction<{ list: PostItemType[], firstPostIdx: number, lastPostIdx: number }>) => {
+        postIdsDone: (state: PostStateType, action: PayloadAction<{ postIds: Array<Id>, firstPostIdx: number, lastPostIdx: number }>) => {
             if (state.isLoading === 'pending') {
                 state.isLoading = 'idle';
-                state.entries.items = action.payload.list;
-                const likes = {}, dislikes = {};
-                action.payload.list.forEach(post => {
-                    // @ts-ignore
-                    likes[post.id] = post.likes;
-                    // @ts-ignore
-                    dislikes[post.id] = post.dislikes;
-                });
-                state.entries.likes = likes;
-                state.entries.dislikes = dislikes;
+                state.postIds = action.payload.postIds;
+                // state.postData = []; // !!!
                 state.firstPostIdx = action.payload.firstPostIdx;
                 state.lastPostIdx = action.payload.lastPostIdx;
             }
         },
-        postLike: (state: PostStateType, action: PayloadAction<{ postId: Id, user: User }>) => {
-            const post = findPostById(state.entries.items, action.payload.postId);
-            const user = action.payload.user;
-            const likes = state.entries.likes[post.id];
-            const dislikes = state.entries.dislikes[post.id];
-            if (hasLikeDislike(likes, user)) { // has likes
-                state.entries.likes[post.id] = removeLikeDislike(likes, user);
+        postDoneSingle: (state: PostStateType, action: PayloadAction<PostItemType>) => {
+            const postIdx = state.postData.findIndex(post => post.id === action.payload.id);
+            if (!!~postIdx) {
+                state.postData[postIdx] = action.payload;
             } else {
-                const {first, second} = addLike2(likes, dislikes, action.payload.user);
-                state.entries.likes[post.id] = first;
-                state.entries.dislikes[post.id] = second;
+                state.postData.push(action.payload); // TODO need to remove posts from state later !!!
+            }
+        },
+        postLike: (state: PostStateType, action: PayloadAction<{ postId: Id, user: User }>) => {
+            const post = findPostById(state.postData, action.payload.postId);
+            if (post) {
+                const user = action.payload.user;
+                const likes = post.likes;
+                const dislikes = post.dislikes;
+                if (hasLikeDislike(likes, user)) { // has likes
+                    post.likes = removeLikeDislike(likes, user);
+                } else {
+                    const {first, second} = addLike2(likes, dislikes, action.payload.user);
+                    post.likes = first;
+                    post.dislikes = second;
+                }
             }
         },
         postDislike: (state: PostStateType, action: PayloadAction<{ postId: Id, user: User }>) => {
-            const post = findPostById(state.entries.items, action.payload.postId);
-            const user = action.payload.user;
-            const likes = state.entries.likes[post.id];
-            const dislikes = state.entries.dislikes[post.id];
-            if (hasLikeDislike(dislikes, user)) { // has dislikes
-                state.entries.dislikes[post.id] = removeLikeDislike(dislikes, user);
-            } else {
-                const {first, second} = addDislike2(likes, dislikes, action.payload.user);
-                state.entries.likes[post.id] = first;
-                state.entries.dislikes[post.id] = second;
+            const post = findPostById(state.postData, action.payload.postId);
+            if (post) {
+                const user = action.payload.user;
+                const likes = post.likes;
+                const dislikes = post.dislikes;
+                if (hasLikeDislike(dislikes, user)) { // has dislikes
+                    post.dislikes = removeLikeDislike(dislikes, user);
+                } else {
+                    const {first, second} = addDislike2(likes, dislikes, action.payload.user);
+                    post.likes = first;
+                    post.dislikes = second;
+                }
             }
         },
         postText: (state: PostStateType, action: PayloadAction<{ postId: Id, text: string }>) => {
-            const post = findPostById(state.entries.items, action.payload.postId);
+            const post = findPostById(state.postData, action.payload.postId);
             if (post) {
                 post.text = action.payload.text;
             }
         },
         postRemove: (state: PostStateType, action: PayloadAction<{ id: Id }>) => {
-            const post = findPostById(state.entries.items, action.payload.id);
+            const post = findPostById(state.postData, action.payload.id);
             if (post) {
-                state.entries.items = state.entries.items.filter(post => post.id !== action.payload.id);
+                state.postData = state.postData.filter(post => post.id !== action.payload.id);
             }
         },
-        postCount: (state: PostStateType, action: PayloadAction<number>) => {
+        postTotalCount: (state: PostStateType, action: PayloadAction<number>) => {
             state.totalCount = action.payload;
         },
         postsClear: (state: PostStateType) => {
@@ -139,7 +150,7 @@ export const postsSlice = createSlice({
     },
 });
 
-const {postsLoad, postsDone, postText, postRemove, postCount} = postsSlice.actions;
+const {postIdsLoad, postIdsDone, postText, postRemove, postTotalCount, postDoneSingle} = postsSlice.actions;
 export const {postLike, postDislike, postsClear} = postsSlice.actions;
 
 export const selectTotalPages = (state: RootState) => {
@@ -160,28 +171,44 @@ export const fetchPosts = ({threadId, page}: { threadId: Id, page: number }, for
             || threadId !== postsSlice.threadId
             || startLimited !== postsSlice.firstPostIdx // TODO refactor conditions to function ?
             || end !== postsSlice.lastPostIdx
-            || postsSlice.entries.items.length === 0)
+            || postsSlice.postIds.length === 0)
             && postsSlice.isLoading === 'idle')) {
 
-            debug('fetch posts', threadId, startLimited, endLimited);
-            await fetchPostCount(threadId)(dispatch, getState, {userApi}); // TODO is this ok ???
-            dispatch(postsLoad(threadId));
-            const response = await userApi.fetchPosts({id: threadId, start: startLimited, end: endLimited});
-            dispatch(postsDone({
-                list: response.posts || [],
-                firstPostIdx: response.start || 0,
-                lastPostIdx: response.end || response.posts.length - 1
+            debug('fetch posts count', threadId);
+            const count = await userApi.getPostCount({id: threadId});
+            if (count) {
+                dispatch(postTotalCount(count));
+                debug('fetch posts', threadId, startLimited, endLimited);
+                dispatch(postIdsLoad(threadId));
+                const request = {id: threadId, start: startLimited, end: endLimited};
+                const response = await userApi.fetchPosts(request);
+                // console.log('fetchPosts res', response);
+                if (response) {
+                    dispatch(postIdsDone({
+                        postIds: response.posts || [],
+                        firstPostIdx: response.start || 0,
+                        lastPostIdx: response.end || response.posts.length - 1
+                    }));
+                    return;
+                }
+            }
+            dispatch(postIdsDone({
+                postIds: [],
+                firstPostIdx: -1,
+                lastPostIdx: -1
             }));
         } else {
             debug('fetch posts skipped', threadId);
         }
     };
 
-const fetchPostCount = (threadId: Id) =>
-    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => {
-        const {userApi} = extraArgument;
-        const count = await userApi.getPostCount({id: threadId});
-        dispatch(postCount(count));
+export const fetchPostWithId = ({id}: { id: Id }) =>
+    async (dispatch: AppDispatch, getState: () => RootState, extraArgument: MiddlewareExtraArgument) => { // TODO post caching
+        debug('fetch post with id ', id);
+        const post = await userApi.fetchPostWithId({id});
+        if (post) {
+            dispatch(postDoneSingle(post));
+        }
     };
 
 export const setPostText = (postId: Id, text: string) =>
@@ -211,7 +238,7 @@ export const addPostLike = ({postId, user}: { postId: Id, user: User }) =>
         const {userApi} = extraArgument;
         const state = getState();
         const post = selectPostWithId(state, postId);
-        if (!hasLikeDislike(state.posts.entries.likes[post.id], user)) { // has no likes, let's go
+        if (!hasLikeDislike(post.likes, user)) { // has no likes, let's go
             const result = await userApi.addPostLike({postId}); // use user from session on back
             if (!!result && !result.error) {
                 dispatch(postLike({postId, user}));
@@ -226,7 +253,7 @@ export const addPostDislike = ({postId, user}: { postId: Id, user: User }) =>
         const {userApi} = extraArgument;
         const state = getState();
         const post = selectPostWithId(state, postId);
-        if (!hasLikeDislike(state.posts.entries.dislikes[post.id], user)) { // has no dislikes, let's go
+        if (!hasLikeDislike(post.dislikes, user)) { // has no dislikes, let's go
             const result = await userApi.addPostDislike({postId}); // use user from session on back
             if (!!result && !result.error) {
                 dispatch(postDislike({postId, user}));

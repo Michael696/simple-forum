@@ -21,6 +21,17 @@ import {userApi} from "../../app/userApi";
 
 const extraArgument: MiddlewareExtraArgument = {userApi};
 
+function storageMock() {
+    return {
+        getItem: () => ({})
+    }
+}
+
+beforeAll(() => {
+    //@ts-ignore
+    window.localStorage = storageMock(); // TODO is it useless here?
+});
+
 test('Posts: #1 should show no buttons for non-authenticated user ', async () => { // TODO fix this test
     const user: User = {
         id: 'u01',
@@ -32,28 +43,38 @@ test('Posts: #1 should show no buttons for non-authenticated user ', async () =>
         realName: "",
         registeredAt: ""
     };
+
     const server = setupServer(
-        rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
+        rest.post('http://127.0.0.1:1337/api/posts', (req, res, context) => {
             return res(
-                ctx.json({
-                        posts: [{
-                            id: 'p01',
-                            threadId: 't01',
-                            forumId: 'f01',
-                            author: user,
-                            title: 'post 1 title',
-                            text: 'post 1 long text',
-                            likes: [],
-                            dislikes: [],
-                            postedAt: '2022-04-05T13:19:13',
-                            editedAt: '2022-04-05T13:19:15',
-                        }],
+                context.json({
+                        posts: ['p01'],
                         start: 0,
                         end: 0
                     }
                 ),
             )
         }),
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post', (req, res, context) => {
+            return res(
+                context.json({
+                    id: 'p01',
+                    threadId: 't01',
+                    forumId: 'f01',
+                    author: user,
+                    title: 'post 1 title',
+                    text: 'post 1 long text',
+                    likes: [],
+                    dislikes: [],
+                    postedAt: '2022-04-05T13:19:13',
+                    editedAt: '2022-04-05T13:19:15',
+                    }
+                )
+            )
+        })
     );
 
     server.use(
@@ -113,10 +134,10 @@ test('Posts: #1 should show no buttons for non-authenticated user ', async () =>
             getDefaultMiddleware({thunk: {extraArgument}})
     });
 
-    //@ts-ignore
+//@ts-ignore
     await checkAuth()(store.dispatch, store.getState, {userApi});
 
-    act(() => {
+    await act(() => {
         render(
             <Provider store={store}>
                 <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
@@ -128,6 +149,7 @@ test('Posts: #1 should show no buttons for non-authenticated user ', async () =>
         );
     });
 
+    expect(await screen.findByText(/forum id1 thread title 1/)).toBeInTheDocument();
     expect(await screen.queryByText(/^reply$/)).not.toBeInTheDocument();
     expect(await screen.queryByText(/^remove$/)).not.toBeInTheDocument();
     expect(await screen.queryByText(/^edit$/)).not.toBeInTheDocument();
@@ -163,7 +185,18 @@ test('Posts: #2 current user regular - should show "reply", "edit", "remove"  fo
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
                 ctx.json({
-                    posts: [{
+                    posts: ['p01'],
+                    start: 0,
+                    end: 0
+                }),
+            )
+        }),
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post', (req, res, context) => {
+            return res(
+                context.json({
                         id: 'p01',
                         threadId: 't01',
                         forumId: 'f01',
@@ -174,12 +207,10 @@ test('Posts: #2 current user regular - should show "reply", "edit", "remove"  fo
                         dislikes: [],
                         postedAt: '2022-04-05T13:19:13',
                         editedAt: '2022-04-05T13:19:15',
-                    }],
-                    start: 0,
-                    end: 0
-                }),
+                    }
+                )
             )
-        }),
+        })
     );
 
     server.use(
@@ -242,7 +273,7 @@ test('Posts: #2 current user regular - should show "reply", "edit", "remove"  fo
     //@ts-ignore
     await checkAuth()(store.dispatch, store.getState, {userApi});
 
-    act(() => {
+    await act(() => {
         render(
             <Provider store={store}>
                 <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
@@ -289,24 +320,33 @@ test('Posts: #3 current user regular - should show "reply", "edit", "remove"  "r
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
                 ctx.json({
-                        posts: [{
-                            id: 'p01',
-                            threadId: 't01',
-                            forumId: 'f01',
-                            author: user,
-                            title: 'post 1 title',
-                            text: 'post 1 long text',
-                            likes: [],
-                            dislikes: [],
-                            postedAt: '2022-04-05T13:19:13',
-                            editedAt: '2022-04-05T13:19:15',
-                        }],
+                        posts: ['p01'],
                         start: 0,
                         end: 0
                     }
                 ),
             )
         }),
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post', (req, res, context) => {
+            return res(
+                context.json({
+                    id: 'p01',
+                    threadId: 't01',
+                    forumId: 'f01',
+                    author: user,
+                    title: 'post 1 title',
+                    text: 'post 1 long text',
+                    likes: [],
+                    dislikes: [],
+                    postedAt: '2022-04-05T13:19:13',
+                    editedAt: '2022-04-05T13:19:15',
+                    }
+                )
+            )
+        })
     );
 
     server.use(
@@ -329,7 +369,6 @@ test('Posts: #3 current user regular - should show "reply", "edit", "remove"  "r
             );
         }))
     );
-
 
     server.use(
         rest.post('http://127.0.0.1:1337/api/current-user', ((req, res, context) => {
@@ -370,7 +409,7 @@ test('Posts: #3 current user regular - should show "reply", "edit", "remove"  "r
     //@ts-ignore
     await checkAuth()(store.dispatch, store.getState, {userApi});
 
-    act(() => {
+    await act(() => {
         render(
             <Provider store={store}>
                 <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
@@ -405,24 +444,33 @@ test('Posts: #4 current user regular - should show "reply" for other posts', asy
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
                 ctx.json({
-                        posts: [{
-                            id: 'p01',
-                            threadId: 't01',
-                            forumId: 'f01',
-                            author: user,
-                            title: 'post 1 title',
-                            text: 'post 1 long text',
-                            likes: [],
-                            dislikes: [],
-                            postedAt: '2022-04-05T13:19:13',
-                            editedAt: '2022-04-05T13:19:15',
-                        }],
+                        posts: ['p01'],
                         start: 0,
                         end: 0
                     }
                 ),
             )
         }),
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post', (req, res, context) => {
+            return res(
+                context.json({
+                    id: 'p01',
+                    threadId: 't01',
+                    forumId: 'f01',
+                    author: user,
+                    title: 'post 1 title',
+                    text: 'post 1 long text',
+                    likes: [],
+                    dislikes: [],
+                    postedAt: '2022-04-05T13:19:13',
+                    editedAt: '2022-04-05T13:19:15',
+                    }
+                )
+            )
+        })
     );
 
     server.use(
@@ -496,7 +544,7 @@ test('Posts: #4 current user regular - should show "reply" for other posts', asy
     //@ts-ignore
     await checkAuth()(store.dispatch, store.getState, {userApi});
 
-    act(() => {
+    await act(() => {
         render(
             <Provider store={store}>
                 <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
@@ -527,28 +575,38 @@ test('Posts: #5 current user regular (banned) - should show no buttons', async (
         realName: "",
         registeredAt: ""
     };
+
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
                 ctx.json({
-                        posts: [{
-                            id: 'p01',
-                            threadId: 't01',
-                            forumId: 'f01',
-                            author: user,
-                            title: 'post 1 title',
-                            text: 'post 1 long text',
-                            likes: [],
-                            dislikes: [],
-                            postedAt: '2022-04-05T13:19:13',
-                            editedAt: '2022-04-05T13:19:15',
-                        }],
+                        posts: ['p01'],
                         start: 0,
                         end: 0
                     }
                 ),
             )
         }),
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post', (req, res, context) => {
+            return res(
+                context.json({
+                    id: 'p01',
+                    threadId: 't01',
+                    forumId: 'f01',
+                    author: user,
+                    title: 'post 1 title',
+                    text: 'post 1 long text',
+                    likes: [],
+                    dislikes: [],
+                    postedAt: '2022-04-05T13:19:13',
+                    editedAt: '2022-04-05T13:19:15',
+                    }
+                )
+            )
+        })
     );
 
     server.use(
@@ -622,7 +680,7 @@ test('Posts: #5 current user regular (banned) - should show no buttons', async (
     //@ts-ignore
     await checkAuth()(store.dispatch, store.getState, {userApi});
 
-    act(() => {
+    await act(() => {
         render(
             <Provider store={store}>
                 <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
@@ -663,28 +721,38 @@ test('Posts: #6 current user is admin - should show "reply", "edit", "remove" an
         realName: "",
         registeredAt: ""
     };
+
     const server = setupServer(
         rest.post('http://127.0.0.1:1337/api/posts', (req, res, ctx) => {
             return res(
                 ctx.json({
-                        posts: [{
-                            id: 'p01',
-                            threadId: 't01',
-                            forumId: 'f01',
-                            author: user1,
-                            title: 'post 1 title',
-                            text: 'post 1 long text',
-                            likes: [],
-                            dislikes: [],
-                            postedAt: '2022-04-05T13:19:13',
-                            editedAt: '2022-04-05T13:19:15',
-                        }],
+                        posts: ['p01'],
                         start: 0,
                         end: 0
                     }
                 ),
             )
         }),
+    );
+
+    server.use(
+        rest.post('http://127.0.0.1:1337/api/get-post', (req, res, context) => {
+            return res(
+                context.json({
+                    id: 'p01',
+                    threadId: 't01',
+                    forumId: 'f01',
+                    author: user1,
+                    title: 'post 1 title',
+                    text: 'post 1 long text',
+                    likes: [],
+                    dislikes: [],
+                    postedAt: '2022-04-05T13:19:13',
+                    editedAt: '2022-04-05T13:19:15',
+                    }
+                )
+            )
+        })
     );
 
     server.use(
@@ -756,7 +824,7 @@ test('Posts: #6 current user is admin - should show "reply", "edit", "remove" an
     // @ts-ignore
     await checkAuth()(store.dispatch, store.getState, {userApi});
 
-    act(() => {
+    await act(() => {
         render(
             <Provider store={store}>
                 <MemoryRouter initialEntries={[`${url.FORUM}/f01/thread/t01/1`]}>
